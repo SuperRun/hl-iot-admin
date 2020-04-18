@@ -5,20 +5,38 @@
       <div class="login-form flex flex-column jc-center ai-center bg-white">
         <div class="title">用户登录</div>
         <form>
-          <div class="form-item">
-            <svg-icon icon-class="chat"></svg-icon>
-            <input v-model="model.account" placeholder="请输入账号" />
+          <div :class="['form-item', model.account?'active':'']">
+            <svg-icon :icon-class="icon1 ? 'user-active':'user'"></svg-icon>
+            <input
+              v-model="model.account"
+              placeholder="请输入账号"
+              @focus="icon1=true"
+              @blur=" this.model.account ? '' : (this.icon1 = false);
+            "
+            />
           </div>
-          <div class="form-item">
-            <svg-icon icon-class="account"></svg-icon>
-            <input v-model="model.password" placeholder="请输入密码" />
+          <div :class="['form-item', model.password?'active':'']">
+            <svg-icon :icon-class="icon2 ? 'pwd-active':'pwd'"></svg-icon>
+            <input
+              v-model="model.password"
+              type="password"
+              placeholder="请输入密码"
+              @focus="icon2=true"
+              @blur="model.password?'':icon2=false"
+            />
           </div>
-          <div class="form-item">
-            <svg-icon icon-class="account"></svg-icon>
-            <input v-model="model.validateCode" placeholder="请输入验证码" />
+          <div :class="['form-item', model.validateCode?'active':'']">
+            <svg-icon :icon-class="icon3 ? 'pwd-active':'pwd'"></svg-icon>
+            <input
+              v-model="model.validateCode"
+              placeholder="请输入验证码"
+              @focus="icon3=true"
+              @blur="model.validateCode?'':icon3=false"
+            />
             <img src="@/assets/images/valid-code.png" alt />
           </div>
-          <button class="btn gradient-blue text-white fs-md">登录</button>
+          <p ref="tip">{{ !loading? tip : '' }}</p>
+          <el-button :loading="loading" class="btn gradient-blue text-white fs-md" @click="login">登录</el-button>
         </form>
       </div>
     </main>
@@ -26,19 +44,55 @@
 </template>
 
 <script>
+import { validAccount } from "@/utils/validate";
 export default {
   name: "Login",
   data() {
     return {
+      icon1: false,
+      icon2: false,
+      icon3: false,
+      loading: false,
       model: {
         account: "", // 账号
         password: "", // 密码
         validateCode: "" // 验证码
-      }
+      },
+      tip: "", // 登录提示语
+      userTip: "ndjsnk" // 账号提示语
     };
   },
-  created() {
-    console.log("created");
+  methods: {
+    valid() {
+      // 验证是否未填写信息
+      for (const key in this.model) {
+        if (!this.model[key]) {
+          this.tip = "请输入账号/密码/验证码";
+          return false;
+        }
+      }
+      // 验证账号
+      this.tip = validAccount(this.model.account);
+      if (!this.tip) return true;
+      return false;
+    },
+    userBlur() {
+      this.userTip = validAccount(this.model.account);
+    },
+    login() {
+      this.$refs["tip"].style.opacity = 0;
+      this.loading = true;
+      if (!this.valid()) {
+        setTimeout(() => {
+          this.loading = false;
+          this.$refs["tip"].style.opacity = 1;
+        }, 1000);
+      } else {
+        setTimeout(() => {
+          this.loading = false;
+        }, 1000);
+      }
+    }
   }
 };
 </script>
@@ -72,18 +126,25 @@ export default {
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
+    // .user-tip {
+    //   margin: 0;
+    //   color: #572adc;
+    //   font-size: 0.5rem;
+    // }
     .form-item {
       width: 277px;
       height: 38px;
       border-radius: 19px;
       border: 1px solid #cfcfcf;
-      margin-bottom: 1rem;
       display: flex;
       align-items: center;
       padding: 0 1rem;
       transition: border-color 0.5s;
+      margin-bottom: 1rem;
       input {
         border: none;
+        padding: 0 0.5rem;
+        // margin-left: 0.5rem;
       }
       &:focus-within {
         border-color: #2d65ff;
@@ -91,17 +152,28 @@ export default {
       img {
         width: 78px;
         height: 25px;
-        margin-left: 2rem;
       }
+    }
+    .active {
+      border-color: #2d65ff;
+    }
+
+    p {
+      opacity: 0;
+      color: #808080;
+      font-size: 0.8rem;
+      text-align: center;
+      transition: opacity 0.5s;
+      height: 16px;
     }
 
     .btn {
       width: 277px;
       height: 38px;
-      line-height: 38px;
+      border: none;
       border-radius: 19px;
       font-weight: bold;
-      margin-top: 1rem;
+      color: #fff;
     }
   }
 }
