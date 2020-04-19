@@ -9,16 +9,9 @@ export const constantRoutes = [
     component: () => import ('@/views/login/index'),
   },
   {
-    path: '/',
-    redirect: '/index',
-    children: [
-      {
-        path: 'index',
-        name: 'Index',
-        component: () => import ('@/views/index/index'),
-        meta: {title: '监控中心'},
-      },
-    ],
+    path: '/index',
+    name: 'Index',
+    component: () => import ('@/views/index/index'),
   },
 ];
 
