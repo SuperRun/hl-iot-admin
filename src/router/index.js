@@ -12,6 +12,21 @@ export const constantRoutes = [
     path: '/index',
     name: 'Index',
     component: () => import ('@/views/index/index'),
+    meta: {title: '监控中心'},
+  },
+  {
+    path: '/project',
+    name: 'Project',
+    redirect: '/project/list',
+    component: Layout,
+    meta: {title: '项目管理'},
+    children: [
+      {
+        path: '/list',
+        name: 'ProjectList',
+        component: () => import ('@/views/project/index'),
+      },
+    ],
   },
 ];
 

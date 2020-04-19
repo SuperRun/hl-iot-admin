@@ -50,32 +50,44 @@
         <div class="flex-1 equips" v-show="!isFold">
           <ul class="flex">
             <li
-              :class="['equip-tab', 'flex-1','flex', 'flex-column', 'jc-between', 'ai-center', currentTab == 1?'active':'']"
-              @click="currentTab = 1"
+              :class="['equip-tab', 'flex-1','flex', 'flex-column', 'jc-between', 'ai-center', currentTab.includes(1)?'active':'']"
+              @click="chooseDevice(1)"
             >
-              <img :src="require(`@/assets/images/control${currentTab==1?'-active':''}.png`)" alt />
-              <span :class="{'active': currentTab==1}">智慧监控</span>
+              <img
+                :src="require(`@/assets/images/control${currentTab.includes(1)?'-active':''}.png`)"
+                alt
+              />
+              <span :class="{'active': currentTab.includes(1)}">智慧监控</span>
             </li>
             <li
-              :class="['equip-tab', 'flex-1','flex', 'flex-column', 'jc-between', 'ai-center', currentTab == 2?'active':'']"
-              @click="currentTab = 2"
+              :class="['equip-tab', 'flex-1','flex', 'flex-column', 'jc-between', 'ai-center', currentTab.includes(2)?'active':'']"
+              @click="chooseDevice(2)"
             >
-              <img :src="require(`@/assets/images/screen${currentTab==2?'-active':''}.png`)" alt />
-              <span :class="{'active': currentTab==2}">智慧屏</span>
+              <img
+                :src="require(`@/assets/images/screen${currentTab.includes(2)?'-active':''}.png`)"
+                alt
+              />
+              <span :class="{'active': currentTab.includes(2)}">智慧屏</span>
             </li>
             <li
-              :class="['equip-tab', 'flex-1','flex', 'flex-column', 'jc-between', 'ai-center', currentTab == 3?'active':'']"
-              @click="currentTab = 3"
+              :class="['equip-tab', 'flex-1','flex', 'flex-column', 'jc-between', 'ai-center', currentTab.includes(3)?'active':'']"
+              @click="chooseDevice(3)"
             >
-              <img :src="require(`@/assets/images/light${currentTab==3?'-active':''}.png`)" alt />
-              <span :class="{'active': currentTab==3}">智慧照明</span>
+              <img
+                :src="require(`@/assets/images/light${currentTab.includes(3)?'-active':''}.png`)"
+                alt
+              />
+              <span :class="{'active':currentTab.includes(3)}">智慧照明</span>
             </li>
             <li
-              :class="['equip-tab', 'flex-1','flex', 'flex-column', 'jc-between', 'ai-center', currentTab == 4?'active':'']"
-              @click="currentTab = 4"
+              :class="['equip-tab', 'flex-1','flex', 'flex-column', 'jc-between', 'ai-center', currentTab.includes(4)?'active':'']"
+              @click="chooseDevice(4)"
             >
-              <img :src="require(`@/assets/images/detect${currentTab==4?'-active':''}.png`)" alt />
-              <span :class="{'active': currentTab==4}">智慧检测</span>
+              <img
+                :src="require(`@/assets/images/detect${currentTab.includes(4)?'-active':''}.png`)"
+                alt
+              />
+              <span :class="{'active': currentTab.includes(4)}">智慧检测</span>
             </li>
           </ul>
           <h3>当前警告</h3>
@@ -98,9 +110,9 @@
         </div>
       </transition>
     </main>
-    <footer class="flex jc-around">
+    <footer class="flex jc-start">
       <!-- 摄像头 -->
-      <div class="flex-1">
+      <div class="device-content" v-show="currentTab.includes(1)">
         <div class="device-item">
           <div class="top flex jc-between">
             <div>
@@ -121,7 +133,7 @@
         </div>
       </div>
       <!-- LED屏 -->
-      <div class="flex-1">
+      <div class="device-content" v-show="currentTab.includes(2)">
         <div class="device-item">
           <div class="top flex jc-between">
             <div>
@@ -142,7 +154,7 @@
         </div>
       </div>
       <!-- 照明灯 -->
-      <div class="flex-1">
+      <div class="device-content" v-show="currentTab.includes(3)">
         <div class="device-item">
           <div class="top flex jc-between">
             <div>
@@ -182,7 +194,7 @@
         </div>
       </div>
       <!-- 气象站 -->
-      <div class="flex-1">
+      <div class="device-content" v-show="currentTab.includes(4)">
         <div class="device-item">
           <div class="top flex jc-between">
             <div>
@@ -238,7 +250,7 @@ export default {
   },
   data() {
     return {
-      currentTab: 1,
+      currentTab: [1, 2, 3, 4],
       isFold: false,
       projects: [
         { value: 1, label: "项目1" },
@@ -252,6 +264,11 @@ export default {
   methods: {
     foldEquips() {
       this.isFold = !this.isFold;
+    },
+    chooseDevice(type) {
+      this.currentTab.includes(type)
+        ? this.currentTab.splice(this.currentTab.indexOf(type), 1)
+        : this.currentTab.push(type);
     }
   }
 };
@@ -434,6 +451,9 @@ button:last-of-type {
   }
   footer {
     margin-top: 2rem;
+    .device-content {
+      width: 25%;
+    }
     .device-item {
       width: 94%;
       margin: 0 auto;
