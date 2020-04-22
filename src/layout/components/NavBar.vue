@@ -1,7 +1,7 @@
 <template>
   <div class="nav-bar gradient-blue-2 flex ai-center jc-between w-100 bg-white bx-shadow-1">
     <div class="flex flex-5 ai-center">
-      <div class="logo flex ai-center">
+      <div :class="['logo', 'flex', 'ai-center', device==='mobile'?'hide-text':'']">
         <img src="@/assets/images/index-logo.png" alt />
         <!-- <span class="text-white">|</span> -->
         <h1 class="title">城市智慧路灯物联云平台</h1>
@@ -25,6 +25,11 @@ export default {
   name: "nav-bar",
   components: {
     UserAccount
+  },
+  computed: {
+    device() {
+      return this.$store.state.app.device;
+    }
   },
   data() {
     return {
@@ -80,6 +85,11 @@ export default {
       height: 1.5rem;
       line-height: 1.5rem;
     }
+  }
+  .hide-text {
+    margin-right: 50px;
+    width: 40px;
+    overflow: hidden;
   }
 }
 </style>
