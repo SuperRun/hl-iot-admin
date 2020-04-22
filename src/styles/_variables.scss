@@ -10,6 +10,7 @@ $colors:(
   'blue': #1F55EC,
   'blue-1': #3973FF,
   'blue-2': #0245FF,
+  'blue-3': #3E5AE7,
   'white': #fff,
   'white-1': #f8f8f8,
   'white-2': #eceef0,
@@ -20,6 +21,7 @@ $colors:(
   'grey-2': #999999,
   'grey-3': #B3B3B3,
   'grey-4': #E6E6E6,
+  'grey-5': #B8BBC6,
   'dark': #4D4D4D,
   'black': #000,
 );
@@ -32,8 +34,10 @@ $font-sizes:(
   md: 1,
   // 16px
   lg: 1.1429,
-  //18px
-  xl: 1.2857
+  // 18px
+  xl: 1.2857,
+  // 20px
+  xxl: 1.4286 
 );
 
 $flex-jc: (

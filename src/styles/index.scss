@@ -1,4 +1,8 @@
 @import './variables';
+@import './sidebar-variables.scss';
+@import './transition.scss';
+@import './sidebar.scss';
+
 *{
   box-sizing: border-box;
   outline: none;
@@ -32,8 +36,8 @@ body {
   height: 100%;
 }
 // 阴影
-.bx-shadow{
-  box-shadow:0px 2px 5px 0px rgba(0,24,71,0.08);
+.bx-shadow-1{
+  box-shadow:0px 3px 8px 0px rgba(0, 0, 0, 0.23);
 }
 // 字体颜色和背景颜色
 @each $key, $value in $colors {
@@ -86,6 +90,12 @@ body {
 .flex-3{
   flex: 3;
 }
+.flex-4{
+  flex: 4;
+}
+.flex-5{
+  flex: 5;
+}
 
 // 渐变背景
 // - 登录按钮背景
@@ -116,3 +126,9 @@ body {
   background:rgba(83,114,251,1);
   color: #fff;
 }
+
+// 手型
+.cursor-pointer{
+  cursor: pointer;
+}
+

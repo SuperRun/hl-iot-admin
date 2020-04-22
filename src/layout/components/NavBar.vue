@@ -1,35 +1,31 @@
 <template>
-  <div class="nav-bar flex ai-center jc-between w-100 bg-white bx-shadow">
-    <el-select v-model="value" filterable placeholder="请选择">
-      <el-option v-for="item in options" :key="item.id" :label="item.name" :value="item.id"></el-option>
-    </el-select>
-    <h1>平台名称</h1>
-    <div class="flex ai-center">
-      <router-link v-if="chargeOrAdmin" to="/index">
-        <span class="btn text-grey-2">管理中心</span>
+  <div class="nav-bar gradient-blue-2 flex ai-center jc-between w-100 bg-white bx-shadow-1">
+    <div class="flex flex-5 ai-center">
+      <div class="logo flex ai-center">
+        <img src="@/assets/images/index-logo.png" alt />
+        <!-- <span class="text-white">|</span> -->
+        <h1 class="title">城市智慧路灯物联云平台</h1>
+      </div>
+      <el-select class="proj-select" v-model="value" filterable placeholder="请选择">
+        <el-option v-for="item in options" :key="item.id" :label="item.name" :value="item.id"></el-option>
+      </el-select>
+    </div>
+    <div class="flex ai-center flex-1 jc-around">
+      <router-link to="/index">
+        <span class="text-grey-4">监控中心</span>
       </router-link>
-      <router-link v-else to="/index">
-        <span class="btn text-grey-2">监控中心</span>
-      </router-link>
-      <el-dropdown trigger="click">
-        <span class="el-dropdown-link">
-          账号(角色)
-          <i class="el-icon-arrow-down el-icon--right"></i>
-        </span>
-        <el-dropdown-menu slot="dropdown">
-          <el-dropdown-item>账号：</el-dropdown-item>
-          <el-dropdown-item>角色：</el-dropdown-item>
-          <el-dropdown-item>修改密码</el-dropdown-item>
-          <el-dropdown-item>退出登录</el-dropdown-item>
-        </el-dropdown-menu>
-      </el-dropdown>
+      <user-account></user-account>
     </div>
   </div>
 </template>
 
 <script>
+import UserAccount from "@/components/UserAccount";
 export default {
   name: "nav-bar",
+  components: {
+    UserAccount
+  },
   data() {
     return {
       chargeOrAdmin: true,
@@ -51,27 +47,39 @@ export default {
   }
 };
 </script>
-
+<style scoped>
+.proj-select >>> .el-input__inner {
+  background: #4461ed;
+  border: none;
+  border-radius: 19px;
+  color: #ffffffff;
+}
+</style>
 <style lang="scss" scoped>
-@import "~@/styles/_variables.scss";
 .nav-bar {
+  position: relative;
+  z-index: 1;
   height: 60px;
   padding: 0 1rem;
-  .btn {
-    display: inline-block;
-    margin-right: 2rem;
-    cursor: pointer;
-    padding: 0.5rem 1rem;
-    border-radius: 1rem;
-    border: 1px solid map-get($map: $colors, $key: "grey-2");
-    // background-color: map-get($map: $colors, $key: "primay");
-  }
-
-  .btn:hover,
-  .btn:active {
-    border-color: map-get($map: $colors, $key: "blue");
-    color: map-get($map: $colors, $key: "blue");
-    background-color: map-get($map: $colors, $key: "blue-light");
+  .logo {
+    img {
+      width: 156px;
+      height: 50px;
+    }
+    span {
+      display: inline-block;
+      transform: scale(1.6);
+    }
+    .title {
+      margin: 0;
+      color: #fff;
+      font-size: 1.2rem;
+      letter-spacing: 0.1rem;
+      border-left: 2px solid #fff;
+      padding: 0 0.5rem;
+      height: 1.5rem;
+      line-height: 1.5rem;
+    }
   }
 }
 </style>

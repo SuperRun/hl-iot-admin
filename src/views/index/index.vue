@@ -16,23 +16,10 @@
         <h1 class="title">城市智慧路灯物联云平台</h1>
       </div>
       <div class="flex ai-center jc-around flex-1">
-        <router-link to="/index">
+        <router-link to="/device/list">
           <span class="text-grey-4">管理中心</span>
         </router-link>
-        <el-dropdown trigger="click">
-          <span class="el-dropdown-link text-grey-4">
-            账号
-            <i class="el-icon-arrow-down el-icon--right"></i>
-          </span>
-          <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item>账号：</el-dropdown-item>
-            <el-dropdown-item>角色：</el-dropdown-item>
-            <el-dropdown-item>
-              <button type="button" class="btn-light btn">更改密码</button>
-              <button type="button" class="btn-dark btn">退出登录</button>
-            </el-dropdown-item>
-          </el-dropdown-menu>
-        </el-dropdown>
+        <user-account></user-account>
       </div>
     </header>
     <main class="flex">
@@ -42,7 +29,10 @@
             <input type="text" placeholder="搜索设备编号" />
             <svg-icon icon-class="search"></svg-icon>
           </div>
-          <i :class="['el-icon-s-unfold','fold', isFold?'fold-rotate':'']" @click="foldEquips"></i>
+          <div class="flex">
+            <i :class="['lock', isLock?'el-icon-lock':'el-icon-unlock']" @click="lockMap"></i>
+            <i :class="['el-icon-s-unfold','fold', isFold?'fold-rotate':'']" @click="foldEquips"></i>
+          </div>
         </div>
         <baidu-map></baidu-map>
       </div>
@@ -237,10 +227,12 @@
 
 <script>
 import BaiduMap from "@/components/BaiduMap/index";
+import UserAccount from "@/components/UserAccount/index";
 export default {
   name: "Index",
   components: {
-    BaiduMap
+    BaiduMap,
+    UserAccount
   },
   filters: {
     limitStrLen(str) {
@@ -252,6 +244,7 @@ export default {
     return {
       currentTab: [1, 2, 3, 4],
       isFold: false,
+      isLock: true,
       projects: [
         { value: 1, label: "项目1" },
         { value: 2, label: "项目2" }
@@ -262,6 +255,9 @@ export default {
     };
   },
   methods: {
+    lockMap() {
+      this.isLock = !this.isLock;
+    },
     foldEquips() {
       this.isFold = !this.isFold;
     },
@@ -273,36 +269,29 @@ export default {
   }
 };
 </script>
-<style>
-input.el-input__inner {
+<style scoped>
+.proj-select >>> .el-input__inner {
   background: linear-gradient(90deg, rgba(9, 56, 170, 1), rgba(32, 62, 171, 1));
   border: none;
   border-radius: 19px;
   color: #ffffffff;
-}
-.btn {
-  border-radius: 2px;
-  padding: 0.3rem 0.8rem;
-}
-button:last-of-type {
-  margin-left: 0.5rem;
 }
 .alarms-list {
   width: 320px;
   margin: 0 auto;
   border: none;
 }
-.alarms-list .el-collapse-item__header {
+.alarms-list >>> .el-collapse-item__header {
   height: 2rem;
   background: transparent;
   border: none;
   color: #fefefeff;
   font-size: 14px;
 }
-.el-collapse-item__header.focusing:focus:not(:hover) {
+.alarms-list >>> .el-collapse-item__header.focusing:focus:not(:hover) {
   color: #fefefeff;
 }
-.alarms-list .el-collapse-item__wrap {
+.alarms-list >>> .el-collapse-item__wrap {
   background: transparent;
   border: none;
 }
@@ -342,6 +331,7 @@ button:last-of-type {
 </style>
 <style lang="scss" scoped>
 .index {
+  min-height: 100%;
   background-image: url(../../assets/images/index-bg.png);
   header {
     height: 100px;
@@ -373,7 +363,7 @@ button:last-of-type {
       transition: width 0.5s;
       position: relative;
       .tool {
-        width: 220px;
+        width: 240px;
         position: absolute;
         top: 1rem;
         right: 1rem;
@@ -392,11 +382,17 @@ button:last-of-type {
             color: #fefefe;
           }
         }
-        .fold {
+        .fold,
+        .lock {
           color: #d7d7d7;
           font-size: 20px;
           transition: all 0.5s;
           cursor: pointer;
+        }
+        .lock {
+          font-size: 18px;
+          font-weight: 600;
+          margin-right: 0.5rem;
         }
         .fold-rotate {
           transform: rotate(180deg);
@@ -504,22 +500,7 @@ button:last-of-type {
           padding: 0.5rem 0;
         }
       }
-      // .light-content {
-      //   height: 120px;
-      //   overflow: scroll;
-      // }
     }
   }
-}
-.fade-enter-active {
-  transition: all 0.3s ease;
-}
-.fade-leave-active {
-  transition: all 0.3s cubic-bezier(1, 0.5, 0.8, 1);
-}
-.fade-enter,
-.fade-leave-to {
-  transform: translateX(300px);
-  opacity: 0;
 }
 </style>

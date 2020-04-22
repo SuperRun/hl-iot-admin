@@ -12,9 +12,12 @@
   "dependencies": {
     "core-js": "^3.6.4",
     "element-ui": "^2.13.0",
+    "js-cookie": "^2.2.1",
     "node-sass": "^4.13.1",
+    "path-to-regexp": "2.4.0",
     "vue": "^2.6.11",
-    "vue-router": "^3.1.6"
+    "vue-router": "^3.1.6",
+    "vuex": "^3.2.0"
   },
   "devDependencies": {
     "@babel/plugin-syntax-dynamic-import": "^7.8.3",
