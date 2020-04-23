@@ -43,16 +43,11 @@
           @selection-change="handleSelectionChange"
         >
           <el-table-column type="selection" width="55"></el-table-column>
-          <el-table-column prop="name" label="编号" width="120"></el-table-column>
-          <el-table-column prop="mode" label="产品" width="120"></el-table-column>
-          <el-table-column prop="mode" label="位号" width="120"></el-table-column>
-          <el-table-column prop="mode" label="状态" width="120"></el-table-column>
-          <el-table-column prop="mode" label="安装时间" width="120"></el-table-column>
-          <el-table-column label="图片">
-            <template slot-scope="scope">
-              <img class="device-pic" :src="scope.row.image" alt />
-            </template>
-          </el-table-column>
+          <el-table-column prop="name" label="编号" width="200"></el-table-column>
+          <el-table-column prop="mode" label="产品" width="200"></el-table-column>
+          <el-table-column prop="mode" label="位号" width="200"></el-table-column>
+          <el-table-column prop="mode" label="状态" width="200"></el-table-column>
+          <el-table-column prop="mode" label="安装时间" width="200"></el-table-column>
           <el-table-column prop="operation" label="操作">
             <template>
               <a class="operate-btn" href>详情</a>
@@ -67,8 +62,9 @@
       </div>
     </div>
     <!-- 地图 -->
-    <div v-show="tableOrMap=='map'">
+    <div class="camera-map" v-show="tableOrMap=='map'">
       <div id="camera-map"></div>
+      <i :class="[`el-icon-${isLock?'':'un'}lock`, 'lock']" @click="lock"></i>
     </div>
     <!-- 弹出框 -->
     <el-dialog title="添加设备(摄像头)" :visible.sync="showDialog" center @opened="dialogOpened">
@@ -140,19 +136,22 @@
 
 <script>
 import BMap from "BMap";
+import Map from "@/utils/map-util";
 import { keep7Num } from "@/utils/util";
+import cameraMark from "@/assets/images/marker-camera.png";
 // import _ from "lodash";
 export default {
   name: "CameraPanel",
   data() {
     return {
-      showDialog: true,
+      showDialog: false,
       tableOrMap: "table",
       sn: "",
       formLabelWidth: "100px",
       place: "", // 检索地名
       placeList: [], // 地名列表
       loading: false,
+      isLock: true,
       tableData: [
         {
           name: "摄像头1",
@@ -235,10 +234,18 @@ export default {
   },
   mounted() {
     // 设备列表地图
-    this.cameraMap = new BMap.Map("camera-map"); // 创建地图实例
-    var point = new BMap.Point(116.404, 39.915); // 创建点坐标
-    this.cameraMap.centerAndZoom(point, 15); // 初始化地图，设置中心点坐标和地图级别
-    this.cameraMap.enableScrollWheelZoom(true); //开启鼠标滚轮缩放
+    this.cameraMap = new Map(
+      "camera-map",
+      { lng: "116.404", lat: "39.915" },
+      true,
+      true
+    );
+    this.cameraMap.addMark(
+      "116.404",
+      "39.915",
+      { url: cameraMark, w: 30, h: 30 }, // icon
+      true
+    );
   },
   methods: {
     headColor({ row, rowIndex }) {
@@ -246,19 +253,13 @@ export default {
     },
     handleSelectionChange() {},
     dialogOpened() {
-      console.log("dialogOpened");
       // 弹出框地图
-      this.dialogMap = new BMap.Map("dialog-map"); // 创建地图实例
-      this.dialogMap.enableScrollWheelZoom(true); //开启鼠标滚轮缩放
-      var scaleCtrl = new BMap.ScaleControl({
-        anchor: BMAP_ANCHOR_BOTTOM_RIGHT
-      }); // 添加比例尺控件
-      this.dialogMap.addControl(scaleCtrl);
+      this.dialogMap = new Map("dialog-map", {}, true, true);
       const self = this;
-      this.dialogMap.addEventListener("click", function(e) {
+      this.dialogMap.addMapEvent("click", function(e) {
         self.model.lng = keep7Num(e.point.lng);
         self.model.lat = keep7Num(e.point.lat);
-        self.addMark(self.dialogMap, e.point.lng, e.point.lat);
+        self.dialogMap.addMark(e.point.lng, e.point.lat, true);
       });
     },
     confirm() {
@@ -283,15 +284,13 @@ export default {
       this.model.lng = keep7Num(location.lng);
       this.model.lat = keep7Num(location.lat);
       // 地图上添加标记点
-      this.addMark(this.dialogMap, location.lng, location.lat);
+      this.dialogMap.addMark(location.lng, location.lat, true);
     },
-    addMark(map, lng, lat) {
-      var point = new BMap.Point(lng, lat); // 创建点坐标
-      const zoom = map.getZoom() < 15 ? 15 : map.getZoom();
-      map.centerAndZoom(point, zoom); // 初始化地图，设置中心点坐标和地图级别
-      map.clearOverlays(); // 清除覆盖物
-      var marker = new BMap.Marker(point);
-      map.addOverlay(marker);
+    lock() {
+      this.isLock = !this.isLock;
+      this.isLock
+        ? this.cameraMap.disableMarksDragging()
+        : this.cameraMap.enableMarksDragging();
     }
   }
 };
@@ -336,10 +335,21 @@ export default {
     z-index: 1;
   }
 }
-#camera-map {
-  width: 100%;
-  height: 350px;
-  margin-top: 2rem;
+.camera-map {
+  position: relative;
+  #camera-map {
+    width: 100%;
+    height: 350px;
+    margin-top: 2rem;
+  }
+  .lock {
+    cursor: pointer;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 1;
+    font-size: 1.5rem;
+  }
 }
 #dialog-map {
   width: 80%;

@@ -6,7 +6,7 @@
         <!-- <span class="text-white">|</span> -->
         <h1 class="title">城市智慧路灯物联云平台</h1>
       </div>
-      <el-select class="proj-select" v-model="value" filterable placeholder="请选择">
+      <el-select class="proj-select" v-model="projId" filterable placeholder="请选择">
         <el-option v-for="item in options" :key="item.id" :label="item.name" :value="item.id"></el-option>
       </el-select>
     </div>
@@ -34,6 +34,7 @@ export default {
   data() {
     return {
       chargeOrAdmin: true,
+      projId: "",
       options: [
         {
           id: 1,
