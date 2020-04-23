@@ -39,6 +39,9 @@ body {
 .bx-shadow-1{
   box-shadow:0px 3px 8px 0px rgba(0, 0, 0, 0.23);
 }
+.bx-shadow-2{
+  box-shadow:0 0 5px 0 rgba(141, 141, 141, 0.17)
+}
 // 字体颜色和背景颜色
 @each $key, $value in $colors {
   .bg-#{$key}{
@@ -54,6 +57,9 @@ body {
 }
 .h-100 {
   height: 100%;
+}
+.min-h-1{
+  min-height: 80%;
 }
 // 字体大小
 @each $key,$value in $font-sizes {
@@ -96,7 +102,10 @@ body {
 .flex-5{
   flex: 5;
 }
-
+// margin
+.mg-left-1{
+  margin-left: 1rem;
+}
 // 渐变背景
 // - 登录按钮背景
 .gradient-blue{
@@ -126,9 +135,62 @@ body {
   background:rgba(83,114,251,1);
   color: #fff;
 }
+.btn-add{
+  background:rgba(231,239,254,1);
+  border:1px solid rgba(211,211,211,1);
+  border-radius:4px;
+  color: #4360EC;
+}
+.btn-del{
+  background:rgba(237,223,225,1);
+  border:1px solid rgba(211,211,211,1);
+  border-radius:4px;
+  color: #BE4242;
+}
+.btn-refresh{
+  background-color: #D3D3D3;
+  color: #4D4D4D;
+  border-radius:4px;
+}
 
 // 手型
 .cursor-pointer{
   cursor: pointer;
 }
+
+// 表格搜索
+.search{
+  .el-input-group__append button.el-button{
+    background-color: #4360EC;
+    color: #fff;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+  }
+}
+
+// 表格样式
+// - 表头
+.table-header{
+  background-color: #EEEEEE !important;
+  color: #4D4D4D;
+}
+// - 分页
+.el-pagination{
+  text-align: right;
+}
+
+// 弹出框
+// - 标题
+.el-dialog__header {
+  background: linear-gradient(-90deg,rgba(87,119,255,1),rgba(36,60,207,1));
+  padding: 1rem;
+}
+.el-dialog__title {
+  color: #fff;
+  font-size: 1.2rem;
+}
+.el-dialog__headerbtn .el-dialog__close {
+  color: #fff;
+}
+
 

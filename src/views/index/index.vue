@@ -23,7 +23,7 @@
       </div>
     </header>
     <main class="flex">
-      <div class="map flex-3">
+      <div :class="['map', isFold?'w-100':'']">
         <div class="tool flex jc-between ai-center">
           <div class="flex search-input">
             <input type="text" placeholder="搜索设备编号" />
@@ -37,7 +37,7 @@
         <baidu-map></baidu-map>
       </div>
       <transition name="fade">
-        <div class="flex-1 equips" v-show="!isFold">
+        <div class="equips" v-show="!isFold">
           <ul class="flex">
             <li
               :class="['equip-tab', 'flex-1','flex', 'flex-column', 'jc-between', 'ai-center', currentTab.includes(1)?'active':'']"
@@ -96,23 +96,110 @@
               </template>
               <div class="detail">控制反馈：通过界面样式和交互动效让用户可以清晰的感知自己的操作；</div>
             </el-collapse-item>
+            <el-collapse-item>
+              <template slot="title">
+                设备SN
+                <span class="alarm-num">01</span>
+              </template>
+              <div class="detail">{{detail|limitStrLen}}</div>
+            </el-collapse-item>
+            <el-collapse-item>
+              <template slot="title">
+                设备SN
+                <span class="alarm-num">01</span>
+              </template>
+              <div class="detail">控制反馈：通过界面样式和交互动效让用户可以清晰的感知自己的操作；</div>
+            </el-collapse-item>
+            <el-collapse-item>
+              <template slot="title">
+                设备SN
+                <span class="alarm-num">01</span>
+              </template>
+              <div class="detail">{{detail|limitStrLen}}</div>
+            </el-collapse-item>
+            <el-collapse-item>
+              <template slot="title">
+                设备SN
+                <span class="alarm-num">01</span>
+              </template>
+              <div class="detail">控制反馈：通过界面样式和交互动效让用户可以清晰的感知自己的操作；</div>
+            </el-collapse-item>
+            <el-collapse-item>
+              <template slot="title">
+                设备SN
+                <span class="alarm-num">01</span>
+              </template>
+              <div class="detail">控制反馈：通过界面样式和交互动效让用户可以清晰的感知自己的操作；</div>
+            </el-collapse-item>
+            <el-collapse-item>
+              <template slot="title">
+                设备SN
+                <span class="alarm-num">01</span>
+              </template>
+              <div class="detail">控制反馈：通过界面样式和交互动效让用户可以清晰的感知自己的操作；</div>
+            </el-collapse-item>
           </el-collapse>
         </div>
       </transition>
     </main>
-    <footer class="flex jc-start">
+    <footer class="flex jc-between">
+      <div class="flex-column footer-left">
+        <!-- 摄像头详情 -->
+        <div class="tip flex jc-between ai-center" v-show="currentTab.includes(1)">
+          <div>
+            <svg-icon icon-class="camera"></svg-icon>
+            <span class="text-white">摄像头：</span>
+          </div>
+          <div>
+            <span class="state-name text-normal">正常：</span>
+            <span class="state-name text-fault">故障：</span>
+            <span class="state-name text-offline">离线：</span>
+          </div>
+        </div>
+        <!-- LED屏详情 -->
+        <div class="tip flex jc-between ai-center" v-show="currentTab.includes(2)">
+          <div>
+            <svg-icon icon-class="screen"></svg-icon>
+            <span class="text-white">LED屏：</span>
+          </div>
+          <div>
+            <span class="state-name text-normal">正常：</span>
+            <span class="state-name text-fault">故障：</span>
+            <span class="state-name text-offline">离线：</span>
+          </div>
+        </div>
+        <!-- 照明灯详情 -->
+        <div class="tip flex jc-between ai-center" v-show="currentTab.includes(3)">
+          <div>
+            <svg-icon icon-class="light"></svg-icon>
+            <span class="text-white">照明灯：</span>
+          </div>
+          <div>
+            <span class="state-name text-normal">正常：</span>
+            <span class="state-name text-fault">故障：</span>
+            <span class="state-name text-offline">离线：</span>
+          </div>
+        </div>
+        <!-- 气象站详情 -->
+        <div class="tip flex jc-between ai-center" v-show="currentTab.includes(4)">
+          <div>
+            <svg-icon icon-class="detect"></svg-icon>
+            <span class="text-white">气象站：</span>
+          </div>
+          <div>
+            <span class="state-name text-normal">正常：</span>
+            <span class="state-name text-fault">故障：</span>
+            <span class="state-name text-offline">离线：</span>
+          </div>
+        </div>
+      </div>
       <!-- 摄像头 -->
-      <div class="device-content" v-show="currentTab.includes(1)">
+      <div class="device-content footer-right">
         <div class="device-item">
-          <div class="top flex jc-between">
+          <div class="top flex jc-start">
             <div>
               <svg-icon icon-class="camera"></svg-icon>
-              <span class="device-name">摄像头：</span>
-            </div>
-            <div>
-              <span class="state-name text-normal">正常：</span>
-              <span class="state-name text-fault">故障：</span>
-              <span class="state-name text-offline">离线：</span>
+              <span class="device-name">摄像头</span>
             </div>
           </div>
           <div class="device flex jc-between">
@@ -123,17 +210,12 @@
         </div>
       </div>
       <!-- LED屏 -->
-      <div class="device-content" v-show="currentTab.includes(2)">
+      <div class="device-content flex-1" v-show="false">
         <div class="device-item">
-          <div class="top flex jc-between">
+          <div class="top flex jc-start">
             <div>
               <svg-icon icon-class="screen"></svg-icon>
-              <span class="device-name">LED屏：</span>
-            </div>
-            <div>
-              <span class="state-name text-normal">正常：</span>
-              <span class="state-name text-fault">故障：</span>
-              <span class="state-name text-offline">离线：</span>
+              <span class="device-name">LED屏</span>
             </div>
           </div>
           <div class="device flex jc-between">
@@ -144,17 +226,12 @@
         </div>
       </div>
       <!-- 照明灯 -->
-      <div class="device-content" v-show="currentTab.includes(3)">
+      <div class="device-content flex-1" v-show="false">
         <div class="device-item">
-          <div class="top flex jc-between">
+          <div class="top flex jc-start">
             <div>
               <svg-icon icon-class="light"></svg-icon>
-              <span class="device-name">照明灯：</span>
-            </div>
-            <div>
-              <span class="state-name text-normal">正常：</span>
-              <span class="state-name text-fault">故障：</span>
-              <span class="state-name text-offline">离线：</span>
+              <span class="device-name">照明灯</span>
             </div>
           </div>
           <div class="device flex jc-between">
@@ -184,17 +261,12 @@
         </div>
       </div>
       <!-- 气象站 -->
-      <div class="device-content" v-show="currentTab.includes(4)">
+      <div class="device-content flex-1" v-show="false">
         <div class="device-item">
-          <div class="top flex jc-between">
+          <div class="top flex jc-start">
             <div>
               <svg-icon icon-class="detect"></svg-icon>
-              <span class="device-name">气象站：</span>
-            </div>
-            <div>
-              <span class="state-name text-normal">正常：</span>
-              <span class="state-name text-fault">故障：</span>
-              <span class="state-name text-offline">离线：</span>
+              <span class="device-name">气象站</span>
             </div>
           </div>
           <div class="device flex jc-between">
@@ -236,7 +308,6 @@ export default {
   },
   filters: {
     limitStrLen(str) {
-      console.log(str.length);
       return str.length > 41 ? str.slice(0, 41) : str;
     }
   },
@@ -277,9 +348,12 @@ export default {
   color: #ffffffff;
 }
 .alarms-list {
-  width: 320px;
+  height: 50%;
+  overflow: scroll;
+  width: 100%;
   margin: 0 auto;
   border: none;
+  padding: 0 1rem;
 }
 .alarms-list >>> .el-collapse-item__header {
   height: 2rem;
@@ -331,12 +405,13 @@ export default {
 </style>
 <style lang="scss" scoped>
 .index {
+  position: relative;
   min-height: 100%;
   background-image: url(../../assets/images/index-bg.png);
   header {
     height: 100px;
     background-image: url(../../assets/images/index-header-bg.png);
-    background-size: 100% auto;
+    background-size: 100% 110%;
     background-repeat: no-repeat;
     .proj-select {
       margin-left: 2rem;
@@ -356,10 +431,11 @@ export default {
     }
   }
   main {
-    height: 420px;
+    height: calc(100vh - 120px);
     padding: 0 1rem;
     margin-top: 1rem;
     .map {
+      width: 75%;
       transition: width 0.5s;
       position: relative;
       .tool {
@@ -399,17 +475,22 @@ export default {
         }
       }
     }
+    .w-100 {
+      width: 100%;
+    }
     .equips {
+      width: 25%;
+      height: 68%;
       background-image: url(../../assets/images/equips-bg.png);
-      background-size: 100% auto;
+      background-size: 100% 90%;
       background-repeat: no-repeat;
       ul {
         width: 97%;
         margin: 0 auto;
       }
       li {
-        height: 72px;
-        padding: 1.4rem 0;
+        height: 60px;
+        padding: 1rem 0;
         cursor: pointer;
         transition: background 0.5s;
         &.active {
@@ -438,24 +519,52 @@ export default {
         }
       }
       h3 {
-        width: 320px;
+        width: 100%;
         margin: 1rem auto;
         color: #fefefeff;
         font-size: 1rem;
+        padding: 0 1rem;
       }
     }
   }
   footer {
-    margin-top: 2rem;
-    .device-content {
+    width: 100%;
+    height: 30vh;
+    padding: 0 1rem;
+    position: absolute;
+    left: 0;
+    bottom: 0.5rem;
+    .footer-left,
+    .footer-right {
+      align-self: flex-end;
+      height: 100%;
+    }
+    .footer-left {
+      width: 75%;
+    }
+    .footer-right {
       width: 25%;
     }
+    .tip {
+      width: 320px;
+      height: 40px;
+      padding: 0 1rem;
+      background-image: url(../../assets/images/tip-bg.png);
+      background-size: 100% 100%;
+      margin-bottom: 0.3rem;
+      margin-left: 0.5rem;
+      span.text-white {
+        padding: 0 0.5rem;
+      }
+    }
+    // .device-content {
+    //   width: 100%;
+    // }
     .device-item {
-      width: 94%;
+      width: 100%;
       margin: 0 auto;
-      height: 280px;
       background-image: url(../../assets/images/device-item-bg.png);
-      background-size: 100% auto;
+      background-size: 100% 100%;
       background-repeat: no-repeat;
       .top {
         width: 95%;

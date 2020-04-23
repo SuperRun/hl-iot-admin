@@ -3,6 +3,7 @@
 </template>
 <script>
 import { styleJson } from "@/utils/map_config.js";
+import BMap from "BMap";
 export default {
   name: "BaiduMap",
   mounted() {

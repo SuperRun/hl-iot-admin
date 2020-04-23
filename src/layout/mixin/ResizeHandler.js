@@ -34,7 +34,6 @@ export default {
     $_resizeHandler () {
       if (!document.hidden) {
         const isMobile = this.$_isMobile ();
-        console.log (isMobile);
         store.dispatch ('app/toggleDevice', isMobile ? 'mobile' : 'desktop');
 
         if (isMobile) {

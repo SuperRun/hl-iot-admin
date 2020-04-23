@@ -3,9 +3,9 @@ import App from './App.vue';
 import store from './store';
 import ElementUI from 'element-ui';
 import router from '@/router';
+
 import '@/styles/element-variables.scss';
 import '@/styles/index.scss';
-
 import '@/icons';
 
 Vue.config.productionTip = false;

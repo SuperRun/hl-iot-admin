@@ -16,9 +16,6 @@ export default {
       required: true
     }
   },
-  created() {
-    console.log(this.to);
-  },
   methods: {
     linkProps(url) {
       if (isExternal(url)) {

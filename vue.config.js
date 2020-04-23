@@ -1,12 +1,12 @@
-'use strict'
-const path = require('path')
-const defaultSettings = require('./src/settings.js')
+'use strict';
+const path = require ('path');
+const defaultSettings = require ('./src/settings.js');
 
-function resolve(dir) {
-  return path.join(__dirname, dir)
+function resolve (dir) {
+  return path.join (__dirname, dir);
 }
 
-const port = process.env.port || process.env.npm_config_port || 9527 // dev port
+const port = process.env.port || process.env.npm_config_port || 9527; // dev port
 
 module.exports = {
   publicPath: '/',
@@ -21,62 +21,72 @@ module.exports = {
       warnings: false,
       errors: true,
     },
+    proxy: {
+      // http://api.map.baidu.com
+      '/map': {
+        target: 'http://api.map.baidu.com',
+        changeOrigin: true,
+        pathRewrite: {
+          '^/map': '',
+        },
+      },
+    },
   },
   configureWebpack: {
     name: defaultSettings.title,
     resolve: {
       alias: {
-        '@': resolve('src'),
+        '@': resolve ('src'),
       },
     },
+    externals: {
+      BMap: 'BMap',
+    },
   },
-  chainWebpack(config) {
-    config.plugins.delete('preload') // TODO: need test
-    config.plugins.delete('prefetch') // TODO: need test
+  chainWebpack (config) {
+    config.plugins.delete ('preload'); // TODO: need test
+    config.plugins.delete ('prefetch'); // TODO: need test
 
     // set svg-sprite-loader
+    config.module.rule ('svg').exclude.add (resolve ('src/icons')).end ();
     config.module
-      .rule('svg')
-      .exclude.add(resolve('src/icons'))
-      .end()
-    config.module
-      .rule('icons')
-      .test(/\.svg$/)
-      .include.add(resolve('src/icons'))
-      .end()
-      .use('svg-sprite-loader')
-      .loader('svg-sprite-loader')
-      .options({
+      .rule ('icons')
+      .test (/\.svg$/)
+      .include.add (resolve ('src/icons'))
+      .end ()
+      .use ('svg-sprite-loader')
+      .loader ('svg-sprite-loader')
+      .options ({
         symbolId: 'icon-[name]',
       })
-      .end()
+      .end ();
 
     // set preserveWhitespace
     config.module
-      .rule('vue')
-      .use('vue-loader')
-      .loader('vue-loader')
-      .tap((options) => {
-        options.compilerOptions.preserveWhitespace = true
-        return options
+      .rule ('vue')
+      .use ('vue-loader')
+      .loader ('vue-loader')
+      .tap (options => {
+        options.compilerOptions.preserveWhitespace = true;
+        return options;
       })
-      .end()
+      .end ();
 
-    config.when(process.env.NODE_ENV === 'development', (config) =>
-      config.devtool('cheap-source-map')
-    )
+    config.when (process.env.NODE_ENV === 'development', config =>
+      config.devtool ('cheap-source-map')
+    );
 
-    config.when(process.env.NODE_ENV !== 'development', (config) => {
+    config.when (process.env.NODE_ENV !== 'development', config => {
       config
-        .plugin('ScriptExtHtmlWebpackPlugin')
-        .after('html')
-        .use('script-ext-html-webpack-plugin', [
+        .plugin ('ScriptExtHtmlWebpackPlugin')
+        .after ('html')
+        .use ('script-ext-html-webpack-plugin', [
           {
             inline: /runtime\..*\.js$/,
           },
         ])
-        .end()
-      config.optimization.splitChunks({
+        .end ();
+      config.optimization.splitChunks ({
         chunks: 'all',
         cacheGroups: {
           libs: {
@@ -92,14 +102,14 @@ module.exports = {
           },
           commons: {
             name: 'chunk-commons',
-            test: resolve('src/components'), // can customize your rules
+            test: resolve ('src/components'), // can customize your rules
             minChunks: 3, //  minimum common number
             priority: 5,
             reuseExistingChunk: true,
           },
         },
-      })
-      config.optimization.runtimeChunk('single')
-    })
+      });
+      config.optimization.runtimeChunk ('single');
+    });
   },
-}
+};
