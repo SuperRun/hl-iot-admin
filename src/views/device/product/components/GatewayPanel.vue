@@ -1,5 +1,5 @@
 <template>
-  <div class="camera-panel">
+  <div class="gateway-panel">
     <!-- 搜索栏 -->
     <div class="operate flex jc-start">
       <button type="button" class="btn btn-add" @click="showDialog=true">添加</button>
@@ -39,7 +39,7 @@
       </div>
     </div>
     <!-- 弹出框 -->
-    <el-dialog title="添加产品(摄像头)" :visible.sync="showDialog" center width="500px">
+    <el-dialog title="添加产品(物联网关)" :visible.sync="showDialog" center width="500px">
       <el-form :model="model" :rules="rules" ref="form" label-position="left">
         <el-form-item label="名称" :label-width="formLabelWidth" prop="name">
           <el-input v-model="model.name" autocomplete="off" maxlength="20" show-word-limit></el-input>
@@ -61,7 +61,7 @@
 
 <script>
 export default {
-  name: "CameraPanel",
+  name: "GatewayPanel",
   data() {
     return {
       showDialog: false,
@@ -109,7 +109,7 @@ export default {
         image: [{ required: true, message: "请上传产品图片", trigger: "blur" }]
       },
       dialogMap: {}, // 弹出框地图
-      cameraMap: {} // 列表地图
+      gatewayMap: {} // 列表地图
     };
   },
   methods: {
@@ -165,9 +165,9 @@ export default {
     z-index: 1;
   }
 }
-.camera-map {
+.gateway-map {
   position: relative;
-  #camera-map {
+  #gateway-map {
     width: 100%;
     height: 350px;
     margin-top: 2rem;

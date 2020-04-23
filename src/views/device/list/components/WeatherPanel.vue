@@ -298,7 +298,7 @@ export default {
 
 <style lang="scss" scoped>
 .operate {
-  margin-top: 2rem;
+  margin-top: 1rem;
   .btn {
     padding: 0.3rem 1.2rem;
     margin-right: 0.5rem;
