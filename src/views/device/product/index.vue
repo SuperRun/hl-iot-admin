@@ -1,5 +1,5 @@
 <template>
-  <div class="device-list bg-white-3 min-h-1 bx-shadow-2">
+  <div class="product-manage bg-white-3 min-h-1 bx-shadow-2">
     <ul class="flex">
       <li
         :class="['tab', currentTab=='CameraPanel'?'active':'']"
@@ -48,7 +48,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.device-list {
+.product-manage {
   padding: 2rem;
   border-radius: 6px;
   .tab {

@@ -106,6 +106,16 @@ body {
 .mg-left-1{
   margin-left: 1rem;
 }
+.mg-top-1{
+  margin-top: 1rem;
+}
+.mg-right-1{
+  margin-right: 1rem;
+}
+// padding
+.pd-right-1{
+  padding-right: 1rem;
+}
 // 渐变背景
 // - 登录按钮背景
 .gradient-blue{
@@ -125,12 +135,13 @@ body {
 
 
 // 按钮样式
-.btn-light{
+.btn-light, .btn-light:hover,.btn-light:active, .btn-light:focus{
   background:rgba(214,218,239,1);
   border:1px solid rgba(147,161,239,1); 
   color:rgba(38,63,209,1);
 }
-.btn-dark{
+
+.btn-dark, .btn-dark:hover, .btn-dark:active, .btn-dark:focus{
   border:1px solid rgba(83,114,251,1); 
   background:rgba(83,114,251,1);
   color: #fff;

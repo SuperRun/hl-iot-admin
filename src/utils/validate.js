@@ -17,3 +17,12 @@ export function validAccount (account) {
   }
   return /^[0-9a-zA-Z]*$/.test (account) ? '' : '账号只能包含数字或字母';
 }
+
+/**
+ * @description: 验证手机号码
+ * @param {string} phone
+ * @returns {Boolean}
+ */
+export function validPhoneNumber (phone) {
+  return /^1(3|4|5|6|7|8|9)\d{9}$/.test (phone);
+}

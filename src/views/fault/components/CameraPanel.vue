@@ -1,15 +1,16 @@
 <template>
-  <div class="screen-panel">
+  <div class="camera-panel">
     <!-- 搜索栏 -->
-    <div class="operate flex jc-start">
-      <button type="button" class="btn btn-add" @click="showDialog=true">添加</button>
-      <button type="button" class="btn btn-del">删除</button>
+    <div class="operate flex">
+      <button type="button" class="btn btn-del">关闭</button>
       <div class="search flex">
         <el-input placeholder="搜索SN" v-model="sn">
           <el-button slot="append" icon="el-icon-search"></el-button>
         </el-input>
       </div>
+      <button type="button" class="btn btn-refresh mg-left-1">刷新</button>
     </div>
+
     <!-- 表格 -->
     <div class="table">
       <el-table
@@ -20,16 +21,13 @@
         @selection-change="handleSelectionChange"
       >
         <el-table-column type="selection" width="55"></el-table-column>
-        <el-table-column prop="name" label="名称" width="220"></el-table-column>
-        <el-table-column prop="mode" label="型号" width="220"></el-table-column>
-        <el-table-column label="图片">
-          <template slot-scope="scope">
-            <img class="device-pic" :src="scope.row.image" alt />
-          </template>
-        </el-table-column>
+        <el-table-column prop="name" label="设备编号" width="200"></el-table-column>
+        <el-table-column prop="mode" label="产品名称" width="200"></el-table-column>
+        <el-table-column prop="mode" label="位号" width="200"></el-table-column>
+        <el-table-column prop="mode" label="告警内容" width="200"></el-table-column>
         <el-table-column prop="operation" label="操作">
           <template>
-            <a href>编辑</a>
+            <a class="operate-btn" href>详情</a>
           </template>
         </el-table-column>
       </el-table>
@@ -38,33 +36,15 @@
         <el-pagination background layout="total,prev, pager, next" :total="1" :page-size="5"></el-pagination>
       </div>
     </div>
-    <!-- 弹出框 -->
-    <el-dialog title="添加产品(物联网关)" :visible.sync="showDialog" center width="500px">
-      <el-form :model="model" :rules="rules" ref="form" label-position="left">
-        <el-form-item label="名称" :label-width="formLabelWidth" prop="name">
-          <el-input v-model="model.name" autocomplete="off" maxlength="20" show-word-limit></el-input>
-        </el-form-item>
-        <el-form-item label="型号" :label-width="formLabelWidth" prop="mode">
-          <el-input v-model="model.mode" autocomplete="off"></el-input>
-        </el-form-item>
-        <el-form-item label="图片" :label-width="formLabelWidth" prop="image">
-          <el-input v-model="model.image" autocomplete="off"></el-input>
-        </el-form-item>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button class="dialog-btn btn-light" @click="showDialog = false">取 消</el-button>
-        <el-button class="dialog-btn btn-dark" type="primary" @click="confirm">确 定</el-button>
-      </div>
-    </el-dialog>
   </div>
 </template>
 
 <script>
 export default {
-  name: "ScreenPanel",
+  name: "CameraPanel",
   data() {
     return {
-      showDialog: false,
+      sn: "",
       tableData: [
         {
           name: "摄像头1",
@@ -96,30 +76,11 @@ export default {
           image:
             "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1587549810674&di=f5cb5da88097485bf9583f2f2b3945a4&imgtype=0&src=http%3A%2F%2Fbpic.588ku.com%2Felement_origin_min_pic%2F16%2F12%2F19%2Fa7e75a580c4af917756a2e4a35621c49.jpg"
         }
-      ],
-      sn: "",
-      formLabelWidth: "60px",
-      model: {
-        name: "", // 名称
-        mode: "" // 型号
-      },
-      rules: {
-        name: [{ required: true, message: "请填写设备名称", trigger: "blur" }],
-        mode: [{ required: true, message: "请填写产品型号", trigger: "blur" }],
-        image: [{ required: true, message: "请上传产品图片", trigger: "blur" }]
-      }
+      ]
     };
   },
   methods: {
-    headColor({ row, rowIndex }) {
-      return "bg-grey-6";
-    },
-    handleSelectionChange() {},
-    confirm() {
-      this.$refs["form"].validate(valid => {
-        if (!valid) return;
-      });
-    }
+    handleSelectionChange() {}
   }
 };
 </script>
@@ -152,8 +113,5 @@ export default {
 }
 .page {
   margin-top: 2rem;
-}
-.dialog-btn {
-  width: 40%;
 }
 </style>

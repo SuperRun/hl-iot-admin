@@ -107,9 +107,7 @@ export default {
         name: [{ required: true, message: "请填写设备名称", trigger: "blur" }],
         mode: [{ required: true, message: "请填写产品型号", trigger: "blur" }],
         image: [{ required: true, message: "请上传产品图片", trigger: "blur" }]
-      },
-      dialogMap: {}, // 弹出框地图
-      weatherMap: {} // 列表地图
+      }
     };
   },
   methods: {
@@ -154,38 +152,6 @@ export default {
 }
 .page {
   margin-top: 2rem;
-}
-.map {
-  position: relative;
-  .search-location {
-    position: absolute;
-    left: 80px;
-    top: 10px;
-    width: 200px;
-    z-index: 1;
-  }
-}
-.weather-map {
-  position: relative;
-  #weather-map {
-    width: 100%;
-    height: 350px;
-    margin-top: 2rem;
-  }
-  .lock {
-    cursor: pointer;
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    z-index: 1;
-    font-size: 1.5rem;
-  }
-}
-#dialog-map {
-  width: 80%;
-  margin: 0 auto;
-  height: 350px;
-  margin-top: 1rem;
 }
 .dialog-btn {
   width: 40%;

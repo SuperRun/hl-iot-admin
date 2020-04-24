@@ -135,7 +135,6 @@
 </template>
 
 <script>
-import BMap from "BMap";
 import Map from "@/utils/map-util";
 import { keep7Num } from "@/utils/util";
 import cameraMark from "@/assets/images/marker-camera.png";
