@@ -1,0 +1,56 @@
+// const BASE_URL = 'http://api.map.baidu.com';
+const BASE_API = '/map';
+const ak = 'WGoBmL91XStsCQ7PKBOU8Vi1UFt6qWLC';
+const PLACE_QUERY = `${BASE_API}/place/v2/suggestion?ak=${ak}&output=json`;
+const PLACE_QUERY_DETAIl = `${BASE_API}/place/v2/detail?ak=${ak}&output=json`;
+
+// user
+const UESR_LOGIN = '/common/login';
+const VALID_CODE = '/common/getCaptcha';
+const USER_LOGOUT = '/user/logout';
+const UPDATE_PWD = '/user/updatePassword';
+
+// product
+const PRODUCT_EDIT = '/product/update';
+const PRODUCT_ADD = '/product/store';
+const PRODUCT_LIST = '/product/index';
+const PRODUCT_DESTROY = '/product/destroy';
+const PRODUCT_DETAIL = '/product/detail';
+
+// project
+const PROJECT_EDIT = '/project/update';
+const PROJECT_ADD = '/project/store';
+const PROJECT_LIST = '/project/index';
+const PROJECT_DESTROY = '/project/destroy';
+const PROJECT_DETAIL = '/project/detail';
+
+// device
+const DEVICE_EDIT = '/device/update';
+const DEVICE_ADD = '/device/store';
+const DEVICE_LIST = '/device/index';
+const DEVICE_DESTROY = '/device/destroy';
+const DEVICE_DETAIL = '/device/detail';
+
+export {
+  PLACE_QUERY,
+  PLACE_QUERY_DETAIl,
+  UESR_LOGIN,
+  VALID_CODE,
+  USER_LOGOUT,
+  UPDATE_PWD,
+  PRODUCT_EDIT,
+  PRODUCT_ADD,
+  PRODUCT_LIST,
+  PRODUCT_DESTROY,
+  PRODUCT_DETAIL,
+  PROJECT_EDIT,
+  PROJECT_ADD,
+  PROJECT_LIST,
+  PROJECT_DESTROY,
+  PROJECT_DETAIL,
+  DEVICE_EDIT,
+  DEVICE_ADD,
+  DEVICE_LIST,
+  DEVICE_DESTROY,
+  DEVICE_DETAIL,
+};

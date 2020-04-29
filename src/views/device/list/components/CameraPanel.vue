@@ -6,10 +6,15 @@
         <button type="button" class="btn btn-add" @click="showDialog=true">添加</button>
         <button type="button" class="btn btn-del">删除</button>
         <div class="search flex">
-          <el-input placeholder="搜索SN" v-model="sn">
-            <el-button slot="append" icon="el-icon-search"></el-button>
-          </el-input>
+          <el-input
+            placeholder="搜索SN"
+            v-model="params.device_number"
+            class="mg-right-1"
+            @input="search"
+          ></el-input>
+          <el-input placeholder="搜索位号" v-model="params.place_number" @input="search"></el-input>
         </div>
+        <button type="button" class="btn btn-light mg-left-1 br-4" @click="reset">重置</button>
         <button type="button" class="btn btn-refresh mg-left-1">读状态</button>
       </div>
       <div class="flex">
@@ -40,6 +45,7 @@
           :data="tableData"
           tooltip-effect="dark"
           header-cell-class-name="table-header"
+          v-loading="listLoading"
           @selection-change="handleSelectionChange"
         >
           <el-table-column type="selection" width="55"></el-table-column>
@@ -69,12 +75,12 @@
     <!-- 弹出框 -->
     <el-dialog title="添加设备(摄像头)" :visible.sync="showDialog" center @opened="dialogOpened">
       <el-form :model="model" :inline="true" :rules="rules" ref="form">
-        <el-form-item label="编号" :label-width="formLabelWidth" prop="num">
-          <el-input v-model="model.num" autocomplete="off" maxlength="50" show-word-limit></el-input>
+        <el-form-item label="编号" :label-width="formLabelWidth" prop="device_number">
+          <el-input v-model="model.device_number" autocomplete="off" maxlength="50" show-word-limit></el-input>
         </el-form-item>
         <!-- 显示产品名称和型号 -->
-        <el-form-item label="产品" :label-width="formLabelWidth" prop="product">
-          <el-select v-model="model.product" placeholder="请选择产品">
+        <el-form-item label="产品" :label-width="formLabelWidth" prop="product_id">
+          <el-select v-model="model.product_id" placeholder="请选择产品">
             <el-option
               :key="product.value"
               :label="product.label"
@@ -83,8 +89,8 @@
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="位号" :label-width="formLabelWidth" prop="position">
-          <el-input v-model="model.position" autocomplete="off" maxlength="20" show-word-limit></el-input>
+        <el-form-item label="位号" :label-width="formLabelWidth" prop="place_number">
+          <el-input v-model="model.place_number" autocomplete="off" maxlength="20" show-word-limit></el-input>
         </el-form-item>
         <!-- 显示网关名称和型号 -->
         <el-form-item label="网关" :label-width="formLabelWidth" prop="gateway">
@@ -138,6 +144,9 @@
 import Map from "@/utils/map-util";
 import { keep7Num } from "@/utils/util";
 import cameraMark from "@/assets/images/marker-camera.png";
+import _ from "lodash";
+import { mapGetters, createNamespacedHelpers } from "vuex";
+const { mapActions } = createNamespacedHelpers("device");
 // import _ from "lodash";
 export default {
   name: "CameraPanel",
@@ -151,45 +160,15 @@ export default {
       placeList: [], // 地名列表
       loading: false,
       isLock: true,
-      tableData: [
-        {
-          name: "摄像头1",
-          mode: "bdhjb",
-          image:
-            "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1587549810674&di=f5cb5da88097485bf9583f2f2b3945a4&imgtype=0&src=http%3A%2F%2Fbpic.588ku.com%2Felement_origin_min_pic%2F16%2F12%2F19%2Fa7e75a580c4af917756a2e4a35621c49.jpg"
-        },
-        {
-          name: "摄像头1",
-          mode: "bdhjb",
-          image:
-            "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1587549810674&di=f5cb5da88097485bf9583f2f2b3945a4&imgtype=0&src=http%3A%2F%2Fbpic.588ku.com%2Felement_origin_min_pic%2F16%2F12%2F19%2Fa7e75a580c4af917756a2e4a35621c49.jpg"
-        },
-        {
-          name: "摄像头1",
-          mode: "bdhjb",
-          image:
-            "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1587549810674&di=f5cb5da88097485bf9583f2f2b3945a4&imgtype=0&src=http%3A%2F%2Fbpic.588ku.com%2Felement_origin_min_pic%2F16%2F12%2F19%2Fa7e75a580c4af917756a2e4a35621c49.jpg"
-        },
-        {
-          name: "摄像头1",
-          mode: "bdhjb",
-          image:
-            "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1587549810674&di=f5cb5da88097485bf9583f2f2b3945a4&imgtype=0&src=http%3A%2F%2Fbpic.588ku.com%2Felement_origin_min_pic%2F16%2F12%2F19%2Fa7e75a580c4af917756a2e4a35621c49.jpg"
-        },
-        {
-          name: "摄像头1",
-          mode: "bdhjb",
-          image:
-            "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1587549810674&di=f5cb5da88097485bf9583f2f2b3945a4&imgtype=0&src=http%3A%2F%2Fbpic.588ku.com%2Felement_origin_min_pic%2F16%2F12%2F19%2Fa7e75a580c4af917756a2e4a35621c49.jpg"
-        }
-      ],
+      listLoading: false,
+      tableData: [],
       model: {
-        num: "", // 编号
-        product: "", // 产品
-        position: "", // 位号
-        gateway: "", // 网关
-        lng: "", // 经度
-        lat: "" // 纬度
+        device_number: "", // 设备号
+        place_number: "", // 位号
+        project_id: "", // 项目id
+        product_id: "", // 产品id
+        longitude: "", // 经度
+        latitude: "" // 纬度
       },
       products: [
         {
@@ -220,18 +199,43 @@ export default {
         }
       ],
       rules: {
-        num: [{ required: true, message: "请填写设备编号", trigger: "blur" }],
-        product: [{ required: true, message: "请选择产品", trigger: "blur" }],
-        position: [{ required: true, message: "请填写位号", trigger: "blur" }],
+        device_number: [
+          { required: true, message: "请填写设备编号", trigger: "blur" }
+        ],
+        product_id: [
+          { required: true, message: "请选择产品", trigger: "blur" }
+        ],
+        place_number: [
+          { required: true, message: "请填写位号", trigger: "blur" }
+        ],
         gateway: [{ required: true, message: "请选择网关", trigger: "blur" }],
         lng: [{ required: true, message: "请标记地点", trigger: "blur" }],
         lat: [{ required: true, message: "请标记地点", trigger: "blur" }]
       },
       dialogMap: {}, // 弹出框地图
-      cameraMap: {} // 列表地图
+      cameraMap: {}, // 列表地图
+      params: {
+        product_type: 1, // 产品类型 1-摄像头
+        device_number: "", // 设备编号
+        place_number: "", // 位号
+        project_id: "" // 项目ID
+      }
     };
   },
+  computed: {
+    ...mapGetters(["cur_proj"])
+  },
+  watch: {
+    cur_proj() {
+      this.params.project_id = this.cur_proj;
+      this.getList();
+    }
+  },
   mounted() {
+    // 获取设备列表
+    this.params.project_id = this.cur_proj;
+    this.getList();
+
     // 设备列表地图
     this.cameraMap = new Map(
       "camera-map",
@@ -247,6 +251,22 @@ export default {
     );
   },
   methods: {
+    ...mapActions(["editDevice", "addDevice", "listDevice", "detailDevice"]),
+    async getList() {
+      this.listLoading = true;
+      const { total, list } = await this.listDevice(this.params);
+      this.listLoading = false;
+      this.tableData = list;
+      this.total = total;
+    },
+    search: _.debounce(function() {
+      this.getList();
+    }, 500),
+    reset() {
+      this.params.device_number = "";
+      this.params.place_number = "";
+      this.getList();
+    },
     headColor({ row, rowIndex }) {
       return "bg-grey-6";
     },

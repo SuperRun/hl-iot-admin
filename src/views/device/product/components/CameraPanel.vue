@@ -18,10 +18,11 @@
         tooltip-effect="dark"
         header-cell-class-name="table-header"
         @selection-change="handleSelectionChange"
+        v-loading="listLoading"
       >
         <el-table-column type="selection" width="55"></el-table-column>
-        <el-table-column prop="name" label="名称" width="220"></el-table-column>
-        <el-table-column prop="mode" label="型号" width="220"></el-table-column>
+        <el-table-column prop="title" label="名称" width="220"></el-table-column>
+        <el-table-column prop="model" label="型号" width="220"></el-table-column>
         <el-table-column label="图片">
           <template slot-scope="scope">
             <img class="device-pic" :src="scope.row.image" alt />
@@ -35,7 +36,12 @@
       </el-table>
       <!-- 分页 -->
       <div class="page">
-        <el-pagination background layout="total,prev, pager, next" :total="1" :page-size="5"></el-pagination>
+        <el-pagination
+          background
+          layout="total,prev, pager, next"
+          :total="total"
+          :page-size="limit"
+        ></el-pagination>
       </div>
     </div>
     <!-- 弹出框 -->
@@ -65,38 +71,7 @@ export default {
   data() {
     return {
       showDialog: false,
-      tableData: [
-        {
-          name: "摄像头1",
-          mode: "bdhjb",
-          image:
-            "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1587549810674&di=f5cb5da88097485bf9583f2f2b3945a4&imgtype=0&src=http%3A%2F%2Fbpic.588ku.com%2Felement_origin_min_pic%2F16%2F12%2F19%2Fa7e75a580c4af917756a2e4a35621c49.jpg"
-        },
-        {
-          name: "摄像头1",
-          mode: "bdhjb",
-          image:
-            "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1587549810674&di=f5cb5da88097485bf9583f2f2b3945a4&imgtype=0&src=http%3A%2F%2Fbpic.588ku.com%2Felement_origin_min_pic%2F16%2F12%2F19%2Fa7e75a580c4af917756a2e4a35621c49.jpg"
-        },
-        {
-          name: "摄像头1",
-          mode: "bdhjb",
-          image:
-            "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1587549810674&di=f5cb5da88097485bf9583f2f2b3945a4&imgtype=0&src=http%3A%2F%2Fbpic.588ku.com%2Felement_origin_min_pic%2F16%2F12%2F19%2Fa7e75a580c4af917756a2e4a35621c49.jpg"
-        },
-        {
-          name: "摄像头1",
-          mode: "bdhjb",
-          image:
-            "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1587549810674&di=f5cb5da88097485bf9583f2f2b3945a4&imgtype=0&src=http%3A%2F%2Fbpic.588ku.com%2Felement_origin_min_pic%2F16%2F12%2F19%2Fa7e75a580c4af917756a2e4a35621c49.jpg"
-        },
-        {
-          name: "摄像头1",
-          mode: "bdhjb",
-          image:
-            "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1587549810674&di=f5cb5da88097485bf9583f2f2b3945a4&imgtype=0&src=http%3A%2F%2Fbpic.588ku.com%2Felement_origin_min_pic%2F16%2F12%2F19%2Fa7e75a580c4af917756a2e4a35621c49.jpg"
-        }
-      ],
+      tableData: [],
       sn: "",
       formLabelWidth: "60px",
       model: {
@@ -107,10 +82,33 @@ export default {
         name: [{ required: true, message: "请填写设备名称", trigger: "blur" }],
         mode: [{ required: true, message: "请填写产品型号", trigger: "blur" }],
         image: [{ required: true, message: "请上传产品图片", trigger: "blur" }]
-      }
+      },
+      params: {
+        type: 1, // 1-摄像头
+        title: "", // 产品名称
+        model: "" // 产品型号
+      },
+      listLoading: false,
+      total: 0,
+      page: 1, // 当前页面
+      limit: 5 // 每页限制条数
     };
   },
+  mounted() {
+    // 获取产品列表
+    this.getList();
+  },
   methods: {
+    async getList() {
+      this.listLoading = true;
+      const { list, total } = await this.$store.dispatch(
+        "product/listProduct",
+        { ...this.params, page: this.page, limit: this.limit }
+      );
+      this.listLoading = false;
+      this.tableData = list;
+      this.total = total;
+    },
     headColor({ row, rowIndex }) {
       return "bg-grey-6";
     },

@@ -1,7 +1,7 @@
 <template funtional>
-  <div class="flex flex-column ai-center">
-    <img src="@/assets/images/no-faults.png" alt />
-    <span class="text-grey">暂无告警</span>
+  <div class="flex flex-column jc-center">
+    <img src="@/assets/images/no-device.png" alt />
+    <span class="text-grey">暂无设备</span>
   </div>
 </template>
 <style scoped>

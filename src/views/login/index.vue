@@ -5,14 +5,13 @@
       <div class="login-form flex flex-column jc-center ai-center bg-white">
         <div class="title">用户登录</div>
         <form>
-          <div :class="['form-item', model.account?'active':'']">
+          <div :class="['form-item', model.username?'active':'']">
             <svg-icon :icon-class="icon1 ? 'user-active':'user'"></svg-icon>
             <input
-              v-model="model.account"
+              v-model="model.username"
               placeholder="请输入账号"
               @focus="icon1=true"
-              @blur=" this.model.account ? '' : (this.icon1 = false);
-            "
+              @blur="model.username ? '' : icon1 = false"
             />
           </div>
           <div :class="['form-item', model.password?'active':'']">
@@ -21,19 +20,20 @@
               v-model="model.password"
               type="password"
               placeholder="请输入密码"
+              autocomplete="off"
               @focus="icon2=true"
               @blur="model.password?'':icon2=false"
             />
           </div>
-          <div :class="['form-item', model.validateCode?'active':'']">
+          <div :class="['form-item', model.captcha?'active':'']">
             <svg-icon :icon-class="icon3 ? 'pwd-active':'pwd'"></svg-icon>
             <input
-              v-model="model.validateCode"
+              v-model="model.captcha"
               placeholder="请输入验证码"
               @focus="icon3=true"
-              @blur="model.validateCode?'':icon3=false"
+              @blur="model.captcha?'':icon3=false"
             />
-            <img src="@/assets/images/valid-code.png" alt />
+            <img :src="code" alt @click="getValidCode" />
           </div>
           <p ref="tip">{{ !loading? tip : '' }}</p>
           <el-button :loading="loading" class="btn gradient-blue text-white fs-md" @click="login">登录</el-button>
@@ -44,7 +44,7 @@
 </template>
 
 <script>
-import { validAccount } from "@/utils/validate";
+import { validUsername } from "@/utils/validate";
 export default {
   name: "Login",
   data() {
@@ -54,13 +54,18 @@ export default {
       icon3: false,
       loading: false,
       model: {
-        account: "", // 账号
+        username: "", // 账号
         password: "", // 密码
-        validateCode: "" // 验证码
+        captcha: "", // 验证码
+        captcha_key: "" // 验证码key
       },
       tip: "", // 登录提示语
-      userTip: "ndjsnk" // 账号提示语
+      userTip: "ndjsnk", // 账号提示语
+      code: "" // 验证码
     };
+  },
+  mounted() {
+    this.getValidCode();
   },
   methods: {
     valid() {
@@ -72,26 +77,37 @@ export default {
         }
       }
       // 验证账号
-      this.tip = validAccount(this.model.account);
+      this.tip = validUsername(this.model.username);
       if (!this.tip) return true;
       return false;
     },
     userBlur() {
-      this.userTip = validAccount(this.model.account);
+      this.userTip = validUsername(this.model.username);
     },
-    login() {
+    async login() {
       this.$refs["tip"].style.opacity = 0;
       this.loading = true;
-      if (!this.valid()) {
-        setTimeout(() => {
-          this.loading = false;
+      if (this.valid()) {
+        try {
+          await this.$store.dispatch("user/userLogin", this.model);
+          this.$router.push({ path: "/" });
+        } catch (error) {
+          this.tip = error;
           this.$refs["tip"].style.opacity = 1;
-        }, 1000);
+        } finally {
+          this.loading = false;
+        }
       } else {
         setTimeout(() => {
+          this.$refs["tip"].style.opacity = 1;
           this.loading = false;
         }, 1000);
       }
+    },
+    async getValidCode() {
+      const { img, key } = await this.$store.dispatch("user/getValidCode");
+      this.code = img;
+      this.model.captcha_key = key;
     }
   }
 };

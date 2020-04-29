@@ -109,8 +109,14 @@ body {
 .mg-top-1{
   margin-top: 1rem;
 }
+.mg-top-3{
+  margin-top: 3rem;
+}
 .mg-right-1{
   margin-right: 1rem;
+}
+.mg-right-5{
+  margin-right: 5rem;
 }
 // padding
 .pd-right-1{
@@ -146,23 +152,38 @@ body {
   background:rgba(83,114,251,1);
   color: #fff;
 }
-.btn-add{
+.btn-add,.btn-add:hover,.btn-add:active, .btn-add:focus{
   background:rgba(231,239,254,1);
   border:1px solid rgba(211,211,211,1);
   border-radius:4px;
   color: #4360EC;
 }
-.btn-del{
+.btn-del,.btn-del:hover,.btn-del:active, .btn-del:focus{
   background:rgba(237,223,225,1);
   border:1px solid rgba(211,211,211,1);
   border-radius:4px;
   color: #BE4242;
+}
+.btn-upload,.btn-upload:hover,.btn-upload:active, .btn-upload:focus{
+  background-color: #5372FB;
+  color: #ffffff;
+  border-color: #5372FB;
 }
 .btn-refresh{
   background-color: #D3D3D3;
   color: #4D4D4D;
   border-radius:4px;
 }
+.reset{
+  width: 80px;
+  border-radius:4px;
+}
+
+// 圆角
+.br-4{
+  border-radius:4px;
+}
+
 
 // 手型
 .cursor-pointer{
@@ -214,5 +235,13 @@ body {
 // - 百度logo
 .anchorBL{
   display: none;
+}
+
+// 滑块条
+.el-slider__bar {
+  background-color: #5372FB;
+}
+.el-slider__button{
+  border-color: #5372FB;
 }
 

@@ -22,12 +22,18 @@ module.exports = {
       errors: true,
     },
     proxy: {
-      // http://api.map.baidu.com
       '/map': {
         target: 'http://api.map.baidu.com',
         changeOrigin: true,
         pathRewrite: {
           '^/map': '',
+        },
+      },
+      '/api/v1': {
+        target: 'http://121.196.55.96:8009',
+        changeOrigin: true,
+        pathRewrite: {
+          '^/api/v1': '',
         },
       },
     },

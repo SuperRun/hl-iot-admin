@@ -11,7 +11,7 @@ export function isExternal (path) {
  * @param {Object} obj
  * @returns {Boolean}
  */
-export function validAccount (account) {
+export function validUsername (account) {
   if (account.length < 5 || account.length > 12) {
     return '账号长度5-12个字符';
   }

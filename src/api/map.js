@@ -1,5 +1,5 @@
 import request from '@/utils/request';
-import {PLACE_QUERY, PLACE_QUERY_DETAIl} from '@/utils/url';
+import {PLACE_QUERY, PLACE_QUERY_DETAIl} from '@/constant/url';
 
 /**
  * @description: 地点搜索
@@ -9,7 +9,7 @@ import {PLACE_QUERY, PLACE_QUERY_DETAIl} from '@/utils/url';
 export function queryPlace (param) {
   return request ({
     url: `${PLACE_QUERY}&query=${param.query}&region=${param.region}`,
-    methods: 'get',
+    method: 'get',
   });
 }
 /**
@@ -20,6 +20,6 @@ export function queryPlace (param) {
 export function queryPlaceDetail (param) {
   return request ({
     url: `${PLACE_QUERY_DETAIl}&uid=${param.uid}&scope=${param.scope}`,
-    methods: 'get',
+    method: 'get',
   });
 }

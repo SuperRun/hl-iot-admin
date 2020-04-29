@@ -17,6 +17,10 @@
         <app-main />
       </div>
     </section>
+    <!-- 设备详情弹出框 -->
+    <device-detail :deviceType="deviceType"></device-detail>
+    <!-- 编辑密码 -->
+    <edit-pwd></edit-pwd>
   </div>
 </template>
 
@@ -26,13 +30,17 @@ import SideBar from "./components/SideBar";
 import Breadcrumb from "./components/Breadcrumb";
 import AppMain from "./components/AppMain";
 import ResizeMixin from "./mixin/ResizeHandler";
+import DeviceDetail from "@/components/DeviceDetail";
+import EditPwd from "@/components/EditPwd";
 
 export default {
   components: {
     NavBar,
     SideBar,
     Breadcrumb,
-    AppMain
+    AppMain,
+    DeviceDetail,
+    EditPwd
   },
   mixins: [ResizeMixin],
   computed: {

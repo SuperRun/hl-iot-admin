@@ -5,41 +5,46 @@
       <button type="button" class="btn btn-add" @click="showDialog=true">添加</button>
       <button type="button" class="btn btn-del">删除</button>
       <div class="search flex">
-        <el-input placeholder="搜索名称/城市" v-model="keyword">
-          <el-button slot="append" icon="el-icon-search"></el-button>
-        </el-input>
+        <el-input placeholder="搜索名称" v-model="params.title" class="mg-right-1" @input="search"></el-input>
+        <el-input placeholder="搜索城市" v-model="params.city" class="mg-right-1" @input="search"></el-input>
+        <button type="button" class="reset btn-light" @click="reset">重置</button>
+        <!-- <el-button slot="append" icon="el-icon-search"></el-button> -->
       </div>
     </div>
     <!-- 表格 -->
     <div class="table">
       <el-table
         ref="multipleTable"
+        v-loading="listLoading"
         :data="tableData"
         tooltip-effect="dark"
         header-cell-class-name="table-header"
         @selection-change="handleSelectionChange"
       >
         <el-table-column type="selection" width="55"></el-table-column>
-        <el-table-column prop="name" label="名称" width="220"></el-table-column>
+        <el-table-column prop="title" label="名称" width="220"></el-table-column>
         <el-table-column prop="mode" label="城市" width="220"></el-table-column>
         <el-table-column prop="mode" label="管理员" width="220"></el-table-column>
-        <el-table-column prop="mode" label="创建时间" width="220"></el-table-column>
+        <el-table-column label="创建时间" width="220">
+          <template slot-scope="scope">{{scope.row.created_at | formatTime}}</template>
+        </el-table-column>
         <el-table-column prop="operation" label="操作">
           <template>
+            <a class="mg-right-1" href>详情</a>
             <a href>编辑</a>
           </template>
         </el-table-column>
       </el-table>
       <!-- 分页 -->
       <div class="page">
-        <el-pagination background layout="total,prev, pager, next" :total="1" :page-size="5"></el-pagination>
+        <el-pagination background layout="total" :total="total"></el-pagination>
       </div>
     </div>
     <!-- 弹出框 -->
     <el-dialog title="创建项目" :visible.sync="showDialog" center @opened="dialogOpened" width="600px">
       <el-form :model="model" :rules="rules" ref="form" label-position="left">
-        <el-form-item label="名称" :label-width="formLabelWidth" prop="name">
-          <el-input v-model="model.name" autocomplete="off" maxlength="20" show-word-limit></el-input>
+        <el-form-item label="名称" :label-width="formLabelWidth" prop="title">
+          <el-input v-model="model.title" autocomplete="off" maxlength="20" show-word-limit></el-input>
         </el-form-item>
         <el-form-item label="城市" :label-width="formLabelWidth" prop="city">
           <el-input v-model="model.position" autocomplete="off" maxlength="20" show-word-limit></el-input>
@@ -87,13 +92,16 @@
 </template>
 
 <script>
+import _ from "lodash";
 import Map from "@/utils/map-util";
 import { keep7Num } from "@/utils/util";
+import { createNamespacedHelpers } from "vuex";
+const { mapActions } = createNamespacedHelpers("project");
+
 export default {
   name: "ProjectManage",
   data() {
     return {
-      keyword: "",
       showDialog: false,
       loading: false,
       formLabelWidth: "60px",
@@ -112,10 +120,43 @@ export default {
         lng: [{ required: true, message: "请标记地点", trigger: "blur" }],
         lat: [{ required: true, message: "请标记地点", trigger: "blur" }],
         desc: [{ required: true, message: "请填写项目描述", trigger: "blur" }]
+      },
+      tableData: [],
+      total: 0, // 总数
+      listLoading: false, // 表格数据加载
+      params: {
+        title: "",
+        city: ""
       }
     };
   },
+  async mounted() {
+    console.log("_", _);
+    this.getList();
+  },
   methods: {
+    ...mapActions([
+      "editProject",
+      "addProject",
+      "listProject",
+      "detailProject"
+    ]),
+    async getList() {
+      this.listLoading = true;
+      const { total, list } = await this.listProject(this.params);
+      this.listLoading = false;
+      this.tableData = list;
+      this.total = total;
+    },
+    reset() {
+      Object.keys(this.params).forEach(key => {
+        this.params[key] = "";
+      });
+      this.getList();
+    },
+    search: _.debounce(function(e) {
+      this.getList();
+    }, 500),
     dialogOpened() {
       // 弹出框地图
       this.dialogMap = new Map("dialog-map", {}, true, true);
@@ -162,7 +203,7 @@ export default {
   .operate {
     margin-top: 1rem;
     .btn {
-      padding: 0.3rem 1.2rem;
+      padding: 0 1rem;
       margin-right: 0.5rem;
     }
     .search {

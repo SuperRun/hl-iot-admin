@@ -45,8 +45,6 @@ export default class Map {
     let marker = null;
     if (Object.keys (icon).length !== 0) {
       myIcon = new BMap.Icon (icon.url, new BMap.Size (icon.h, icon.w));
-      console.log (myIcon);
-
       marker = new BMap.Marker (point, {icon: myIcon});
     } else {
       marker = new BMap.Marker (point);

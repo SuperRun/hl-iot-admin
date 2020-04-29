@@ -2,13 +2,8 @@
   <div class="index w-100 flex flex-column">
     <header class="w-100 flex jc-between ai-center">
       <div class="flex-1">
-        <el-select class="proj-select" v-model="proj" filterable placeholder="全部项目">
-          <el-option
-            v-for="item in projects"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
-          ></el-option>
+        <el-select class="proj-select" v-model="projId" filterable @change="change">
+          <el-option v-for="item in projList" :key="item.id" :label="item.title" :value="item.id"></el-option>
         </el-select>
       </div>
       <div class="header-center flex flex-2 flex-column ai-center">
@@ -80,8 +75,8 @@
               <span :class="{'active': currentTab.includes(4)}">智慧检测</span>
             </li>
           </ul>
-          <h3>当前警告</h3>
-          <el-collapse class="alarms-list" accordion>
+          <h3 v-if="faultList.length>0">当前警告</h3>
+          <el-collapse class="alarms-list" accordion v-if="faultList.length>0">
             <el-collapse-item>
               <template slot="title">
                 设备SN
@@ -139,6 +134,7 @@
               <div class="detail">控制反馈：通过界面样式和交互动效让用户可以清晰的感知自己的操作；</div>
             </el-collapse-item>
           </el-collapse>
+          <no-fault class="mg-top-3" v-else></no-fault>
         </div>
       </transition>
     </main>
@@ -194,7 +190,7 @@
         </div>
       </div>
       <!-- 摄像头 -->
-      <div class="device-content footer-right">
+      <div class="device-content footer-right" v-show="false">
         <div class="device-item">
           <div class="top flex jc-start">
             <div>
@@ -204,7 +200,7 @@
           </div>
           <div class="device flex jc-between">
             <span class="text-light fs-sm">设备编号</span>
-            <span class="text-light detail-btn">详情/设置 ></span>
+            <span class="text-light detail-btn" @click="openDeviceDetail(1)">详情/设置 ></span>
           </div>
           <div class="content flex flex-column"></div>
         </div>
@@ -220,7 +216,7 @@
           </div>
           <div class="device flex jc-between">
             <span class="text-light fs-sm">设备编号</span>
-            <span class="text-light detail-btn">详情/设置 ></span>
+            <span class="text-light detail-btn" @click="openDeviceDetail(2)">详情/设置 ></span>
           </div>
           <div class="content flex flex-column"></div>
         </div>
@@ -236,7 +232,7 @@
           </div>
           <div class="device flex jc-between">
             <span class="text-light fs-sm">设备编号</span>
-            <span class="text-light detail-btn">详情/设置 ></span>
+            <span class="text-light detail-btn" @click="openDeviceDetail(3)">详情/设置 ></span>
           </div>
           <div class="content flex flex-column">
             <div class="parameter flex">
@@ -261,7 +257,7 @@
         </div>
       </div>
       <!-- 气象站 -->
-      <div class="device-content flex-1" v-show="false">
+      <div class="device-content flex-1" v-show="true">
         <div class="device-item">
           <div class="top flex jc-start">
             <div>
@@ -271,7 +267,7 @@
           </div>
           <div class="device flex jc-between">
             <span class="text-light fs-sm">设备编号</span>
-            <span class="text-light detail-btn">详情/设置 ></span>
+            <span class="text-light detail-btn" @click="openDeviceDetail(4)">详情/设置 ></span>
           </div>
           <div class="content flex flex-column">
             <div class="parameter flex">
@@ -294,38 +290,66 @@
         </div>
       </div>
     </footer>
+    <!-- 设备详情弹出框 -->
+    <device-detail :deviceType="deviceType"></device-detail>
+    <!-- 编辑密码 -->
+    <edit-pwd></edit-pwd>
   </div>
 </template>
 
 <script>
 import BaiduMap from "@/components/BaiduMap/index";
 import UserAccount from "@/components/UserAccount/index";
+import DeviceDetail from "@/components/DeviceDetail";
+import EditPwd from "@/components/EditPwd";
+import NoFault from "@/components/NoFault";
+import { mapGetters } from "vuex";
+
 export default {
   name: "Index",
   components: {
     BaiduMap,
-    UserAccount
+    UserAccount,
+    DeviceDetail,
+    EditPwd,
+    NoFault
   },
   filters: {
     limitStrLen(str) {
       return str.length > 41 ? str.slice(0, 41) : str;
     }
   },
+  computed: {
+    ...mapGetters(["projList", "cur_proj"])
+  },
   data() {
     return {
+      deviceType: 1,
       currentTab: [1, 2, 3, 4],
       isFold: false,
       isLock: true,
+      faultList: [],
       projects: [
         { value: 1, label: "项目1" },
         { value: 2, label: "项目2" }
       ],
-      proj: "",
+      projId: "",
       detail:
         "故障信息描述内容故障信息描述内容故障信息描述内容故障信息描述内容故障信息描述内容故障信息描述内容信息描述内容"
     };
   },
+  async mounted() {
+    // 获取项目列表
+    if (this.projList.length == 0) {
+      console.log("length", this.projList.length);
+      await this.$store.dispatch("project/allProject");
+    }
+    this.projId = this.cur_proj;
+  },
   methods: {
+    change() {
+      this.$store.commit("project/SET_CURPROJ", this.projId);
+    },
     lockMap() {
       this.isLock = !this.isLock;
     },
@@ -336,6 +360,10 @@ export default {
       this.currentTab.includes(type)
         ? this.currentTab.splice(this.currentTab.indexOf(type), 1)
         : this.currentTab.push(type);
+    },
+    openDeviceDetail(type) {
+      this.deviceType = type;
+      this.$store.dispatch("app/openDeviceDialog");
     }
   }
 };
@@ -569,7 +597,7 @@ export default {
       .top {
         width: 95%;
         margin: 0 auto;
-        padding: 3.5% 1%;
+        padding: 2% 1%;
         span.state-name {
           display: inline-block;
           font-size: 12px;
@@ -606,7 +634,7 @@ export default {
         height: 120px;
         overflow: scroll;
         .parameter {
-          padding: 0.5rem 0;
+          padding: 0.3rem 0;
         }
       }
     }

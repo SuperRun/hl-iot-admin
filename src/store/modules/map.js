@@ -10,7 +10,6 @@ const actions = {
   queryPlaceDetail ({commit}, param) {
     return new Promise (resolve => {
       queryPlaceDetail (param).then (res => {
-        console.log (res);
         resolve (res.result);
       });
     });

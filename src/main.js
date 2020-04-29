@@ -8,6 +8,14 @@ import '@/styles/element-variables.scss';
 import '@/styles/index.scss';
 import '@/icons';
 
+import './permission';
+import * as filters from './filters/index';
+console.log (filters);
+
+Object.keys (filters).forEach (key => {
+  Vue.filter (key, filters[key]);
+});
+
 Vue.config.productionTip = false;
 Vue.use (ElementUI);
 new Vue ({

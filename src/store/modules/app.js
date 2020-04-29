@@ -8,6 +8,8 @@ const state = {
   },
   device: 'desktop',
   withoutAnimation: false,
+  deviceDetailDialogOpened: false,
+  editPwdDialogOpened: false,
 };
 const mutations = {
   TOGGLE_SIDEBAR: state => {
@@ -27,6 +29,18 @@ const mutations = {
   TOGGLE_DEVICE: (state, device) => {
     state.device = device;
   },
+  OPEN_DEVICEDIALOG: state => {
+    state.deviceDetailDialogOpened = true;
+  },
+  CLOSE_DEVICEDIALOG: state => {
+    state.deviceDetailDialogOpened = false;
+  },
+  OPEN_PWDDIALOG: state => {
+    state.editPwdDialogOpened = true;
+  },
+  CLOSE_PWDDIALOG: state => {
+    state.editPwdDialogOpened = false;
+  },
 };
 
 const actions = {
@@ -38,6 +52,18 @@ const actions = {
   },
   toggleDevice ({commit}, device) {
     commit ('TOGGLE_DEVICE', device);
+  },
+  openDeviceDialog({commit}) {
+    commit ('OPEN_DEVICEDIALOG');
+  },
+  closeDeviceDialog({commit}) {
+    commit ('CLOSE_DEVICEDIALOG');
+  },
+  openPwdDialog({commit}) {
+    commit ('OPEN_PWDDIALOG');
+  },
+  closePwdDialog({commit}) {
+    commit ('CLOSE_PWDDIALOG');
   },
 };
 
