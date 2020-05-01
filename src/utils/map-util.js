@@ -35,6 +35,7 @@ export default class Map {
   // 添加mark isSingle true 表示地图只能有一个mark
   addMark (lng, lat, icon = {}, isSingle) {
     if (isSingle) {
+      console.log ('清除标记');
       this.map.clearOverlays ();
       this.marks = [];
     }
@@ -71,5 +72,11 @@ export default class Map {
   // 给地图添加事件
   addMapEvent (type, fn) {
     this.map.addEventListener (type, fn);
+  }
+
+  // 根据城市名设置中心点
+  setCenterByCity (city) {
+    console.log (city);
+    this.map.centerAndZoom (city, this.ZOOM);
   }
 }

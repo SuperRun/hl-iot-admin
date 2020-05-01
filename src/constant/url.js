@@ -1,4 +1,3 @@
-// const BASE_URL = 'http://api.map.baidu.com';
 const BASE_API = '/map';
 const ak = 'WGoBmL91XStsCQ7PKBOU8Vi1UFt6qWLC';
 const PLACE_QUERY = `${BASE_API}/place/v2/suggestion?ak=${ak}&output=json`;

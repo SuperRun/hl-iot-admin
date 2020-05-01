@@ -2,8 +2,8 @@
   <div class="project-manage bg-white-3 min-h-1 bx-shadow-2">
     <!-- 搜索栏 -->
     <div class="operate flex">
-      <button type="button" class="btn btn-add" @click="showDialog=true">添加</button>
-      <button type="button" class="btn btn-del">删除</button>
+      <button type="button" class="btn btn-add" @click="showDialog=true;mode='add'">添加</button>
+      <button type="button" class="btn btn-del" @click="del">删除</button>
       <div class="search flex">
         <el-input placeholder="搜索名称" v-model="params.title" class="mg-right-1" @input="search"></el-input>
         <el-input placeholder="搜索城市" v-model="params.city" class="mg-right-1" @input="search"></el-input>
@@ -23,38 +23,67 @@
       >
         <el-table-column type="selection" width="55"></el-table-column>
         <el-table-column prop="title" label="名称" width="220"></el-table-column>
-        <el-table-column prop="mode" label="城市" width="220"></el-table-column>
+        <el-table-column prop="mode" label="城市" width="220">
+          <template slot-scope="scope">{{scope.row | convertCityName}}</template>
+        </el-table-column>
         <el-table-column prop="mode" label="管理员" width="220"></el-table-column>
         <el-table-column label="创建时间" width="220">
           <template slot-scope="scope">{{scope.row.created_at | formatTime}}</template>
         </el-table-column>
         <el-table-column prop="operation" label="操作">
-          <template>
-            <a class="mg-right-1" href>详情</a>
-            <a href>编辑</a>
+          <template slot-scope="scope">
+            <span class="btn-table mg-right-1">详情</span>
+            <span class="btn-table" @click="edit(scope.row)">编辑</span>
           </template>
         </el-table-column>
       </el-table>
       <!-- 分页 -->
       <div class="page">
-        <el-pagination background layout="total" :total="total"></el-pagination>
+        <el-pagination
+          background
+          layout="total,prev, pager, next"
+          :total="total"
+          :page-size="limit"
+          :current-page="page"
+          @current-change="currentPage"
+        ></el-pagination>
       </div>
     </div>
     <!-- 弹出框 -->
-    <el-dialog title="创建项目" :visible.sync="showDialog" center @opened="dialogOpened" width="600px">
+    <el-dialog
+      :title="title"
+      :visible.sync="showDialog"
+      center
+      @opened="dialogOpened"
+      width="600px"
+    >
       <el-form :model="model" :rules="rules" ref="form" label-position="left">
         <el-form-item label="名称" :label-width="formLabelWidth" prop="title">
           <el-input v-model="model.title" autocomplete="off" maxlength="20" show-word-limit></el-input>
         </el-form-item>
-        <el-form-item label="城市" :label-width="formLabelWidth" prop="city">
-          <el-input v-model="model.position" autocomplete="off" maxlength="20" show-word-limit></el-input>
+        <el-form-item label="城市" :label-width="formLabelWidth" prop="location">
+          <div class="flex">
+            <el-select v-model="country" placeholder="国家" style="width:80px">
+              <el-option label="中国" value="1"></el-option>
+            </el-select>
+            <v-distpicker
+              :province="model.province"
+              :city="model.city"
+              hide-area
+              @province="onChangeProvince"
+              @city="onChangeCity"
+              class="mg-left-1"
+            ></v-distpicker>
+          </div>
+
+          <!-- <el-input v-model="model.position" autocomplete="off" maxlength="20" show-word-limit></el-input> -->
         </el-form-item>
         <div class="flex jc-between">
-          <el-form-item label="经度" :label-width="formLabelWidth" prop="lng">
-            <el-input v-model="model.lng" :readonly="true"></el-input>
+          <el-form-item label="经度" :label-width="formLabelWidth" prop="longitude">
+            <el-input v-model="model.longitude" :readonly="true"></el-input>
           </el-form-item>
-          <el-form-item label="纬度" :label-width="formLabelWidth" prop="lat">
-            <el-input v-model="model.lat" :readonly="true"></el-input>
+          <el-form-item label="纬度" :label-width="formLabelWidth" prop="latitude">
+            <el-input v-model="model.latitude" :readonly="true"></el-input>
           </el-form-item>
         </div>
         <!-- 地图 -->
@@ -94,13 +123,28 @@
 <script>
 import _ from "lodash";
 import Map from "@/utils/map-util";
-import { keep7Num } from "@/utils/util";
+import { keep7Num, getValByKey } from "@/utils/util";
+import { showSuccessMsg, showWarningMsg, showInfoMsg } from "@/utils/message";
 import { createNamespacedHelpers } from "vuex";
 const { mapActions } = createNamespacedHelpers("project");
 
 export default {
   name: "ProjectManage",
+  computed: {
+    title() {
+      return this.mode == "add" ? "创建项目" : "编辑项目";
+    }
+  },
   data() {
+    const validateLocation = (rule, value, callback) => {
+      if (this.model.province == "") {
+        callback(new Error("请选择省份"));
+      } else if (this.model.city == "") {
+        callback(new Error("请选择城市"));
+      } else {
+        callback();
+      }
+    };
     return {
       showDialog: false,
       loading: false,
@@ -108,18 +152,24 @@ export default {
       place: "", // 检索地名
       placeList: [], // 地名列表
       dialogMap: {}, // 弹出框地图
+      country: "1",
       model: {
-        name: "", // 名称
-        product: "", // 城市
-        lng: "", // 经度
-        lat: "" // 纬度
+        title: "", // 标题
+        province: "", // 省
+        city: "", // 市
+        county: 2, // 区
+        longitude: "", // 经度
+        latitude: "", // 纬度
+        desc: "" // 描述
       },
       rules: {
-        name: [{ required: true, message: "请填写项目名称", trigger: "blur" }],
-        city: [{ required: true, message: "请选择城市", trigger: "blur" }],
-        lng: [{ required: true, message: "请标记地点", trigger: "blur" }],
-        lat: [{ required: true, message: "请标记地点", trigger: "blur" }],
-        desc: [{ required: true, message: "请填写项目描述", trigger: "blur" }]
+        title: [{ required: true, message: "请填写项目名称", trigger: "blur" }],
+        location: [
+          { required: true, validator: validateLocation, trigger: "blur" }
+        ],
+        longitude: [{ required: true, message: "请标记地点", trigger: "blur" }],
+        latitude: [{ required: true, message: "请标记地点", trigger: "blur" }],
+        desc: [{ required: true, message: "请填写描述", trigger: "blur" }]
       },
       tableData: [],
       total: 0, // 总数
@@ -129,11 +179,13 @@ export default {
       params: {
         title: "",
         city: ""
-      }
+      },
+      mode: "add",
+      names: "", // 要删除所有项目的名称
+      ids: "" // 要删除所有项目的id
     };
   },
   async mounted() {
-    console.log("_", _);
     this.getList();
   },
   methods: {
@@ -141,7 +193,8 @@ export default {
       "editProject",
       "addProject",
       "listProject",
-      "detailProject"
+      "detailProject",
+      "delProject"
     ]),
     async getList() {
       this.listLoading = true;
@@ -160,6 +213,10 @@ export default {
       });
       this.getList();
     },
+    currentPage(page) {
+      this.page = page;
+      this.getList();
+    },
     search: _.debounce(function(e) {
       this.getList();
     }, 500),
@@ -168,23 +225,20 @@ export default {
       this.dialogMap = new Map("dialog-map", {}, true, true);
       const self = this;
       this.dialogMap.addMapEvent("click", function(e) {
-        self.model.lng = keep7Num(e.point.lng);
-        self.model.lat = keep7Num(e.point.lat);
-        self.dialogMap.addMark(e.point.lng, e.point.lat, true);
-      });
-    },
-    confirm() {
-      this.$refs["form"].validate(valid => {
-        if (!valid) return;
+        self.model.longitude = keep7Num(e.point.lng);
+        self.model.latitude = keep7Num(e.point.lat);
+        self.dialogMap.addMark(e.point.lng, e.point.lat, {}, true);
       });
     },
     async searchPlace(query) {
       if (query == "") return;
       this.loading = true;
+      console.log(this.model.city || this.model.province || "全国");
       this.placeList = await this.$store.dispatch("map/queryPlace", {
         query,
-        region: "全国"
+        region: this.model.city || this.model.province || "全国"
       });
+      console.log("placeList", this.placeList);
       this.loading = false;
     },
     async choosePlace(val) {
@@ -192,12 +246,82 @@ export default {
         uid: val,
         scope: 1
       });
-      this.model.lng = keep7Num(location.lng);
-      this.model.lat = keep7Num(location.lat);
+      this.model.longitude = keep7Num(location.lng);
+      this.model.latitude = keep7Num(location.lat);
       // 地图上添加标记点
-      this.dialogMap.addMark(location.lng, location.lat, true);
+      this.dialogMap.addMark(location.lng, location.lat, {}, true);
     },
-    handleSelectionChange() {}
+    onChangeProvince(province) {
+      this.model.province = province.value;
+      this.dialogMap.setCenterByCity(province.value);
+    },
+    onChangeCity(city) {
+      this.model.city = city.value;
+      this.dialogMap.setCenterByCity(city.value);
+    },
+    closed() {
+      this.$refs["form"].resetFields();
+      Object.keys(this.model).forEach(key => this.model[key]);
+    },
+    confirm() {
+      this.$refs["form"].validate(async valid => {
+        if (!valid) return;
+        if (this.mode == "add") {
+          await this.addProject(this.model);
+          showSuccessMsg("添加成功");
+        } else {
+          await this.addProject(this.model);
+          showSuccessMsg("编辑成功");
+        }
+        this.showDialog = false;
+        this.getList();
+      });
+    },
+    edit(item) {
+      this.mode = "edit";
+      this.showDialog = true;
+      this.model = Object.assign(this.model, item);
+    },
+    handleSelectionChange(val) {
+      this.names = getValByKey("title", val, ", ");
+      this.ids = getValByKey("id", val);
+    },
+    del() {
+      if (this.ids == "") {
+        showInfoMsg("未选中任何产品");
+        return;
+      }
+      const h = this.$createElement;
+      this.$confirm(
+        h("div", null, [
+          h(
+            "p",
+            {
+              style: "text-align: center;padding:.2rem 0;font-size:0.9rem;"
+            },
+            `已选中项目：${this.names}`
+          ),
+          h(
+            "p",
+            {
+              style: "text-align: center;padding:.2rem 0;font-size:0.9rem;"
+            },
+            "删除以上项目将删除关联的所有设备确认删除?"
+          )
+        ]),
+        "提示",
+        {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消"
+        }
+      ).then(async _ => {
+        await this.delProject({ ids: this.ids });
+        this.getList();
+        showSuccessMsg("删除成功");
+        // 重新获取导航条上项目下拉框
+        await this.$store.dispatch("project/allProject");
+      });
+    }
   }
 };
 </script>

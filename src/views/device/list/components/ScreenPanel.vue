@@ -3,8 +3,8 @@
     <!-- 搜索栏 -->
     <div class="operate flex jc-between">
       <div class="flex">
-        <button type="button" class="btn btn-add" @click="showDialog=true">添加</button>
-        <button type="button" class="btn btn-del">删除</button>
+        <button type="button" class="btn btn-add" @click="add">添加</button>
+        <button type="button" class="btn btn-del" @click="del">删除</button>
         <div class="search flex">
           <el-input
             placeholder="搜索设备编号"
@@ -34,7 +34,11 @@
             <svg-icon :icon-class="tableOrMap=='map'?'location-active':'location'"></svg-icon>
           </li>
         </ul>
-        <button type="button" class="btn btn-add mg-left-1">产品管理</button>
+        <button
+          type="button"
+          class="btn btn-add mg-left-1"
+          @click="$router.push({path:'/device/product'})"
+        >产品管理</button>
       </div>
     </div>
     <!-- 表格 -->
@@ -78,41 +82,41 @@
       <i :class="[`el-icon-${isLock?'':'un'}lock`, 'lock']" @click="lock"></i>
     </div>
     <!-- 弹出框 -->
-    <el-dialog title="添加设备(LED屏)" :visible.sync="showDialog" center @opened="dialogOpened">
+    <el-dialog :title="title" :visible.sync="showDialog" center @opened="dialogOpened">
       <el-form :model="model" :inline="true" :rules="rules" ref="form">
-        <el-form-item label="编号" :label-width="formLabelWidth" prop="num">
-          <el-input v-model="model.num" autocomplete="off" maxlength="50" show-word-limit></el-input>
+        <el-form-item label="编号" :label-width="formLabelWidth" prop="device_number">
+          <el-input v-model="model.device_number" autocomplete="off" maxlength="50" show-word-limit></el-input>
         </el-form-item>
         <!-- 显示产品名称和型号 -->
-        <el-form-item label="产品" :label-width="formLabelWidth" prop="product">
-          <el-select v-model="model.product" placeholder="请选择产品">
+        <el-form-item label="产品" :label-width="formLabelWidth" prop="product_id">
+          <el-select v-model="model.product_id" placeholder="请选择产品">
             <el-option
-              :key="product.value"
-              :label="product.label"
-              :value="product.value"
+              :key="product.id"
+              :label="product.title"
+              :value="product.id"
               v-for="product in products"
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="位号" :label-width="formLabelWidth" prop="position">
-          <el-input v-model="model.position" autocomplete="off" maxlength="20" show-word-limit></el-input>
+        <el-form-item label="位号" :label-width="formLabelWidth" prop="place_number">
+          <el-input v-model="model.place_number" autocomplete="off" maxlength="20" show-word-limit></el-input>
         </el-form-item>
         <!-- 显示网关名称和型号 -->
-        <el-form-item label="网关" :label-width="formLabelWidth" prop="gateway">
-          <el-select v-model="model.gateway" placeholder="请选择网关">
+        <el-form-item label="网关" :label-width="formLabelWidth" prop="gateway_product_id">
+          <el-select v-model="model.gateway_product_id" placeholder="请选择网关">
             <el-option
-              :key="gateway.value"
-              :label="gateway.label"
-              :value="gateway.value"
+              :key="gateway.id"
+              :label="gateway.title"
+              :value="gateway.id"
               v-for="gateway in gateways"
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="经度" :label-width="formLabelWidth" prop="lng">
-          <el-input v-model="model.lng" :readonly="true"></el-input>
+        <el-form-item label="经度" :label-width="formLabelWidth" prop="longitude">
+          <el-input v-model="model.longitude" :readonly="true"></el-input>
         </el-form-item>
-        <el-form-item label="纬度" :label-width="formLabelWidth" prop="lat">
-          <el-input v-model="model.lat" :readonly="true"></el-input>
+        <el-form-item label="纬度" :label-width="formLabelWidth" prop="latitude">
+          <el-input v-model="model.latitude" :readonly="true"></el-input>
         </el-form-item>
         <!-- 地图 -->
         <div class="map">
@@ -146,23 +150,21 @@
 </template>
 
 <script>
-import BMap from "BMap";
-import Map from "@/utils/map-util";
-import { keep7Num } from "@/utils/util";
-import cameraMark from "@/assets/images/marker-camera.png";
+import DialogMixin from "../mixin/dialog";
 import SearchMixin from "../mixin/search";
 
 export default {
   name: "ScreenPanel",
-  mixins: [SearchMixin],
+  mixins: [SearchMixin, DialogMixin],
+  computed: {
+    title() {
+      return this.mode == "add" ? "添加设备(LED屏)" : "编辑设备(LED屏)";
+    }
+  },
   data() {
     return {
       showDialog: false,
       tableOrMap: "table",
-      formLabelWidth: "100px",
-      place: "", // 检索地名
-      placeList: [], // 地名列表
-      loading: false,
       isLock: true,
       params: {
         product_type: 2, // 产品类型 2-led屏
@@ -170,42 +172,6 @@ export default {
         place_number: "", // 位号
         project_id: "" // 项目ID
       },
-      model: {
-        num: "", // 编号
-        product: "", // 产品
-        position: "", // 位号
-        gateway: "", // 网关
-        lng: "", // 经度
-        lat: "" // 纬度
-      },
-      products: [
-        {
-          value: 1,
-          label: "产品1"
-        },
-        {
-          value: 2,
-          label: "产品2"
-        },
-        {
-          value: 3,
-          label: "产品3"
-        }
-      ],
-      gateways: [
-        {
-          value: 1,
-          label: "网关1"
-        },
-        {
-          value: 2,
-          label: "网关2"
-        },
-        {
-          value: 3,
-          label: "网关3"
-        }
-      ],
       rules: {
         num: [{ required: true, message: "请填写设备编号", trigger: "blur" }],
         product: [{ required: true, message: "请选择产品", trigger: "blur" }],
@@ -214,7 +180,6 @@ export default {
         lng: [{ required: true, message: "请标记地点", trigger: "blur" }],
         lat: [{ required: true, message: "请标记地点", trigger: "blur" }]
       },
-      dialogMap: {}, // 弹出框地图
       screenMap: {} // 列表地图
     };
   },
@@ -235,40 +200,6 @@ export default {
   },
   methods: {
     handleSelectionChange() {},
-    dialogOpened() {
-      // 弹出框地图
-      this.dialogMap = new Map("dialog-map", {}, true, true);
-      const self = this;
-      this.dialogMap.addMapEvent("click", function(e) {
-        self.model.lng = keep7Num(e.point.lng);
-        self.model.lat = keep7Num(e.point.lat);
-        self.dialogMap.addMark(e.point.lng, e.point.lat, true);
-      });
-    },
-    confirm() {
-      this.$refs["form"].validate(valid => {
-        if (!valid) return;
-      });
-    },
-    async searchPlace(query) {
-      if (query == "") return;
-      this.loading = true;
-      this.placeList = await this.$store.dispatch("map/queryPlace", {
-        query,
-        region: "全国"
-      });
-      this.loading = false;
-    },
-    async choosePlace(val) {
-      const { location } = await this.$store.dispatch("map/queryPlaceDetail", {
-        uid: val,
-        scope: 1
-      });
-      this.model.lng = keep7Num(location.lng);
-      this.model.lat = keep7Num(location.lat);
-      // 地图上添加标记点
-      this.dialogMap.addMark(location.lng, location.lat, true);
-    },
     lock() {
       this.isLock = !this.isLock;
       this.isLock
@@ -300,9 +231,6 @@ export default {
   .device-pic {
     width: 50px;
     height: 50px;
-  }
-  .operate-btn {
-    margin-right: 1rem;
   }
 }
 .page {

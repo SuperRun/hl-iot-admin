@@ -2,6 +2,7 @@ import Vue from 'vue';
 import App from './App.vue';
 import store from './store';
 import ElementUI from 'element-ui';
+import Distpicker from 'v-distpicker';
 import locale from 'element-ui/lib/locale/lang/zh-CN';
 import router from '@/router';
 import {getToken} from '@/utils/auth';
@@ -20,6 +21,7 @@ Object.keys (filters).forEach (key => {
 
 Vue.mixin (UploadMixiin);
 Vue.use (ElementUI, {locale});
+Vue.component ('v-distpicker', Distpicker);
 Vue.config.productionTip = false;
 
 new Vue ({

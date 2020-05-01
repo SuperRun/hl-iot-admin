@@ -22,6 +22,7 @@ module.exports = {
       errors: true,
     },
     proxy: {
+      // http://api.map.baidu.com
       '/map': {
         target: 'http://api.map.baidu.com',
         changeOrigin: true,

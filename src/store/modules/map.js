@@ -3,6 +3,7 @@ const actions = {
   queryPlace ({commit}, param) {
     return new Promise (resolve => {
       queryPlace (param).then (res => {
+        console.log ('res', res);
         resolve (res.result);
       });
     });

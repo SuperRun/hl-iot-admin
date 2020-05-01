@@ -29,7 +29,10 @@ const actions = {
         const {list} = res.data;
         commit ('SET_PROJLIST', list);
         setProjlist (list);
-        if (list.length > 0) {
+        const pId = getProjid ();
+        const result = list.some (item => item.id == pid);
+        console.log (pId, result);
+        if (list.length > 0 && !pId && result) {
           commit ('SET_CURPROJ', list[0].id);
         }
         resolve ();

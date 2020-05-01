@@ -6,7 +6,7 @@
     </span>
     <el-dropdown-menu slot="dropdown">
       <el-dropdown-item>账号：{{userInfo.mobile}}</el-dropdown-item>
-      <el-dropdown-item>角色：</el-dropdown-item>
+      <el-dropdown-item>角色：{{userInfo.role.name}}</el-dropdown-item>
       <el-dropdown-item>
         <button type="button" class="btn-light btn" @click="openDialog">更改密码</button>
         <button type="button" class="btn-dark btn" @click="logout">退出登录</button>

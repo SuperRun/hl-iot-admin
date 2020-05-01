@@ -3,5 +3,9 @@ export function formatTime (time) {
   if (time && time.includes (':')) {
     return time.split (' ')[0];
   }
-  return time;
+  return '无';
+}
+
+export function convertCityName (obj) {
+  return `${obj.province}-${obj.city}`;
 }

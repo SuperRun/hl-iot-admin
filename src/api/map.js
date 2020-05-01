@@ -1,4 +1,4 @@
-import request from '@/utils/request';
+import request from '@/utils/map-request';
 import {PLACE_QUERY, PLACE_QUERY_DETAIl} from '@/constant/url';
 
 /**

@@ -61,6 +61,11 @@ export default {
     }
     this.projId = this.cur_proj;
   },
+  watch: {
+    cur_proj() {
+      this.projId = this.cur_proj;
+    }
+  },
   methods: {
     change() {
       this.$store.commit("project/SET_CURPROJ", this.projId);

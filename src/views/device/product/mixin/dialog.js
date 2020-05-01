@@ -31,12 +31,11 @@ export default {
         if (this.mode == 'add') {
           await this.addProduct (this.model);
           showSuccessMsg ('添加成功');
-          this.showDialog = false;
         } else if (this.mode == 'edit') {
           await this.editProduct ({...this.model, id: this.productId});
           showSuccessMsg ('编辑成功');
-          this.showDialog = false;
         }
+        this.showDialog = false;
         // 重新获取列表数据
         this.getList ();
       });

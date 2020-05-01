@@ -5,6 +5,7 @@ import {
   showErrorMsg,
   showInfoMsg,
 } from '@/utils/message';
+import {getValByKey} from '@/utils/util';
 import {createNamespacedHelpers} from 'vuex';
 const {mapActions} = createNamespacedHelpers ('product');
 
@@ -16,8 +17,8 @@ export default {
       page: 1,
       limit: 5,
       total: 0,
-      names: '', // 删除设备的名称
-      ids: '', // 删除设备的id
+      names: '', // 删除产品的名称
+      ids: '', // 删除产品的id
     };
   },
   mounted () {
@@ -59,7 +60,7 @@ export default {
     },
     del () {
       if (this.ids == '') {
-        showInfoMsg ('为选中任何产品');
+        showInfoMsg ('未选中任何产品');
         return;
       }
       const h = this.$createElement;
@@ -86,22 +87,14 @@ export default {
           cancelButtonText: '取消',
         }
       ).then (async _ => {
-        await this.$store.dispatch ('product/delProduct', {ids: this.ids});
+        await this.delProduct ({ids: this.ids});
         this.getList ();
         showSuccessMsg ('删除成功');
       });
     },
     handleSelectionChange (val) {
-      this.names = this.getValByKey ('title', val);
-      this.ids = this.getValByKey ('id', val);
-    },
-    getValByKey (key, val) {
-      return val
-        .reduce ((pre, cur) => {
-          pre.push (cur[key]);
-          return pre;
-        }, [])
-        .join (',');
+      this.names = getValByKey ('title', val, ', ');
+      this.ids = getValByKey ('id', val);
     },
   },
 };

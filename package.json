@@ -21,6 +21,7 @@
     "npm": "^6.14.4",
     "nprogress": "^0.2.0",
     "path-to-regexp": "2.4.0",
+    "v-distpicker": "^1.2.2",
     "vue": "^2.6.11",
     "vue-router": "^3.1.6",
     "vuex": "^3.2.0"

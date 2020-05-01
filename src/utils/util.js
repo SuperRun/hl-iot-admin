@@ -16,3 +16,19 @@ export function getFileNameUUID () {
   }
   return `${+new Date ()}_${rx ()}${rx ()}`;
 }
+
+/**
+ * 获取数组中对象某个key的合集并且用str连接成字符串
+ * @param {string} key 键名
+ * @param {array} val 数组
+ * @param {string} str 拼接的字符串
+ * @return {string}
+ */
+export function getValByKey (key, val, str = ',') {
+  return val
+    .reduce ((pre, cur) => {
+      pre.push (cur[key]);
+      return pre;
+    }, [])
+    .join (str);
+}
