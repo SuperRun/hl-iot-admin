@@ -24,7 +24,7 @@ const actions = {
   listDevice ({commit}, params) {
     return new Promise ((resolve, reject) => {
       listDevice (params).then (res => {
-        resolve (res);
+        resolve (res.data);
       });
     });
   },

@@ -4,6 +4,7 @@ let TokenKey = 'token';
 let InfoKey = 'user';
 let ProjlistKey = 'proj_list';
 let ProjidKey = 'proj_id';
+let UploadimgKey = 'upload_img';
 
 // token
 export function getToken () {
@@ -55,4 +56,17 @@ export function setProjid (projid) {
 
 export function removeProjid () {
   return localStorage.removeItem (ProjidKey);
+}
+
+// upload
+export function getUploadimgConfig () {
+  return Cookies.get (UploadimgKey);
+}
+
+export function setUploadimgConfig (config) {
+  return Cookies.set (UploadimgKey, config);
+}
+
+export function removeUploadimgConfig () {
+  return Cookies.remove (UploadimgKey);
 }

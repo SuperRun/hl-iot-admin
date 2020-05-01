@@ -6,10 +6,15 @@
         <button type="button" class="btn btn-add" @click="showDialog=true">添加</button>
         <button type="button" class="btn btn-del">删除</button>
         <div class="search flex">
-          <el-input placeholder="搜索SN" v-model="sn">
-            <el-button slot="append" icon="el-icon-search"></el-button>
-          </el-input>
+          <el-input
+            placeholder="搜索设备编号"
+            v-model="params.device_number"
+            class="mg-right-1"
+            @input="search"
+          ></el-input>
+          <el-input placeholder="搜索位号" v-model="params.place_number" @input="search"></el-input>
         </div>
+        <button type="button" class="btn btn-light mg-left-1 br-4" @click="reset">重置</button>
         <button type="button" class="btn btn-refresh mg-left-1">读状态</button>
       </div>
       <div class="flex">
@@ -36,6 +41,7 @@
     <div v-show="tableOrMap=='table'">
       <div class="table">
         <el-table
+          v-loading="listLoading"
           ref="multipleTable"
           :data="tableData"
           tooltip-effect="dark"
@@ -58,7 +64,12 @@
       </div>
       <!-- 分页 -->
       <div class="page">
-        <el-pagination background layout="total,prev, pager, next" :total="1" :page-size="5"></el-pagination>
+        <el-pagination
+          background
+          layout="total,prev, pager, next"
+          :total="total"
+          :page-size="limit"
+        ></el-pagination>
       </div>
     </div>
     <!-- 地图 -->
@@ -139,51 +150,26 @@ import BMap from "BMap";
 import Map from "@/utils/map-util";
 import { keep7Num } from "@/utils/util";
 import cameraMark from "@/assets/images/marker-camera.png";
-// import _ from "lodash";
+import SearchMixin from "../mixin/search";
+
 export default {
   name: "WeatherPanel",
+  mixins: [SearchMixin],
   data() {
     return {
       showDialog: false,
       tableOrMap: "table",
-      sn: "",
       formLabelWidth: "100px",
       place: "", // 检索地名
       placeList: [], // 地名列表
       loading: false,
       isLock: true,
-      tableData: [
-        {
-          name: "摄像头1",
-          mode: "bdhjb",
-          image:
-            "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1587549810674&di=f5cb5da88097485bf9583f2f2b3945a4&imgtype=0&src=http%3A%2F%2Fbpic.588ku.com%2Felement_origin_min_pic%2F16%2F12%2F19%2Fa7e75a580c4af917756a2e4a35621c49.jpg"
-        },
-        {
-          name: "摄像头1",
-          mode: "bdhjb",
-          image:
-            "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1587549810674&di=f5cb5da88097485bf9583f2f2b3945a4&imgtype=0&src=http%3A%2F%2Fbpic.588ku.com%2Felement_origin_min_pic%2F16%2F12%2F19%2Fa7e75a580c4af917756a2e4a35621c49.jpg"
-        },
-        {
-          name: "摄像头1",
-          mode: "bdhjb",
-          image:
-            "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1587549810674&di=f5cb5da88097485bf9583f2f2b3945a4&imgtype=0&src=http%3A%2F%2Fbpic.588ku.com%2Felement_origin_min_pic%2F16%2F12%2F19%2Fa7e75a580c4af917756a2e4a35621c49.jpg"
-        },
-        {
-          name: "摄像头1",
-          mode: "bdhjb",
-          image:
-            "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1587549810674&di=f5cb5da88097485bf9583f2f2b3945a4&imgtype=0&src=http%3A%2F%2Fbpic.588ku.com%2Felement_origin_min_pic%2F16%2F12%2F19%2Fa7e75a580c4af917756a2e4a35621c49.jpg"
-        },
-        {
-          name: "摄像头1",
-          mode: "bdhjb",
-          image:
-            "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1587549810674&di=f5cb5da88097485bf9583f2f2b3945a4&imgtype=0&src=http%3A%2F%2Fbpic.588ku.com%2Felement_origin_min_pic%2F16%2F12%2F19%2Fa7e75a580c4af917756a2e4a35621c49.jpg"
-        }
-      ],
+      params: {
+        product_type: 4, // 产品类型 4-气象站
+        device_number: "", // 设备编号
+        place_number: "", // 位号
+        project_id: "" // 项目ID
+      },
       model: {
         num: "", // 编号
         product: "", // 产品
@@ -248,9 +234,6 @@ export default {
     );
   },
   methods: {
-    headColor({ row, rowIndex }) {
-      return "bg-grey-6";
-    },
     handleSelectionChange() {},
     dialogOpened() {
       // 弹出框地图

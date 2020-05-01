@@ -8,7 +8,7 @@ import {
 import {getProjlist, setProjlist, setProjid, getProjid} from '@/utils/auth';
 
 const state = {
-  projList: getProjlist (), // 全部项目列表
+  projList: getProjlist () || [], // 全部项目列表
   cur_proj: getProjid (), // 当前选中的项目
 };
 

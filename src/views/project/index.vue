@@ -123,6 +123,8 @@ export default {
       },
       tableData: [],
       total: 0, // 总数
+      page: 1,
+      limit: 5,
       listLoading: false, // 表格数据加载
       params: {
         title: "",
@@ -143,7 +145,11 @@ export default {
     ]),
     async getList() {
       this.listLoading = true;
-      const { total, list } = await this.listProject(this.params);
+      const { total, list } = await this.listProject({
+        ...this.params,
+        page: this.page,
+        limit: this.limit
+      });
       this.listLoading = false;
       this.tableData = list;
       this.total = total;

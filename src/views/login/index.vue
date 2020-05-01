@@ -90,6 +90,8 @@ export default {
       if (this.valid()) {
         try {
           await this.$store.dispatch("user/userLogin", this.model);
+          // 获取上传图片信息
+          this.$store.dispatch("upload/getUploadImgConfig");
           this.$router.push({ path: "/" });
         } catch (error) {
           this.tip = error;
@@ -115,7 +117,7 @@ export default {
 
 <style lang="scss" scoped>
 .login {
-  background-image: url(../../assets/images/login-bg.png);
+  background-image: url(../../assets/images/login-bg.jpg);
   h1 {
     letter-spacing: 0.5rem;
     font-size: 2rem;

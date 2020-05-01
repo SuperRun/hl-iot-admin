@@ -24,7 +24,7 @@ const actions = {
   listProduct ({commit}, params) {
     return new Promise ((resolve, reject) => {
       listProduct (params).then (res => {
-        resolve (res);
+        resolve (res.data);
       });
     });
   },

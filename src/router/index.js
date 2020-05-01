@@ -53,18 +53,6 @@ export const constantRoutes = [
     ],
   },
   {
-    path: '/project',
-    component: Layout,
-    children: [
-      {
-        path: 'index',
-        component: () => import ('@/views/project/index'),
-        name: 'Project',
-        meta: {title: '项目管理', icon: 'nav-proj'},
-      },
-    ],
-  },
-  {
     path: '/fault',
     component: Layout,
     children: [
@@ -76,6 +64,19 @@ export const constantRoutes = [
       },
     ],
   },
+  {
+    path: '/project',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        component: () => import ('@/views/project/index'),
+        name: 'Project',
+        meta: {title: '项目管理', icon: 'nav-proj'},
+      },
+    ],
+  },
+
   {
     path: '/user',
     component: Layout,

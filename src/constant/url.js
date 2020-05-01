@@ -31,6 +31,10 @@ const DEVICE_LIST = '/device/index';
 const DEVICE_DESTROY = '/device/destroy';
 const DEVICE_DETAIL = '/device/detail';
 
+// upload
+const UPLOAD_IMAGE = '/oss/image_upload';
+const UPLOAD_VIDEO = '/oss/video_upload';
+
 export {
   PLACE_QUERY,
   PLACE_QUERY_DETAIl,
@@ -53,4 +57,6 @@ export {
   DEVICE_LIST,
   DEVICE_DESTROY,
   DEVICE_DETAIL,
+  UPLOAD_IMAGE,
+  UPLOAD_VIDEO,
 };

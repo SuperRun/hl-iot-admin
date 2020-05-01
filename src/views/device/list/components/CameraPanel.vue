@@ -7,7 +7,7 @@
         <button type="button" class="btn btn-del">删除</button>
         <div class="search flex">
           <el-input
-            placeholder="搜索SN"
+            placeholder="搜索设备编号"
             v-model="params.device_number"
             class="mg-right-1"
             @input="search"
@@ -53,8 +53,8 @@
           <el-table-column prop="mode" label="产品" width="200"></el-table-column>
           <el-table-column prop="mode" label="位号" width="200"></el-table-column>
           <el-table-column prop="mode" label="状态" width="200"></el-table-column>
-          <el-table-column prop="mode" label="安装时间" width="200"></el-table-column>
-          <el-table-column prop="operation" label="操作">
+          <el-table-column prop="mode" label="安装时间"></el-table-column>
+          <el-table-column prop="operation" label="操作" width="300">
             <template>
               <a class="operate-btn" href>详情</a>
               <a class="operate-btn" href>编辑</a>
@@ -64,7 +64,12 @@
       </div>
       <!-- 分页 -->
       <div class="page">
-        <el-pagination background layout="total,prev, pager, next" :total="1" :page-size="5"></el-pagination>
+        <el-pagination
+          background
+          layout="total,prev, pager, next"
+          :total="total"
+          :page-size="limit"
+        ></el-pagination>
       </div>
     </div>
     <!-- 地图 -->
@@ -144,24 +149,26 @@
 import Map from "@/utils/map-util";
 import { keep7Num } from "@/utils/util";
 import cameraMark from "@/assets/images/marker-camera.png";
-import _ from "lodash";
-import { mapGetters, createNamespacedHelpers } from "vuex";
-const { mapActions } = createNamespacedHelpers("device");
-// import _ from "lodash";
+import SearchMixin from "../mixin/search";
+
 export default {
   name: "CameraPanel",
+  mixins: [SearchMixin],
   data() {
     return {
       showDialog: false,
       tableOrMap: "table",
-      sn: "",
       formLabelWidth: "100px",
       place: "", // 检索地名
       placeList: [], // 地名列表
       loading: false,
       isLock: true,
-      listLoading: false,
-      tableData: [],
+      params: {
+        product_type: 1, // 产品类型 1-摄像头
+        device_number: "", // 设备编号
+        place_number: "", // 位号
+        project_id: "" // 项目ID
+      },
       model: {
         device_number: "", // 设备号
         place_number: "", // 位号
@@ -213,29 +220,10 @@ export default {
         lat: [{ required: true, message: "请标记地点", trigger: "blur" }]
       },
       dialogMap: {}, // 弹出框地图
-      cameraMap: {}, // 列表地图
-      params: {
-        product_type: 1, // 产品类型 1-摄像头
-        device_number: "", // 设备编号
-        place_number: "", // 位号
-        project_id: "" // 项目ID
-      }
+      cameraMap: {} // 列表地图
     };
   },
-  computed: {
-    ...mapGetters(["cur_proj"])
-  },
-  watch: {
-    cur_proj() {
-      this.params.project_id = this.cur_proj;
-      this.getList();
-    }
-  },
   mounted() {
-    // 获取设备列表
-    this.params.project_id = this.cur_proj;
-    this.getList();
-
     // 设备列表地图
     this.cameraMap = new Map(
       "camera-map",
@@ -251,25 +239,6 @@ export default {
     );
   },
   methods: {
-    ...mapActions(["editDevice", "addDevice", "listDevice", "detailDevice"]),
-    async getList() {
-      this.listLoading = true;
-      const { total, list } = await this.listDevice(this.params);
-      this.listLoading = false;
-      this.tableData = list;
-      this.total = total;
-    },
-    search: _.debounce(function() {
-      this.getList();
-    }, 500),
-    reset() {
-      this.params.device_number = "";
-      this.params.place_number = "";
-      this.getList();
-    },
-    headColor({ row, rowIndex }) {
-      return "bg-grey-6";
-    },
     handleSelectionChange() {},
     dialogOpened() {
       // 弹出框地图

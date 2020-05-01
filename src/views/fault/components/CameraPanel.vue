@@ -4,7 +4,7 @@
     <div class="operate flex">
       <button type="button" class="btn btn-del">关闭</button>
       <div class="search flex">
-        <el-input placeholder="搜索SN" v-model="sn">
+        <el-input placeholder="搜索设备编号" v-model="sn">
           <el-button slot="append" icon="el-icon-search"></el-button>
         </el-input>
       </div>

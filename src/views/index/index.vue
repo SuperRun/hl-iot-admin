@@ -139,7 +139,7 @@
       </transition>
     </main>
     <footer class="flex jc-between">
-      <div class="flex-column footer-left">
+      <div class="flex flex-column footer-left jc-end">
         <!-- 摄像头详情 -->
         <div class="tip flex jc-between ai-center" v-show="currentTab.includes(1)">
           <div>
@@ -291,7 +291,7 @@
       </div>
     </footer>
     <!-- 设备详情弹出框 -->
-    <device-detail :deviceType="deviceType"></device-detail>
+    <device-detail></device-detail>
     <!-- 编辑密码 -->
     <edit-pwd></edit-pwd>
   </div>

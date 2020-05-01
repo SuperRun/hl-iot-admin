@@ -178,6 +178,15 @@ body {
   width: 80px;
   border-radius:4px;
 }
+// - 表格中的操作按钮
+.btn-table{
+  cursor: pointer;
+  color: #666666;
+}
+.btn-table:hover{
+  color: #4360EC;
+  text-decoration: underline;
+}
 
 // 圆角
 .br-4{
@@ -243,5 +252,30 @@ body {
 }
 .el-slider__button{
   border-color: #5372FB;
+}
+
+// 上传图片
+.avatar-uploader .el-upload {
+  border: 1px dashed #d9d9d9;
+  border-radius: 6px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+.avatar-uploader .el-upload:hover {
+  border-color: #409EFF;
+}
+.avatar-uploader-icon {
+  font-size: 28px;
+  color: #8c939d;
+  width: 178px;
+  height: 178px;
+  line-height: 178px;
+  text-align: center;
+}
+.avatar {
+  width: 178px;
+  height: 178px;
+  display: block;
 }
 

@@ -7,6 +7,7 @@ import {
   getUserinfo,
   removeUserinfo,
   removeProjlist,
+  removeUploadimgConfig,
 } from '@/utils/auth';
 
 const state = {
@@ -50,6 +51,7 @@ const actions = {
           removeToken ();
           removeUserinfo ();
           removeProjlist ();
+          removeUploadimgConfig ();
           resolve ();
         })
         .catch (error => {

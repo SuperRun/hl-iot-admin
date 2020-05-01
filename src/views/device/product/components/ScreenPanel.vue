@@ -3,12 +3,12 @@
     <!-- 搜索栏 -->
     <div class="operate flex jc-start">
       <button type="button" class="btn btn-add" @click="showDialog=true">添加</button>
-      <button type="button" class="btn btn-del">删除</button>
+      <button type="button" class="btn btn-del" @click="del">删除</button>
       <div class="search flex">
-        <el-input placeholder="搜索SN" v-model="sn">
-          <el-button slot="append" icon="el-icon-search"></el-button>
-        </el-input>
+        <el-input placeholder="搜索产品名称" v-model="params.title" class="mg-right-1" @input="search"></el-input>
+        <el-input placeholder="搜索产品型号" v-model="params.model" @input="search"></el-input>
       </div>
+      <button type="button" class="btn btn-light mg-left-1 br-4" @click="reset">重置</button>
     </div>
     <!-- 表格 -->
     <div class="table">
@@ -18,37 +18,65 @@
         tooltip-effect="dark"
         header-cell-class-name="table-header"
         @selection-change="handleSelectionChange"
+        v-loading="listLoading"
       >
         <el-table-column type="selection" width="55"></el-table-column>
-        <el-table-column prop="name" label="名称" width="220"></el-table-column>
-        <el-table-column prop="mode" label="型号" width="220"></el-table-column>
+        <el-table-column prop="title" label="名称" width="220"></el-table-column>
+        <el-table-column prop="model" label="型号" width="220"></el-table-column>
         <el-table-column label="图片">
           <template slot-scope="scope">
-            <img class="device-pic" :src="scope.row.image" alt />
+            <img
+              class="device-pic"
+              @error="(e)=> e.target.src = require ('@/assets/images/no-pic.png')"
+              :src="scope.row.image || require('@/assets/images/no-pic.png')"
+              alt
+            />
           </template>
         </el-table-column>
         <el-table-column prop="operation" label="操作">
-          <template>
-            <a href>编辑</a>
+          <template slot-scope="scope">
+            <span class="btn-table" @click="edit(scope.row)">编辑</span>
           </template>
         </el-table-column>
       </el-table>
       <!-- 分页 -->
       <div class="page">
-        <el-pagination background layout="total,prev, pager, next" :total="1" :page-size="5"></el-pagination>
+        <el-pagination
+          background
+          layout="total,prev, pager, next"
+          :total="total"
+          :page-size="limit"
+          :current-page="page"
+          @current-change="currentPage"
+        ></el-pagination>
       </div>
     </div>
     <!-- 弹出框 -->
-    <el-dialog title="添加产品(物联网关)" :visible.sync="showDialog" center width="500px">
+    <el-dialog :title="title" :visible.sync="showDialog" center width="500px" @closed="closed">
       <el-form :model="model" :rules="rules" ref="form" label-position="left">
-        <el-form-item label="名称" :label-width="formLabelWidth" prop="name">
-          <el-input v-model="model.name" autocomplete="off" maxlength="20" show-word-limit></el-input>
+        <el-form-item label="名称" :label-width="formLabelWidth" prop="title">
+          <el-input v-model="model.title" autocomplete="off" maxlength="20" show-word-limit></el-input>
         </el-form-item>
-        <el-form-item label="型号" :label-width="formLabelWidth" prop="mode">
-          <el-input v-model="model.mode" autocomplete="off"></el-input>
+        <el-form-item label="型号" :label-width="formLabelWidth" prop="model">
+          <el-input v-model="model.model" autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item label="图片" :label-width="formLabelWidth" prop="image">
-          <el-input v-model="model.image" autocomplete="off"></el-input>
+          <el-upload
+            action
+            list-type="picture-card"
+            :before-upload="beforeImgUpload"
+            :http-request="uploadImage"
+            :on-preview="handlePictureCardPreview"
+            :before-remove="beforePicRemove"
+            :limit="1"
+            :on-exceed="handleExceed"
+            :file-list="imgList"
+          >
+            <i class="el-icon-plus"></i>
+          </el-upload>
+          <el-dialog title="查看大图" :visible.sync="dialogVisible" :modal="false">
+            <img width="100%" :src="model.image" alt />
+          </el-dialog>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -60,66 +88,37 @@
 </template>
 
 <script>
+import SearchMixin from "../mixin/search";
+import DialogMixin from "../mixin/dialog";
 export default {
   name: "ScreenPanel",
+  mixins: [SearchMixin, DialogMixin],
+  computed: {
+    title() {
+      return this.mode == "add" ? "添加产品(LED屏)" : "编辑产品(LED屏)";
+    }
+  },
   data() {
     return {
       showDialog: false,
-      tableData: [
-        {
-          name: "摄像头1",
-          mode: "bdhjb",
-          image:
-            "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1587549810674&di=f5cb5da88097485bf9583f2f2b3945a4&imgtype=0&src=http%3A%2F%2Fbpic.588ku.com%2Felement_origin_min_pic%2F16%2F12%2F19%2Fa7e75a580c4af917756a2e4a35621c49.jpg"
-        },
-        {
-          name: "摄像头1",
-          mode: "bdhjb",
-          image:
-            "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1587549810674&di=f5cb5da88097485bf9583f2f2b3945a4&imgtype=0&src=http%3A%2F%2Fbpic.588ku.com%2Felement_origin_min_pic%2F16%2F12%2F19%2Fa7e75a580c4af917756a2e4a35621c49.jpg"
-        },
-        {
-          name: "摄像头1",
-          mode: "bdhjb",
-          image:
-            "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1587549810674&di=f5cb5da88097485bf9583f2f2b3945a4&imgtype=0&src=http%3A%2F%2Fbpic.588ku.com%2Felement_origin_min_pic%2F16%2F12%2F19%2Fa7e75a580c4af917756a2e4a35621c49.jpg"
-        },
-        {
-          name: "摄像头1",
-          mode: "bdhjb",
-          image:
-            "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1587549810674&di=f5cb5da88097485bf9583f2f2b3945a4&imgtype=0&src=http%3A%2F%2Fbpic.588ku.com%2Felement_origin_min_pic%2F16%2F12%2F19%2Fa7e75a580c4af917756a2e4a35621c49.jpg"
-        },
-        {
-          name: "摄像头1",
-          mode: "bdhjb",
-          image:
-            "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1587549810674&di=f5cb5da88097485bf9583f2f2b3945a4&imgtype=0&src=http%3A%2F%2Fbpic.588ku.com%2Felement_origin_min_pic%2F16%2F12%2F19%2Fa7e75a580c4af917756a2e4a35621c49.jpg"
-        }
-      ],
-      sn: "",
       formLabelWidth: "60px",
       model: {
-        name: "", // 名称
-        mode: "" // 型号
+        type: 2, // 产品类型 2-LED屏
+        title: "", // 名称
+        model: "", // 型号
+        image: "" // 图片
       },
       rules: {
         name: [{ required: true, message: "请填写设备名称", trigger: "blur" }],
-        mode: [{ required: true, message: "请填写产品型号", trigger: "blur" }],
-        image: [{ required: true, message: "请上传产品图片", trigger: "blur" }]
-      }
+        mode: [{ required: true, message: "请填写产品型号", trigger: "blur" }]
+      },
+      params: {
+        type: 2, // 1-led屏
+        title: "", // 产品名称
+        model: "" // 产品型号
+      },
+      mode: "add" // 编辑还是新增
     };
-  },
-  methods: {
-    headColor({ row, rowIndex }) {
-      return "bg-grey-6";
-    },
-    handleSelectionChange() {},
-    confirm() {
-      this.$refs["form"].validate(valid => {
-        if (!valid) return;
-      });
-    }
   }
 };
 </script>
