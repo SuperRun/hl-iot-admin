@@ -51,9 +51,6 @@ export default {
       this.params.place_number = '';
       this.getList ();
     },
-    headColor({row, rowIndex}) {
-      return 'bg-grey-6';
-    },
     del () {
       if (this.ids == '') {
         showInfoMsg ('未选中任何产品');

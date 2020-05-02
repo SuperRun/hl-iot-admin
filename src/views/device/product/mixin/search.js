@@ -51,9 +51,6 @@ export default {
       this.params.model = '';
       this.getList ();
     },
-    headColor({row, rowIndex}) {
-      return 'bg-grey-6';
-    },
     currentPage (page) {
       this.page = page;
       this.getList ();

@@ -59,7 +59,7 @@ export const constantRoutes = [
       {
         path: 'index',
         component: () => import ('@/views/fault/index'),
-        name: 'Fault',
+        name: 'FaultManage',
         meta: {title: '告警管理', icon: 'nav-fault'},
       },
     ],
@@ -71,7 +71,7 @@ export const constantRoutes = [
       {
         path: 'index',
         component: () => import ('@/views/project/index'),
-        name: 'Project',
+        name: 'ProjectManage',
         meta: {title: '项目管理', icon: 'nav-proj'},
       },
     ],
@@ -84,7 +84,7 @@ export const constantRoutes = [
       {
         path: 'index',
         component: () => import ('@/views/user/index'),
-        name: 'User',
+        name: 'UserManage',
         meta: {title: '用户管理', icon: 'nav-user'},
       },
     ],
@@ -92,12 +92,32 @@ export const constantRoutes = [
   {
     path: '/auth',
     component: Layout,
+    redirect: '/auth/list',
+    name: 'Auth',
+    meta: {
+      title: '权限管理',
+      icon: 'nav-auth',
+    },
     children: [
       {
-        path: 'index',
-        component: () => import ('@/views/auth/index'),
-        name: 'Auth',
-        meta: {title: '权限管理', icon: 'nav-auth'},
+        path: 'list',
+        component: () => import ('@/views/auth/list/index'),
+        name: 'AuthList',
+        meta: {title: '权限列表'},
+      },
+      {
+        path: 'add',
+        component: () => import ('@/views/auth/add/index'),
+        name: 'AddAuth',
+        meta: {title: '添加权限'},
+        hidden: true,
+      },
+      {
+        path: 'detail/:id(\\d+)?',
+        component: () => import ('@/views/auth/edit/index'),
+        name: 'DetailAuth',
+        meta: {title: '权限详情'},
+        hidden: true,
       },
     ],
   },

@@ -8,6 +8,15 @@ const UESR_LOGIN = '/common/login';
 const VALID_CODE = '/common/getCaptcha';
 const USER_LOGOUT = '/user/logout';
 const UPDATE_PWD = '/user/updatePassword';
+const USER_LIST = '/user/index';
+const USER_ADD = '/user/store';
+const USER_EDIT = '/user/update';
+const USER_DEL = '/user/destroy';
+
+// role
+const ROLE_LIST = '/role/index';
+const ROLE_EDIT = '/role/update';
+const ROLE_ADD = '/role/store';
 
 // product
 const PRODUCT_EDIT = '/product/update';
@@ -41,6 +50,13 @@ export {
   VALID_CODE,
   USER_LOGOUT,
   UPDATE_PWD,
+  USER_LIST,
+  USER_ADD,
+  USER_DEL,
+  USER_EDIT,
+  ROLE_LIST,
+  ROLE_ADD,
+  ROLE_EDIT,
   PRODUCT_EDIT,
   PRODUCT_ADD,
   PRODUCT_LIST,

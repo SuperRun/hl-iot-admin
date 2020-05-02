@@ -119,7 +119,7 @@
 </template>
 
 <script>
-import { showWarningMsg } from "@/utils/message";
+import { showWarningMsg, showSuccessMsg, showInfoMsg } from "@/utils/message";
 export default {
   name: "Content",
   props: {
@@ -164,17 +164,11 @@ export default {
         confirmButtonText: "确定",
         cancelButtonText: "取消"
       })
-        .then(() => {
-          this.$message({
-            type: "success",
-            message: "清除成功!"
-          });
+        .then(_ => {
+          showSuccessMsg("清除成功");
         })
-        .catch(() => {
-          this.$message({
-            type: "info",
-            message: "已取消删除"
-          });
+        .catch(_ => {
+          showInfoMsg("已取消删除");
         });
     }
   }

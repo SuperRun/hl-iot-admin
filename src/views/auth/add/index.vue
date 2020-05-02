@@ -1,8 +1,16 @@
 <template>
   <div class="auth-manage">
-    <ul class="flex">
-      <li class="tab active">管理员</li>
-    </ul>
+    <el-form label-width="80px" :model="model" :rules="rules" ref="form">
+      <el-form-item label="角色名称" prop="name">
+        <el-input
+          type="text"
+          v-model="model.name"
+          maxlength="10"
+          style="width:220px"
+          show-word-limit
+        ></el-input>
+      </el-form-item>
+    </el-form>
     <el-table
       ref="multipleTable"
       :data="tableData"
@@ -27,18 +35,16 @@
     </el-table>
 
     <div class="flex jc-end mg-top-1">
-      <div v-if="isEdit">
-        <el-button class="btn-light" type="button" @click="isEdit=false">取消</el-button>
-        <el-button class="btn-dark" type="button">确定</el-button>
-      </div>
-      <el-button v-else class="btn-dark" type="button" @click="isEdit=true">编辑</el-button>
+      <el-button class="btn-dark" type="button" @click="add">创建</el-button>
     </div>
   </div>
 </template>
 
 <script>
+import { showSuccessMsg } from "@/utils/message";
+
 export default {
-  name: "Auth",
+  name: "AddAuth",
   data() {
     return {
       isEdit: false,
@@ -63,8 +69,36 @@ export default {
             ]
           }
         }
-      ]
+      ],
+      model: {
+        name: "" // 角色名称
+      },
+      rules: {
+        name: [
+          {
+            required: true,
+            message: "请填写角色名称",
+            trigger: "blur"
+          },
+          {
+            max: 10,
+            message: "",
+            trigger: "blur"
+          }
+        ]
+      }
     };
+  },
+  methods: {
+    add() {
+      this.$refs["form"].validate(valid => {
+        if (!valid) return;
+        this.$store.dispatch("role/addRole", this.model).then(_ => {
+          showSuccessMsg("添加成功");
+          this.$router.push({ path: "/auth/list" });
+        });
+      });
+    }
   }
 };
 </script>

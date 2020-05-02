@@ -1,4 +1,13 @@
-import {login, logout, updatePwd, getValidCode} from '@/api/user';
+import {
+  login,
+  logout,
+  updatePwd,
+  getValidCode,
+  listUser,
+  addUser,
+  editUser,
+  delUser,
+} from '@/api/user';
 import {
   getToken,
   setToken,
@@ -79,6 +88,26 @@ const actions = {
         .catch (error => {
           reject (error);
         });
+    });
+  },
+  listUser ({commit}, params) {
+    return new Promise ((resolve, reject) => {
+      listUser (params).then (res => resolve (res.data));
+    });
+  },
+  addUser ({commit}, data) {
+    return new Promise ((resolve, reject) => {
+      addUser (data).then (res => resolve (res));
+    });
+  },
+  editUser ({commit}, data) {
+    return new Promise ((resolve, reject) => {
+      editUser (data).then (res => resolve (res));
+    });
+  },
+  delUser ({commit}, data) {
+    return new Promise ((resolve, reject) => {
+      delUser (data).then (res => resolve (res));
     });
   },
 };

@@ -73,6 +73,8 @@
           layout="total,prev, pager, next"
           :total="total"
           :page-size="limit"
+          :current-page="page"
+          @current-change="currentPage"
         ></el-pagination>
       </div>
     </div>
