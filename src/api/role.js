@@ -1,5 +1,5 @@
 import request from '@/utils/request';
-import {ROLE_LIST, ROLE_ADD, ROLE_EDIT} from '@/constant/url';
+import {ROLE_LIST, ROLE_ADD, ROLE_EDIT, ROLE_DETAIL} from '@/constant/url';
 
 /**
  * @description: 角色列表
@@ -37,5 +37,18 @@ export function editRole (data) {
     url: ROLE_EDIT,
     method: 'post',
     data,
+  });
+}
+
+/**
+ * @description: 角色详情
+ * @param {object} data
+ * @return: 
+ */
+export function detailRole (params) {
+  return request ({
+    url: ROLE_DETAIL,
+    method: 'get',
+    params,
   });
 }

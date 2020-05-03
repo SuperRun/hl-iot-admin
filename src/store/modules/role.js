@@ -1,4 +1,4 @@
-import {listRole, addRole, editRole} from '@/api/role';
+import {listRole, addRole, editRole, detailRole} from '@/api/role';
 
 const actions = {
   listRole ({commit}, params) {
@@ -14,6 +14,11 @@ const actions = {
   editRole ({commit}, data) {
     return new Promise ((resolve, reject) => {
       editRole (data).then (res => resolve (res));
+    });
+  },
+  detailRole ({commit}, params) {
+    return new Promise ((resolve, reject) => {
+      detailRole (params).then (res => resolve (res.data));
     });
   },
 };

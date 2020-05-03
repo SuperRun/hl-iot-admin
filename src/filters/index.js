@@ -1,5 +1,4 @@
 export function formatTime (time) {
-  console.log ('time', time);
   if (time && time.includes (':')) {
     return time.split (' ')[0];
   }
@@ -8,4 +7,10 @@ export function formatTime (time) {
 
 export function convertCityName (obj) {
   return `${obj.province}-${obj.city}`;
+}
+
+// 状态1-待检测 2-正常,3-故障,4-离线
+export function faultStatus (status) {
+  const map = new Map ([[1, '待检测'], [2, '正常'], [3, '故障'], [4, '离线']]);
+  return map.get (status);
 }

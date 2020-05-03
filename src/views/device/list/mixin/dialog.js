@@ -57,14 +57,26 @@ export default {
       this.gateways = res.list;
       // 弹出框地图
       this.dialogMap = new Map ('dialog-map', {}, true, true);
-      console.log (this.dialogMap);
-
       const self = this;
       this.dialogMap.addMapEvent ('click', function (e) {
         self.model.longitude = keep7Num (e.point.lng);
         self.model.latitude = keep7Num (e.point.lat);
         self.dialogMap.addMark (e.point.lng, e.point.lat, {}, true);
       });
+      // 编辑：添加标记点
+      if (this.mode == 'edit') {
+        const point = this.dialogMap.createPoint (
+          this.model.longitude,
+          this.model.latitude
+        );
+        this.dialogMap.setPoint (point);
+        this.dialogMap.addMark (
+          this.model.longitude,
+          this.model.latitude,
+          {},
+          true
+        );
+      }
     },
     confirm () {
       this.$refs['form'].validate (async valid => {
@@ -73,13 +85,16 @@ export default {
           this.model.project_id = this.cur_proj;
           await this.addDevice (this.model);
           showSuccessMsg ('添加成功');
+        } else {
+          this.model.project_id = this.cur_proj;
+          await this.editDevice (this.model);
+          showSuccessMsg ('编辑成功');
         }
         this.showDialog = false;
         this.getList ();
       });
     },
     closed () {
-      console.log ('closed');
       this.$refs['form'].resetFields ();
       Object.keys (this.model).forEach (
         key => (key !== 'type' ? (this.model[key] = '') : '')

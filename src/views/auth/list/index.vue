@@ -7,6 +7,7 @@
       tooltip-effect="dark"
       header-cell-class-name="table-header"
       class="mg-top-1"
+      v-loading="listLoading"
     >
       <el-table-column label="序号">
         <template slot-scope="scope">{{ scope.$index +1 }}</template>
@@ -30,7 +31,8 @@ export default {
   data() {
     return {
       isEdit: false,
-      tableData: []
+      tableData: [],
+      listLoading: false
     };
   },
   mounted() {
@@ -38,8 +40,10 @@ export default {
   },
   methods: {
     async getList() {
+      this.listLoading = true;
       const { list } = await this.$store.dispatch("role/listRole");
       this.tableData = list;
+      this.listLoading = false;
     },
     del(item) {
       this.$confirm(`确认删除角色 ${item.name}? `, "提示", {

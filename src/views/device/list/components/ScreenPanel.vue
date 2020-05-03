@@ -45,23 +45,31 @@
     <div v-show="tableOrMap=='table'">
       <div class="table">
         <el-table
-          v-loading="listLoading"
           ref="multipleTable"
           :data="tableData"
           tooltip-effect="dark"
           header-cell-class-name="table-header"
+          v-loading="listLoading"
           @selection-change="handleSelectionChange"
         >
           <el-table-column type="selection" width="55"></el-table-column>
-          <el-table-column prop="name" label="编号" width="200"></el-table-column>
-          <el-table-column prop="mode" label="产品" width="200"></el-table-column>
-          <el-table-column prop="mode" label="位号" width="200"></el-table-column>
-          <el-table-column prop="mode" label="状态" width="200"></el-table-column>
-          <el-table-column prop="mode" label="安装时间" width="200"></el-table-column>
+          <el-table-column prop="device_number" label="编号" width="180"></el-table-column>
+          <el-table-column label="产品" width="200">
+            <template
+              slot-scope="scope"
+            >{{scope.row.product?`${scope.row.product.title}(${scope.row.product.model})`:'无'}}</template>
+          </el-table-column>
+          <el-table-column prop="place_number" label="位号" width="180"></el-table-column>
+          <el-table-column label="状态" width="150">
+            <template slot-scope="scope">{{scope.row.status | faultStatus}}</template>
+          </el-table-column>
+          <el-table-column label="安装时间" width="200">
+            <template slot-scope="scope">{{scope.row.created_at | formatTime}}</template>
+          </el-table-column>
           <el-table-column prop="operation" label="操作">
-            <template>
-              <a class="operate-btn" href>详情</a>
-              <a class="operate-btn" href>编辑</a>
+            <template slot-scope="scope">
+              <span class="btn-table mg-right-1">详情</span>
+              <span class="btn-table" @click="edit(scope.row)">编辑</span>
             </template>
           </el-table-column>
         </el-table>
@@ -84,7 +92,13 @@
       <i :class="[`el-icon-${isLock?'':'un'}lock`, 'lock']" @click="lock"></i>
     </div>
     <!-- 弹出框 -->
-    <el-dialog :title="title" :visible.sync="showDialog" center @opened="dialogOpened">
+    <el-dialog
+      :title="title"
+      :visible.sync="showDialog"
+      center
+      @opened="dialogOpened"
+      @closed="closed"
+    >
       <el-form :model="model" :inline="true" :rules="rules" ref="form">
         <el-form-item label="编号" :label-width="formLabelWidth" prop="device_number">
           <el-input v-model="model.device_number" autocomplete="off" maxlength="50" show-word-limit></el-input>
@@ -201,7 +215,6 @@ export default {
     );
   },
   methods: {
-    handleSelectionChange() {},
     lock() {
       this.isLock = !this.isLock;
       this.isLock

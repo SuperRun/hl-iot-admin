@@ -1,7 +1,10 @@
 <template>
   <el-dropdown trigger="click">
-    <span class="el-dropdown-link text-grey-4 cursor-pointer">
-      {{userInfo.username}}
+    <span class="flex ai-center el-dropdown-link text-grey-4 cursor-pointer">
+      <span style="text-align:center">
+        {{userInfo.username}}
+        <br />欢迎您！
+      </span>
       <i class="el-icon-arrow-down el-icon--right"></i>
     </span>
     <el-dropdown-menu slot="dropdown">

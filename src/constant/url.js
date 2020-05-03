@@ -1,4 +1,4 @@
-const BASE_API = '/map';
+const BASE_API = process.env.NODE_ENV == 'development' ? 'map' : '';
 const ak = 'WGoBmL91XStsCQ7PKBOU8Vi1UFt6qWLC';
 const PLACE_QUERY = `${BASE_API}/place/v2/suggestion?ak=${ak}&output=json`;
 const PLACE_QUERY_DETAIl = `${BASE_API}/place/v2/detail?ak=${ak}&output=json`;
@@ -17,6 +17,7 @@ const USER_DEL = '/user/destroy';
 const ROLE_LIST = '/role/index';
 const ROLE_EDIT = '/role/update';
 const ROLE_ADD = '/role/store';
+const ROLE_DETAIL = '/role/detail';
 
 // product
 const PRODUCT_EDIT = '/product/update';
@@ -57,6 +58,7 @@ export {
   ROLE_LIST,
   ROLE_ADD,
   ROLE_EDIT,
+  ROLE_DETAIL,
   PRODUCT_EDIT,
   PRODUCT_ADD,
   PRODUCT_LIST,

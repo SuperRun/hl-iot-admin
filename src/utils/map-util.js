@@ -28,7 +28,7 @@ export default class Map {
   }
 
   // 设置中心点
-  setPoint (point, zoom) {
+  setPoint (point, zoom = 15) {
     this.map.centerAndZoom (point, zoom);
   }
 
@@ -62,6 +62,11 @@ export default class Map {
     this.marks.forEach (mark => mark.disableDragging ());
   }
 
+  removeAllMarkers () {
+    this.marks = [];
+    this.map.clearOverlays;
+  }
+
   // 创建比例尺
   createScaleControl () {
     return new BMap.ScaleControl ({
@@ -76,7 +81,6 @@ export default class Map {
 
   // 根据城市名设置中心点
   setCenterByCity (city) {
-    console.log (city);
     this.map.centerAndZoom (city, this.ZOOM);
   }
 }

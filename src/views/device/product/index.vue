@@ -8,7 +8,7 @@
       <li
         :class="['tab', currentTab=='ScreenPanel'?'active':'']"
         @click="currentTab='ScreenPanel'"
-      >LED屏幕</li>
+      >LED屏</li>
       <li
         :class="['tab', currentTab=='WeatherPanel'?'active':'']"
         @click="currentTab='WeatherPanel'"

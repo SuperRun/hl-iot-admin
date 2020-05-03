@@ -32,7 +32,6 @@
         </el-table-column>
         <el-table-column prop="operation" label="操作">
           <template slot-scope="scope">
-            <span class="btn-table mg-right-1">详情</span>
             <span class="btn-table" @click="edit(scope.row)">编辑</span>
           </template>
         </el-table-column>
@@ -56,6 +55,7 @@
       center
       @opened="dialogOpened"
       width="600px"
+      @closed="closed"
     >
       <el-form :model="model" :rules="rules" ref="form" label-position="left">
         <el-form-item label="名称" :label-width="formLabelWidth" prop="title">
@@ -182,7 +182,12 @@ export default {
       },
       mode: "add",
       names: "", // 要删除所有项目的名称
-      ids: "" // 要删除所有项目的id
+      ids: "", // 要删除所有项目的id
+      copyItem: {
+        // 记录编辑前的经纬度
+        latitude: "",
+        longitude: ""
+      }
     };
   },
   async mounted() {
@@ -194,7 +199,8 @@ export default {
       "addProject",
       "listProject",
       "detailProject",
-      "delProject"
+      "delProject",
+      "allProject"
     ]),
     async getList() {
       this.listLoading = true;
@@ -221,6 +227,8 @@ export default {
       this.getList();
     }, 500),
     dialogOpened() {
+      console.log("dialogOpened");
+
       // 弹出框地图
       this.dialogMap = new Map("dialog-map", {}, true, true);
       const self = this;
@@ -229,16 +237,33 @@ export default {
         self.model.latitude = keep7Num(e.point.lat);
         self.dialogMap.addMark(e.point.lng, e.point.lat, {}, true);
       });
+
+      // 经纬度重新赋值(city，provide 触发change事件经纬度被清空)
+      this.model.longitude = this.copyItem.longitude;
+      this.model.latitude = this.copyItem.latitude;
+
+      // 编辑：添加标记点
+      if (this.mode == "edit") {
+        const point = this.dialogMap.createPoint(
+          this.model.longitude,
+          this.model.latitude
+        );
+        this.dialogMap.setPoint(point);
+        this.dialogMap.addMark(
+          this.model.longitude,
+          this.model.latitude,
+          {},
+          true
+        );
+      }
     },
     async searchPlace(query) {
       if (query == "") return;
       this.loading = true;
-      console.log(this.model.city || this.model.province || "全国");
       this.placeList = await this.$store.dispatch("map/queryPlace", {
         query,
         region: this.model.city || this.model.province || "全国"
       });
-      console.log("placeList", this.placeList);
       this.loading = false;
     },
     async choosePlace(val) {
@@ -252,16 +277,27 @@ export default {
       this.dialogMap.addMark(location.lng, location.lat, {}, true);
     },
     onChangeProvince(province) {
+      console.log("onChangeProvince");
+
       this.model.province = province.value;
       this.dialogMap.setCenterByCity(province.value);
+      // 清空经纬度
+      this.model.longitude = "";
+      this.model.latitude = "";
     },
     onChangeCity(city) {
+      console.log("onChangeCity");
       this.model.city = city.value;
       this.dialogMap.setCenterByCity(city.value);
+      // 清空经纬度
+      this.model.longitude = "";
+      this.model.latitude = "";
     },
     closed() {
       this.$refs["form"].resetFields();
-      Object.keys(this.model).forEach(key => this.model[key]);
+      Object.keys(this.model).forEach(key =>
+        key != "county" ? (this.model[key] = "") : ""
+      );
     },
     confirm() {
       this.$refs["form"].validate(async valid => {
@@ -270,17 +306,22 @@ export default {
           await this.addProject(this.model);
           showSuccessMsg("添加成功");
         } else {
-          await this.addProject(this.model);
+          await this.editProject(this.model);
           showSuccessMsg("编辑成功");
         }
         this.showDialog = false;
         this.getList();
+        this.allProject();
       });
     },
     edit(item) {
+      console.log(item);
       this.mode = "edit";
       this.showDialog = true;
-      this.model = Object.assign(this.model, item);
+      console.log("model", this.model);
+      this.model = Object.assign({}, item);
+      this.copyItem.longitude = item.longitude;
+      this.copyItem.latitude = item.latitude;
     },
     handleSelectionChange(val) {
       this.names = getValByKey("title", val, ", ");
@@ -288,7 +329,7 @@ export default {
     },
     del() {
       if (this.ids == "") {
-        showInfoMsg("未选中任何产品");
+        showInfoMsg("未选中任何项目");
         return;
       }
       const h = this.$createElement;

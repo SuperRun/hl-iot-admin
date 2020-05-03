@@ -1,7 +1,9 @@
 import axios from 'axios';
 
 const service = axios.create ({
-  // baseURL: 'http://api.map.baidu.com/place/v2',
+  baseURL: process.env.NODE_ENV == 'development'
+    ? ''
+    : 'http://api.map.baidu.com/place/v2',
   timeout: 5000,
 });
 service.interceptors.request.use (

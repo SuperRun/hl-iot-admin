@@ -2,7 +2,7 @@
   <div class="user-manage bg-white-3 min-h-1 bx-shadow-2">
     <!-- 搜索栏 -->
     <div class="operate flex">
-      <button type="button" class="btn btn-add" @click="showDialog=true">添加</button>
+      <button type="button" class="btn btn-add" @click="add">添加</button>
       <button type="button" class="btn btn-del" @click="del">删除</button>
       <div class="search flex">
         <el-input placeholder="搜索名称" v-model="params.name" class="mg-right-1" @input="search"></el-input>
@@ -49,7 +49,7 @@
       </div>
     </div>
     <!-- 弹出框 -->
-    <el-dialog :title="title" :visible.sync="showDialog" center width="600px">
+    <el-dialog :title="title" :visible.sync="showDialog" center width="600px" @closed="closed">
       <el-form
         :model="model"
         :label-width="formLabelWidth"
@@ -66,9 +66,9 @@
             show-word-limit
           ></el-input>
         </el-form-item>
-        <el-form-item label="密码" prop="password">
+        <el-form-item label="密码" prop="show_pwd">
           <el-input
-            v-model="model.password"
+            v-model="model.show_pwd"
             :type="showPwd?'text':'password'"
             autocomplete="off"
             maxlength="20"
@@ -138,19 +138,22 @@ export default {
     projFilter(projs) {
       const proj_list_id = projs
         .reduce((pre, cur) => {
-          console.log(cur);
-          pre.push(cur.project_id);
-          return pre;
-        }, [])
-        .join(", ");
-      return projList
-        .reduce((pre, cur) => {
-          if (proj_list_id.includes(cur.id)) {
-            pre.push(cur.title);
+          if (cur.project) {
+            pre.push(cur.project_id);
           }
           return pre;
         }, [])
         .join(", ");
+      return proj_list_id == ""
+        ? "无"
+        : projList
+            .reduce((pre, cur) => {
+              if (proj_list_id.includes(cur.id)) {
+                pre.push(cur.title);
+              }
+              return pre;
+            }, [])
+            .join(", ");
     }
   },
   data() {
@@ -170,6 +173,7 @@ export default {
       model: {
         username: "", // 账号
         password: "", // 密码
+        show_pwd: "", // 未加密的密码
         name: "", // 名称
         mobile: "", // 手机
         sex: "1", // 性别 1-男,2-女
@@ -181,7 +185,7 @@ export default {
           { required: true, message: "请填写账号", trigger: "blur" },
           { min: 5, max: 20, message: "长度在 5 到 20 个字符", trigger: "blur" }
         ],
-        password: [
+        show_pwd: [
           { required: true, message: "请填写密码", trigger: "blur" },
           { min: 6, max: 20, message: "长度在 6 到 20 个字符", trigger: "blur" }
         ],
@@ -248,13 +252,19 @@ export default {
     add() {
       this.showDialog = true;
       this.mode = "add";
+      console.log("title", this.title);
     },
     edit(item) {
       this.mode = "edit";
       this.showDialog = true;
       this.model = Object.assign({}, item);
       this.model.sex += "";
-      this.projIds = this.model.project_user.map(proj => proj.project_id);
+      const ids = this.model.project_user.map(proj =>
+        proj.project ? proj.project_id : ""
+      );
+      console.log(ids.filter(id => id != ""));
+
+      this.projIds = ids.filter(id => id != "");
     },
     confirm() {
       this.$refs["form"].validate(async valid => {
@@ -265,6 +275,7 @@ export default {
           showSuccessMsg("添加成功");
         } else {
           this.model.project_id_list = this.projIds.join(",");
+          this.model.password = this.model.show_pwd;
           await this.editUser(this.model);
           showSuccessMsg("编辑成功");
         }
@@ -309,6 +320,14 @@ export default {
     handleSelectionChange(val) {
       this.names = getValByKey("name", val, ", ");
       this.ids = getValByKey("id", val);
+    },
+    closed() {
+      this.$refs["form"].resetFields();
+      Object.keys(this.model).forEach(key =>
+        key !== "sex" ? (this.model[key] = "") : ""
+      );
+      this.projIds = [];
+      this.showPwd = false;
     }
   }
 };

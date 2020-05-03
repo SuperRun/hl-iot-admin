@@ -62,19 +62,20 @@ export default {
       });
     },
     async beforePicRemove (file, fileList) {
-      return await this.$store
-        .dispatch ('upload/delImg', {
-          url: this.config,
-          signature: this.uploadimgConfig.signature,
-        })
-        .then (_ => {
-          showSuccessMsg ('删除成功');
-          return Promise.resolve (true);
-        })
-        .catch (e => {
-          showErrorMsg ('删除失败');
-          return Promise.reject (false);
-        });
+      // return await this.$store
+      //   .dispatch ('upload/delImg', {
+      //     url: this.config,
+      //     signature: this.uploadimgConfig.signature,
+      //   })
+      //   .then (_ => {
+      //     showSuccessMsg ('删除成功');
+      //     return Promise.resolve (true);
+      //   })
+      //   .catch (e => {
+      //     showErrorMsg ('删除失败');
+      //     return Promise.reject (false);
+      //   });
+      return this.$confirm ('确定删除?', '提示');
     },
     handlePictureCardPreview () {
       this.dialogVisible = true;

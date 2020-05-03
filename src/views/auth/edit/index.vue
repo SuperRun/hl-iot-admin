@@ -3,6 +3,7 @@
     <el-form label-width="80px">
       <el-form-item label="角色名称" prop="name">
         <el-input
+          v-model="model.name"
           type="text"
           maxlength="10"
           style="width:140px"
@@ -36,6 +37,7 @@
     </el-table>
 
     <div class="flex jc-end mg-top-1">
+      <el-button class="btn-light mg-right-1" type="button" @click="$router.back()">返回</el-button>
       <div v-if="isEdit">
         <el-button class="btn-light" type="button" @click="isEdit=false">取消</el-button>
         <el-button class="btn-dark" type="button" @click="confirm">确定</el-button>
@@ -72,7 +74,10 @@ export default {
             ]
           }
         }
-      ]
+      ],
+      model: {
+        name: ""
+      }
     };
   },
   computed: {
@@ -81,7 +86,7 @@ export default {
     }
   },
   async mounted() {
-    // this.model = await this.$store.dispatch("role/detailRole", { id: this.id });
+    this.model = await this.$store.dispatch("role/detailRole", { id: this.id });
   },
   methods: {
     confirm() {

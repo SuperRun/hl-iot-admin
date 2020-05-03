@@ -36,21 +36,7 @@ export default {
   data() {
     return {
       chargeOrAdmin: true,
-      projId: "",
-      options: [
-        {
-          id: 1,
-          name: "项目1"
-        },
-        {
-          id: 2,
-          name: "项目1"
-        },
-        {
-          id: 3,
-          name: "项目1"
-        }
-      ] // 项目
+      projId: ""
     };
   },
   async mounted() {
@@ -60,6 +46,7 @@ export default {
       await this.$store.dispatch("project/allProject");
     }
     this.projId = this.cur_proj;
+    console.log(typeof this.projId);
   },
   watch: {
     cur_proj() {
