@@ -11,6 +11,7 @@ export default {
       loading: false,
       products: [],
       gateways: [],
+      groups: [],
       rules: {
         device_number: [{required: true, message: '请填写设备编号', trigger: 'blur'}],
         product_id: [{required: true, message: '请选择产品', trigger: 'blur'}],
@@ -18,6 +19,7 @@ export default {
         gateway_product_id: [
           {required: true, message: '请选择网关', trigger: 'blur'},
         ],
+        group_id: [{required: true, message: '请选择分组', trigger: 'blur'}],
         longitude: [{required: true, message: '请标记地点', trigger: 'blur'}],
         latitude: [{required: true, message: '请标记地点', trigger: 'blur'}],
       },
@@ -30,6 +32,7 @@ export default {
         longitude: '', // 经度
         latitude: '', // 纬度
         gateway_product_id: '', // 网关的产品id
+        group_id: '', // 分组id
       },
     };
   },
@@ -47,6 +50,12 @@ export default {
     async dialogOpened () {
       // 获取产品和网关列表
       console.log ('product_type', this.params.product_type);
+      if (this.params.product_type == 3) {
+        let {list} = await this.$store.dispatch ('group/listGroup', {
+          project_id: this.cur_proj,
+        });
+        this.groups = list;
+      }
       let {list} = await this.$store.dispatch ('product/listProduct', {
         type: this.params.product_type,
       });

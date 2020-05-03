@@ -8,7 +8,11 @@
       <li
         :class="['tab', currentTab=='ScreenPanel'?'active':'']"
         @click="currentTab='ScreenPanel'"
-      >LED屏幕</li>
+      >LED屏</li>
+      <li
+        :class="['tab', currentTab=='LightPanel'?'active':'']"
+        @click="currentTab='LightPanel'"
+      >照明灯</li>
       <li
         :class="['tab', currentTab=='WeatherPanel'?'active':'']"
         @click="currentTab='WeatherPanel'"
@@ -24,6 +28,7 @@
 <script>
 import CameraPanel from "./components/CameraPanel";
 import ScreenPanel from "./components/ScreenPanel";
+import LightPanel from "./components/LightPanel";
 import WeatherPanel from "./components/WeatherPanel";
 
 export default {
@@ -31,6 +36,7 @@ export default {
   components: {
     CameraPanel,
     ScreenPanel,
+    LightPanel,
     WeatherPanel
   },
   data() {

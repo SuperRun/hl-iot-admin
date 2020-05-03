@@ -11,7 +11,7 @@
       <button type="button" class="btn btn-refresh mg-left-1">刷新</button>
     </div>
 
-    <!-- 当前告警表格 -->
+    <!-- 表格 -->
     <div class="table">
       <el-table
         ref="multipleTable"
@@ -19,49 +19,20 @@
         tooltip-effect="dark"
         header-cell-class-name="table-header"
         @selection-change="handleSelectionChange"
-        v-if="isCur"
       >
         <el-table-column type="selection" width="55"></el-table-column>
         <el-table-column prop="name" label="设备编号" width="200"></el-table-column>
         <el-table-column prop="mode" label="产品名称" width="200"></el-table-column>
         <el-table-column prop="mode" label="位号" width="200"></el-table-column>
         <el-table-column prop="mode" label="告警内容" width="200"></el-table-column>
-        <el-table-column label="操作">
+        <el-table-column prop="operation" label="操作">
           <template>
-            <span class="btn-table mg-right-1">详情</span>
-            <span class="btn-table">关闭</span>
+            <a class="operate-btn" href>详情</a>
           </template>
         </el-table-column>
       </el-table>
       <!-- 分页 -->
-      <div class="page" v-if="isCur">
-        <el-pagination background layout="total,prev, pager, next" :total="1" :page-size="5"></el-pagination>
-      </div>
-    </div>
-    <!-- 历史告警表格 -->
-    <div class="table">
-      <el-table
-        ref="multipleTable"
-        :data="tableData"
-        tooltip-effect="dark"
-        header-cell-class-name="table-header"
-        @selection-change="handleSelectionChange"
-        v-if="!isCur"
-      >
-        <el-table-column type="selection" width="55"></el-table-column>
-        <el-table-column prop="name" label="设备编号" width="200"></el-table-column>
-        <el-table-column prop="mode" label="产品名称" width="200"></el-table-column>
-        <el-table-column prop="mode" label="位号" width="200"></el-table-column>
-        <el-table-column prop="mode" label="告警内容" width="200"></el-table-column>
-        <el-table-column label="操作">
-          <template>
-            <span class="btn-table mg-right-1">详情</span>
-            <span class="btn-table">删除</span>
-          </template>
-        </el-table-column>
-      </el-table>
-      <!-- 分页 -->
-      <div class="page" v-if="!isCur">
+      <div class="page">
         <el-pagination background layout="total,prev, pager, next" :total="1" :page-size="5"></el-pagination>
       </div>
     </div>
@@ -70,13 +41,7 @@
 
 <script>
 export default {
-  name: "CameraPanel",
-  props: {
-    isCur: {
-      type: Boolean,
-      default: true
-    }
-  },
+  name: "LightPanel",
   data() {
     return {
       sn: "",
@@ -113,9 +78,6 @@ export default {
         }
       ]
     };
-  },
-  watch: {
-    isCur() {}
   },
   methods: {
     handleSelectionChange() {}

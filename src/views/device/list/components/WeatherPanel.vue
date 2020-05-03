@@ -108,7 +108,7 @@
           <el-select v-model="model.product_id" placeholder="请选择产品">
             <el-option
               :key="product.id"
-              :label="product.title"
+              :label="`${product.title}(${product.model})`"
               :value="product.id"
               v-for="product in products"
             ></el-option>
@@ -122,7 +122,7 @@
           <el-select v-model="model.gateway_product_id" placeholder="请选择网关">
             <el-option
               :key="gateway.id"
-              :label="gateway.title"
+              :label="`${gateway.title}(${gateway.model})`"
               :value="gateway.id"
               v-for="gateway in gateways"
             ></el-option>

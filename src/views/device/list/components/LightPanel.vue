@@ -18,6 +18,7 @@
         <button type="button" class="btn btn-refresh mg-left-1">读状态</button>
       </div>
       <div class="flex">
+        <button type="button" class="btn btn-dark mg-right-1 br-4" @click="del">导出</button>
         <ul class="flex">
           <li
             class="icon-btn flex ai-center"
@@ -128,6 +129,17 @@
             ></el-option>
           </el-select>
         </el-form-item>
+        <el-form-item label="分组" :label-width="formLabelWidth" prop="group_id">
+          <el-select v-model="model.group_id" placeholder="请选择分组">
+            <el-option
+              :key="group.id"
+              :label="group.group_number"
+              :value="group.id"
+              v-for="group in groups"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+        <br />
         <el-form-item label="经度" :label-width="formLabelWidth" prop="longitude">
           <el-input v-model="model.longitude" :readonly="true"></el-input>
         </el-form-item>
@@ -170,11 +182,11 @@ import SearchMixin from "../mixin/search";
 import DialogMixin from "../mixin/dialog";
 
 export default {
-  name: "CameraPanel",
+  name: "LightPanel",
   mixins: [SearchMixin, DialogMixin],
   computed: {
     title() {
-      return this.mode == "add" ? "添加设备(摄像头)" : "编辑设备(摄像头)";
+      return this.mode == "add" ? "添加设备(照明灯)" : "编辑设备(照明灯)";
     }
   },
   data() {
@@ -184,7 +196,7 @@ export default {
       isLock: true,
       mode: "add",
       params: {
-        product_type: 1, // 产品类型 1-摄像头
+        product_type: 3, // 产品类型 3-摄像头
         device_number: "", // 设备编号
         place_number: "", // 位号
         project_id: "" // 项目ID

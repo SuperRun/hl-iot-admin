@@ -44,6 +44,12 @@ const DEVICE_DETAIL = '/device/detail';
 const UPLOAD_IMAGE = '/oss/image_upload';
 const UPLOAD_VIDEO = '/oss/video_upload';
 
+// group
+const GROUP_LIST = '/group/index';
+const GROUP_EDIT = '/group/update';
+const GROUP_ADD = '/group/store';
+const GROUP_DETAIL = '/group/detail';
+
 export {
   PLACE_QUERY,
   PLACE_QUERY_DETAIl,
@@ -76,4 +82,8 @@ export {
   DEVICE_DETAIL,
   UPLOAD_IMAGE,
   UPLOAD_VIDEO,
+  GROUP_LIST,
+  GROUP_ADD,
+  GROUP_EDIT,
+  GROUP_DETAIL,
 };
