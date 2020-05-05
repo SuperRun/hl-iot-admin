@@ -69,7 +69,7 @@
           </el-table-column>
           <el-table-column prop="operation" label="操作">
             <template slot-scope="scope">
-              <span class="btn-table mg-right-1">详情</span>
+              <span class="btn-table mg-right-1" @click="detail(scope.row.id)">详情</span>
               <span class="btn-table" @click="edit(scope.row)">编辑</span>
             </template>
           </el-table-column>

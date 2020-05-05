@@ -10,6 +10,7 @@ const state = {
   withoutAnimation: false,
   deviceDetailDialogOpened: false,
   editPwdDialogOpened: false,
+  deviceDetail: {},
 };
 const mutations = {
   TOGGLE_SIDEBAR: state => {
@@ -40,6 +41,9 @@ const mutations = {
   },
   CLOSE_PWDDIALOG: state => {
     state.editPwdDialogOpened = false;
+  },
+  SET_DEVICE_DETAIL: (state, detail) => {
+    state.deviceDetail = detail;
   },
 };
 

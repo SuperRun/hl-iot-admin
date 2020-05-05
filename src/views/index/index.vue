@@ -291,7 +291,7 @@
       </div>
     </footer>
     <!-- 设备详情弹出框 -->
-    <device-detail></device-detail>
+    <!-- <device-detail></device-detail> -->
     <!-- 编辑密码 -->
     <edit-pwd></edit-pwd>
   </div>
@@ -329,21 +329,18 @@ export default {
       isFold: false,
       isLock: true,
       faultList: [],
-      projects: [
-        { value: 1, label: "项目1" },
-        { value: 2, label: "项目2" }
-      ],
       projId: "",
       detail:
         "故障信息描述内容故障信息描述内容故障信息描述内容故障信息描述内容故障信息描述内容故障信息描述内容信息描述内容"
     };
   },
-  async mounted() {
+  async created() {
     // 获取项目列表
     if (this.projList.length == 0) {
-      console.log("length", this.projList.length);
       await this.$store.dispatch("project/allProject");
     }
+    console.log("this.cur_proj", this.cur_proj);
+
     this.projId = this.cur_proj;
   },
   methods: {

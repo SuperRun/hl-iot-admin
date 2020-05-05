@@ -22,6 +22,9 @@
     <div class="tab-panel">
       <component :is="currentTab"></component>
     </div>
+
+    <!-- 设备详情弹出框 -->
+    <device-detail></device-detail>
   </div>
 </template>
 
@@ -30,6 +33,7 @@ import CameraPanel from "./components/CameraPanel";
 import ScreenPanel from "./components/ScreenPanel";
 import LightPanel from "./components/LightPanel";
 import WeatherPanel from "./components/WeatherPanel";
+import DeviceDetail from "@/components/DeviceDetail";
 
 export default {
   name: "DeviceList",
@@ -37,7 +41,8 @@ export default {
     CameraPanel,
     ScreenPanel,
     LightPanel,
-    WeatherPanel
+    WeatherPanel,
+    DeviceDetail
   },
   data() {
     return {

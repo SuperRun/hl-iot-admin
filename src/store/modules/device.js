@@ -31,7 +31,7 @@ const actions = {
   detailDevice ({commit}, params) {
     return new Promise ((resolve, reject) => {
       detailDevice (params).then (res => {
-        resolve (res);
+        resolve (res.data);
       });
     });
   },

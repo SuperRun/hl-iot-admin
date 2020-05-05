@@ -52,11 +52,11 @@ body {
   }
 }
 // width, height
+.w-50 {
+  width: 50%;
+}
 .w-100 {
   width: 100%;
-}
-.wpx-100 {
-  width: 100px;
 }
 .wpx-100 {
   width: 100px;
@@ -135,6 +135,9 @@ body {
 }
 // padding
 .pd-tb-05{
+  padding: .5rem 0;
+}
+.pd-t-05{
   padding: .5rem 0;
 }
 .pd-right-1{

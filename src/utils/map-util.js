@@ -83,4 +83,9 @@ export default class Map {
   setCenterByCity (city) {
     this.map.centerAndZoom (city, this.ZOOM);
   }
+
+  // 缩放复原
+  reset () {
+    this.map.reset ();
+  }
 }

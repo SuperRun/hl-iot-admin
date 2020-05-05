@@ -65,7 +65,16 @@ export default {
       });
       this.gateways = res.list;
       // 弹出框地图
+      const {
+        longitude,
+        latitude,
+      } = await this.$store.dispatch ('project/detailProject', {
+        id: this.cur_proj,
+      });
       this.dialogMap = new Map ('dialog-map', {}, true, true);
+      const point = this.dialogMap.createPoint (longitude, latitude);
+      this.dialogMap.setPoint (point);
+
       const self = this;
       this.dialogMap.addMapEvent ('click', function (e) {
         self.model.longitude = keep7Num (e.point.lng);
@@ -90,13 +99,21 @@ export default {
     confirm () {
       this.$refs['form'].validate (async valid => {
         if (!valid) return;
+        // 仅照明灯需要group_id
+        this.model.project_id = this.cur_proj;
+        let data = {};
+        if (this.model.product_type !== 3) {
+          Object.keys (this.model).forEach (
+            key => (key === 'group_id' ? '' : (data[key] = this.model[key]))
+          );
+        } else {
+          data = this.model;
+        }
         if (this.mode == 'add') {
-          this.model.project_id = this.cur_proj;
-          await this.addDevice (this.model);
+          await this.addDevice (data);
           showSuccessMsg ('添加成功');
         } else {
-          this.model.project_id = this.cur_proj;
-          await this.editDevice (this.model);
+          await this.editDevice (data);
           showSuccessMsg ('编辑成功');
         }
         this.showDialog = false;

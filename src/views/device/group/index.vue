@@ -84,8 +84,8 @@ export default {
       tableData: [],
       listLoading: false,
       showGroupaddDialog: false,
-      showGroupcontrolDialog: true,
-      showGroupdetailDialog: false,
+      showGroupcontrolDialog: false,
+      showGroupdetailDialog: true,
       mode: "add"
     };
   },

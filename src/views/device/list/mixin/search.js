@@ -140,5 +140,12 @@ export default {
       this.page = page;
       this.getList ();
     },
+    detail (id) {
+      this.detailDevice ({id}).then (res => {
+        console.log ('detail', res);
+        this.$store.commit ('app/SET_DEVICE_DETAIL', res);
+        this.$store.commit ('app/OPEN_DEVICEDIALOG');
+      });
+    },
   },
 };
