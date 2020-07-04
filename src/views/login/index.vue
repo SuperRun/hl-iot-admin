@@ -5,38 +5,43 @@
       <div class="login-form flex flex-column jc-center ai-center bg-white">
         <div class="title">用户登录</div>
         <form>
-          <div :class="['form-item', model.username?'active':'']">
-            <svg-icon :icon-class="icon1 ? 'user-active':'user'"></svg-icon>
+          <div :class="['form-item', model.username ? 'active' : '']">
+            <svg-icon :icon-class="icon1 ? 'user-active' : 'user'"></svg-icon>
             <input
               v-model="model.username"
               placeholder="请输入账号"
-              @focus="icon1=true"
-              @blur="model.username ? '' : icon1 = false"
+              @focus="icon1 = true"
+              @blur="model.username ? '' : (icon1 = false)"
             />
           </div>
-          <div :class="['form-item', model.password?'active':'']">
-            <svg-icon :icon-class="icon2 ? 'pwd-active':'pwd'"></svg-icon>
+          <div :class="['form-item', model.password ? 'active' : '']">
+            <svg-icon :icon-class="icon2 ? 'pwd-active' : 'pwd'"></svg-icon>
             <input
               v-model="model.password"
               type="password"
               placeholder="请输入密码"
               autocomplete="off"
-              @focus="icon2=true"
-              @blur="model.password?'':icon2=false"
+              @focus="icon2 = true"
+              @blur="model.password ? '' : (icon2 = false)"
             />
           </div>
-          <div :class="['form-item', model.captcha?'active':'']">
-            <svg-icon :icon-class="icon3 ? 'pwd-active':'pwd'"></svg-icon>
+          <div :class="['form-item', model.captcha ? 'active' : '']">
+            <svg-icon :icon-class="icon3 ? 'pwd-active' : 'pwd'"></svg-icon>
             <input
               v-model="model.captcha"
               placeholder="请输入验证码"
-              @focus="icon3=true"
-              @blur="model.captcha?'':icon3=false"
+              @focus="icon3 = true"
+              @blur="model.captcha ? '' : (icon3 = false)"
             />
             <img :src="code" alt @click="getValidCode" />
           </div>
-          <p ref="tip">{{ !loading? tip : '' }}</p>
-          <el-button :loading="loading" class="btn gradient-blue text-white fs-md" @click="login">登录</el-button>
+          <p ref="tip">{{ !loading ? tip : '' }}</p>
+          <el-button
+            :loading="loading"
+            class="btn gradient-blue text-white fs-md"
+            @click="login"
+            >登录</el-button
+          >
         </form>
       </div>
     </main>
@@ -44,9 +49,9 @@
 </template>
 
 <script>
-import { validUsername } from "@/utils/validate";
+import {validUsername} from '@/utils/validate';
 export default {
-  name: "Login",
+  name: 'Login',
   data() {
     return {
       icon1: false,
@@ -54,14 +59,14 @@ export default {
       icon3: false,
       loading: false,
       model: {
-        username: "", // 账号
-        password: "", // 密码
-        captcha: "", // 验证码
-        captcha_key: "" // 验证码key
+        username: '', // 账号
+        password: '', // 密码
+        captcha: '', // 验证码
+        captcha_key: '', // 验证码key
       },
-      tip: "", // 登录提示语
-      userTip: "ndjsnk", // 账号提示语
-      code: "" // 验证码
+      tip: '', // 登录提示语
+      userTip: 'ndjsnk', // 账号提示语
+      code: '', // 验证码
     };
   },
   mounted() {
@@ -72,7 +77,7 @@ export default {
       // 验证是否未填写信息
       for (const key in this.model) {
         if (!this.model[key]) {
-          this.tip = "请输入账号/密码/验证码";
+          this.tip = '请输入账号/密码/验证码';
           return false;
         }
       }
@@ -85,39 +90,42 @@ export default {
       this.userTip = validUsername(this.model.username);
     },
     async login() {
-      this.$refs["tip"].style.opacity = 0;
+      this.$refs['tip'].style.opacity = 0;
       this.loading = true;
       if (this.valid()) {
         try {
-          await this.$store.dispatch("user/userLogin", this.model);
+          await this.$store.dispatch('user/userLogin', this.model);
           // 获取上传图片信息
-          this.$store.dispatch("upload/getUploadImgConfig");
-          this.$router.push({ path: "/" });
+          this.$store.dispatch('upload/getUploadImgConfig');
+          this.$store.dispatch('upload/getUploadVideoConfig', {type: 1});
+          this.$router.push({path: '/'});
         } catch (error) {
           this.tip = error;
-          this.$refs["tip"].style.opacity = 1;
+          this.$refs['tip'].style.opacity = 1;
         } finally {
           this.loading = false;
         }
       } else {
         setTimeout(() => {
-          this.$refs["tip"].style.opacity = 1;
+          this.$refs['tip'].style.opacity = 1;
           this.loading = false;
         }, 1000);
       }
     },
     async getValidCode() {
-      const { img, key } = await this.$store.dispatch("user/getValidCode");
+      const {img, key} = await this.$store.dispatch('user/getValidCode');
       this.code = img;
       this.model.captcha_key = key;
-    }
-  }
+    },
+  },
 };
 </script>
 
 <style lang="scss" scoped>
 .login {
-  background-image: url(../../assets/images/login-bg.jpg);
+  background-image: url(../../assets/images/login-bg.jpeg);
+  background-size: 100% 100%;
+  overflow: hidden;
   h1 {
     letter-spacing: 0.5rem;
     font-size: 2rem;

@@ -2,21 +2,35 @@
   <div class="device-list bg-white-3 min-h-1 bx-shadow-2">
     <ul class="flex">
       <li
-        :class="['tab', currentTab=='CameraPanel'?'active':'']"
-        @click="currentTab='CameraPanel'"
-      >摄像头</li>
+        :class="['tab', currentTab == 'CameraPanel' ? 'active' : '']"
+        @click="currentTab = 'CameraPanel'"
+      >
+        摄像头
+      </li>
       <li
-        :class="['tab', currentTab=='ScreenPanel'?'active':'']"
-        @click="currentTab='ScreenPanel'"
-      >LED屏</li>
+        :class="['tab', currentTab == 'ScreenPanel' ? 'active' : '']"
+        @click="currentTab = 'ScreenPanel'"
+      >
+        LED屏
+      </li>
       <li
-        :class="['tab', currentTab=='LightPanel'?'active':'']"
-        @click="currentTab='LightPanel'"
-      >照明灯</li>
+        :class="['tab', currentTab == 'LightPanel' ? 'active' : '']"
+        @click="currentTab = 'LightPanel'"
+      >
+        照明灯
+      </li>
       <li
-        :class="['tab', currentTab=='WeatherPanel'?'active':'']"
-        @click="currentTab='WeatherPanel'"
-      >气象站</li>
+        :class="['tab', currentTab == 'WeatherPanel' ? 'active' : '']"
+        @click="currentTab = 'WeatherPanel'"
+      >
+        气象站
+      </li>
+      <li
+        :class="['tab', currentTab == 'CommunicationPanel' ? 'active' : '']"
+        @click="currentTab = 'CommunicationPanel'"
+      >
+        通信设备
+      </li>
     </ul>
 
     <div class="tab-panel">
@@ -25,30 +39,42 @@
 
     <!-- 设备详情弹出框 -->
     <device-detail></device-detail>
+    <!-- 气象站设备详情弹出框 -->
+    <weather-detail></weather-detail>
   </div>
 </template>
 
 <script>
-import CameraPanel from "./components/CameraPanel";
-import ScreenPanel from "./components/ScreenPanel";
-import LightPanel from "./components/LightPanel";
-import WeatherPanel from "./components/WeatherPanel";
-import DeviceDetail from "@/components/DeviceDetail";
+import CameraPanel from './components/CameraPanel';
+import ScreenPanel from './components/ScreenPanel';
+import LightPanel from './components/LightPanel';
+import WeatherPanel from './components/WeatherPanel';
+import CommunicationPanel from './components/CommunicationPanel';
+import DeviceDetail from '@/components/DeviceDetail';
+import WeatherDetail from '@/components/WeatherDetail';
 
 export default {
-  name: "DeviceList",
+  name: 'DeviceList',
   components: {
     CameraPanel,
     ScreenPanel,
     LightPanel,
     WeatherPanel,
-    DeviceDetail
+    CommunicationPanel,
+    DeviceDetail,
+    WeatherDetail,
   },
   data() {
     return {
-      currentTab: "CameraPanel"
+      currentTab: 'CameraPanel',
+      content: 'Content',
     };
-  }
+  },
+  methods: {
+    setContent(val) {
+      this.content = val;
+    },
+  },
 };
 </script>
 

@@ -21,7 +21,9 @@
     >
       <el-table-column label="页面" width="220">
         <template slot-scope="scope">
-          <el-checkbox :disabled="!isEdit" v-model="scope.row.state">{{scope.row.p.name}}</el-checkbox>
+          <el-checkbox :disabled="!isEdit" v-model="scope.row.state">{{
+            scope.row.p.name
+          }}</el-checkbox>
         </template>
       </el-table-column>
       <el-table-column label="权限">
@@ -31,74 +33,82 @@
             v-model="scope.row.state"
             :key="item.name"
             v-for="item in scope.row.p.children"
-          >{{item.name}}</el-checkbox>
+            >{{ item.name }}</el-checkbox
+          >
         </template>
       </el-table-column>
     </el-table>
 
     <div class="flex jc-end mg-top-1">
-      <el-button class="btn-light mg-right-1" type="button" @click="$router.back()">返回</el-button>
+      <!-- <el-button class="btn-light mg-right-1" type="button" @click="$router.back()">返回</el-button> -->
       <div v-if="isEdit">
-        <el-button class="btn-light" type="button" @click="isEdit=false">取消</el-button>
-        <el-button class="btn-dark" type="button" @click="confirm">确定</el-button>
+        <el-button class="btn-light" type="button" @click="isEdit = false"
+          >取消</el-button
+        >
+        <el-button class="btn-dark" type="button" @click="confirm"
+          >确定</el-button
+        >
       </div>
-      <el-button v-else class="btn-dark" type="button" @click="isEdit=true">编辑</el-button>
+      <el-button v-else class="btn-dark" type="button" @click="isEdit = true"
+        >编辑</el-button
+      >
     </div>
   </div>
 </template>
 
 <script>
 export default {
-  name: "EditAuth",
+  name: 'EditAuth',
   data() {
     return {
       isEdit: false,
       tableData: [
         {
           p: {
-            name: "页面1",
+            name: '页面1',
             children: [
-              { name: "页面1-权限1" },
-              { name: "页面1-权限2" },
-              { name: "页面1-权限3" }
-            ]
-          }
+              {name: '页面1-权限1'},
+              {name: '页面1-权限2'},
+              {name: '页面1-权限3'},
+            ],
+          },
         },
         {
           p: {
-            name: "页面2",
+            name: '页面2',
             children: [
-              { name: "页面2-权限1" },
-              { name: "页面2-权限2" },
-              { name: "页面2-权限3" }
-            ]
-          }
-        }
+              {name: '页面2-权限1'},
+              {name: '页面2-权限2'},
+              {name: '页面2-权限3'},
+            ],
+          },
+        },
       ],
       model: {
-        name: ""
-      }
+        name: '',
+      },
     };
   },
   computed: {
     id() {
       return this.$route.params.id;
-    }
+    },
   },
   async mounted() {
-    this.model = await this.$store.dispatch("role/detailRole", { id: this.id });
+    this.model = await this.$store.dispatch('role/detailRole', {id: this.id});
+    console.log(this.model);
   },
   methods: {
     confirm() {
-      this.$refs["form"].validate(valid => {
+      this.$refs['form'].validate((valid) => {
         if (!valid) return;
-        this.$store.dispatch("role/editRole", this.model).then(_ => {
-          showSuccessMsg("编辑成功");
-          this.$router.push({ path: "/auth/list" });
+        this.$store.dispatch('role/editRole', this.model).then((_) => {
+          showSuccessMsg('编辑成功');
+          this.$router.push({path: '/auth/list'});
         });
       });
-    }
-  }
+    },
+  },
 };
 </script>
 

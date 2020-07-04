@@ -61,8 +61,6 @@ const actions = {
     });
   },
   detailProject ({commit}, params) {
-    console.log ('params', params);
-
     return new Promise ((resolve, reject) => {
       detailProject (params).then (res => {
         resolve (res.data);

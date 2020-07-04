@@ -15,7 +15,7 @@ export default {
       listLoading: false,
       tableData: [],
       page: 1,
-      limit: 5,
+      limit: 10,
       total: 0,
       names: '', // 删除产品的名称
       ids: '', // 删除产品的id

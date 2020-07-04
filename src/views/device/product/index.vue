@@ -2,25 +2,33 @@
   <div class="product-manage bg-white-3 min-h-1 bx-shadow-2">
     <ul class="flex">
       <li
-        :class="['tab', currentTab=='CameraPanel'?'active':'']"
-        @click="currentTab='CameraPanel'"
-      >摄像头</li>
+        :class="['tab', currentTab == 'CameraPanel' ? 'active' : '']"
+        @click="currentTab = 'CameraPanel'"
+      >
+        摄像头
+      </li>
       <li
-        :class="['tab', currentTab=='ScreenPanel'?'active':'']"
-        @click="currentTab='ScreenPanel'"
-      >LED屏</li>
+        :class="['tab', currentTab == 'ScreenPanel' ? 'active' : '']"
+        @click="currentTab = 'ScreenPanel'"
+      >
+        LED屏
+      </li>
       <li
-        :class="['tab', currentTab=='LightPanel'?'active':'']"
-        @click="currentTab='LightPanel'"
-      >照明灯</li>
-      <li
+        :class="['tab', currentTab == 'LightPanel' ? 'active' : '']"
+        @click="currentTab = 'LightPanel'"
+      >
+        照明灯
+      </li>
+      <!-- <li
         :class="['tab', currentTab=='WeatherPanel'?'active':'']"
         @click="currentTab='WeatherPanel'"
-      >气象站</li>
+      >气象站</li> -->
       <li
-        :class="['tab', currentTab=='GatewayPanel'?'active':'']"
-        @click="currentTab='GatewayPanel'"
-      >物联网关</li>
+        :class="['tab', currentTab == 'GatewayPanel' ? 'active' : '']"
+        @click="currentTab = 'GatewayPanel'"
+      >
+        物联网关
+      </li>
     </ul>
 
     <div class="tab-panel">
@@ -30,26 +38,26 @@
 </template>
 
 <script>
-import CameraPanel from "./components/CameraPanel";
-import ScreenPanel from "./components/ScreenPanel";
-import LightPanel from "./components/LightPanel";
-import WeatherPanel from "./components/WeatherPanel";
-import GatewayPanel from "./components/GatewayPanel";
+import CameraPanel from './components/CameraPanel';
+import ScreenPanel from './components/ScreenPanel';
+import LightPanel from './components/LightPanel';
+import WeatherPanel from './components/WeatherPanel';
+import GatewayPanel from './components/GatewayPanel';
 
 export default {
-  name: "ProductManage",
+  name: 'ProductManage',
   components: {
     CameraPanel,
     ScreenPanel,
     LightPanel,
     WeatherPanel,
-    GatewayPanel
+    GatewayPanel,
   },
   data() {
     return {
-      currentTab: "CameraPanel"
+      currentTab: 'CameraPanel',
     };
-  }
+  },
 };
 </script>
 

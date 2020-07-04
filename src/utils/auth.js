@@ -5,6 +5,7 @@ let InfoKey = 'user';
 let ProjlistKey = 'proj_list';
 let ProjidKey = 'proj_id';
 let UploadimgKey = 'upload_img';
+let UploadvideoKey = 'upload_video';
 
 // token
 export function getToken () {
@@ -69,4 +70,15 @@ export function setUploadimgConfig (config) {
 
 export function removeUploadimgConfig () {
   return Cookies.remove (UploadimgKey);
+}
+export function getUploadvideoConfig () {
+  return Cookies.get (UploadvideoKey);
+}
+
+export function setUploadvideoConfig (config) {
+  return Cookies.set (UploadvideoKey, config);
+}
+
+export function removeUploadvideoConfig () {
+  return Cookies.remove (UploadvideoKey);
 }

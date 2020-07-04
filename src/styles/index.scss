@@ -3,26 +3,26 @@
 @import './transition.scss';
 @import './sidebar.scss';
 
-*{
+* {
   box-sizing: border-box;
   outline: none;
 }
-html{
+html {
   font-size: 14px;
   width: 100%;
   height: 100%;
 }
-ul{
+ul {
   margin: 0;
   padding: 0;
 }
-li{
+li {
   list-style: none;
 }
-a{
+a {
   text-decoration: none;
 }
-button{
+button {
   border: none;
 }
 body {
@@ -36,18 +36,18 @@ body {
   height: 100%;
 }
 // 阴影
-.bx-shadow-1{
-  box-shadow:0px 3px 8px 0px rgba(0, 0, 0, 0.23);
+.bx-shadow-1 {
+  box-shadow: 0px 3px 8px 0px rgba(0, 0, 0, 0.23);
 }
-.bx-shadow-2{
-  box-shadow:0 0 5px 0 rgba(141, 141, 141, 0.17)
+.bx-shadow-2 {
+  box-shadow: 0 0 5px 0 rgba(141, 141, 141, 0.17);
 }
 // 字体颜色和背景颜色
 @each $key, $value in $colors {
-  .bg-#{$key}{
+  .bg-#{$key} {
     background-color: $value;
   }
-  .text-#{$key}{
+  .text-#{$key} {
     color: $value;
   }
 }
@@ -67,163 +67,202 @@ body {
 .wpx-200 {
   width: 200px;
 }
+.wpx-300 {
+  width: 300px;
+}
 .h-100 {
   height: 100%;
 }
-.min-h-1{
+.min-h-1 {
   min-height: 80%;
 }
 // 字体大小
-@each $key,$value in $font-sizes {
-  .fs-#{$key}{
+@each $key, $value in $font-sizes {
+  .fs-#{$key} {
     font-size: $value * $base-font-size;
   }
 }
 // 弹性布局相关
-.flex{
+.flex {
   display: flex;
 }
-.flex-column{
- flex-direction: column;
+.flex-column {
+  flex-direction: column;
 }
-.flex-wrap{
+.flex-wrap {
   flex-wrap: wrap;
 }
 @each $key, $value in $flex-jc {
-  .jc-#{$key}{
+  .jc-#{$key} {
     justify-content: $value;
   }
 }
 @each $key, $value in $flex-ai {
-  .ai-#{$key}{
+  .ai-#{$key} {
     align-items: $value;
   }
 }
-.flex-1{
+.flex-1 {
   flex: 1;
 }
-.flex-2{
+.flex-2 {
   flex: 2;
 }
-.flex-3{
+.flex-3 {
   flex: 3;
 }
-.flex-4{
+.flex-4 {
   flex: 4;
 }
-.flex-5{
+.flex-5 {
   flex: 5;
 }
 // margin
-.mg-left-1{
+.mg-left-1 {
   margin-left: 1rem;
 }
-.mg-top-1{
+.mg-top-1 {
   margin-top: 1rem;
 }
-.mg-top-2{
+.mg-top-2 {
   margin-top: 2rem;
 }
-.mg-top-3{
+.mg-top-3 {
   margin-top: 3rem;
 }
-.mg-right-1{
+.mg-right-1 {
   margin-right: 1rem;
 }
-.mg-right-5{
+.mg-right-5 {
   margin-right: 5rem;
 }
+.mg-bottom-1 {
+  margin-bottom: 1rem;
+}
 // padding
-.pd-tb-05{
-  padding: .5rem 0;
+.pd-tb-05 {
+  padding: 0.5rem 0;
 }
-.pd-t-05{
-  padding: .5rem 0;
+.pd-t-05 {
+  padding: 0.5rem 0;
 }
-.pd-right-1{
+.pd-right-1 {
   padding-right: 1rem;
+}
+.pd-lr-1 {
+  padding: 0 1rem;
 }
 // 渐变背景
 // - 登录按钮背景
-.gradient-blue{
-  background: linear-gradient(90deg, #548BFF,#1A56FD);
+.gradient-blue {
+  background: linear-gradient(90deg, #548bff, #1a56fd);
 }
-.gradient-blue-1{
-  background: linear-gradient(90deg,rgba(142,178,255,1),rgba(93,136,255,1));
+.gradient-blue-1 {
+  background: linear-gradient(
+    90deg,
+    rgba(142, 178, 255, 1),
+    rgba(93, 136, 255, 1)
+  );
 }
 // - 管理页面导航栏背景
-.gradient-blue-2{
-  background:linear-gradient(-90deg,rgba(87,119,255,1),rgba(36,60,207,1));
+.gradient-blue-2 {
+  background: linear-gradient(
+    -90deg,
+    rgba(87, 119, 255, 1),
+    rgba(36, 60, 207, 1)
+  );
 }
 // - 首页下拉框背景颜色
-.gradient-blue-3{
-  background:linear-gradient(90deg,rgba(9,56,170,1),rgba(32,62,171,1));
+.gradient-blue-3 {
+  background: linear-gradient(90deg, rgba(9, 56, 170, 1), rgba(32, 62, 171, 1));
 }
 
+// - 管理中心按钮
+.gradient-blue-4 {
+  background: linear-gradient(
+    90deg,
+    rgba(0, 102, 255, 0.77),
+    rgba(0, 207, 255, 0.77)
+  );
+}
 
 // 按钮样式
-.btn-light, .btn-light:hover,.btn-light:active, .btn-light:focus{
-  background:rgba(214,218,239,1);
-  border:1px solid rgba(147,161,239,1); 
-  color:rgba(38,63,209,1);
+.btn-light,
+.btn-light:hover,
+.btn-light:active,
+.btn-light:focus {
+  background: rgba(214, 218, 239, 1);
+  border: 1px solid rgba(147, 161, 239, 1);
+  color: rgba(38, 63, 209, 1);
 }
 
-.btn-dark, .btn-dark:hover, .btn-dark:active, .btn-dark:focus{
-  border:1px solid rgba(83,114,251,1); 
-  background:rgba(83,114,251,1);
+.btn-dark,
+.btn-dark:hover,
+.btn-dark:active,
+.btn-dark:focus {
+  border: 1px solid rgba(83, 114, 251, 1);
+  background: rgba(83, 114, 251, 1);
   color: #fff;
 }
-.btn-add,.btn-add:hover,.btn-add:active, .btn-add:focus{
-  background:rgba(231,239,254,1);
-  border:1px solid rgba(211,211,211,1);
-  border-radius:4px;
-  color: #4360EC;
+.btn-add,
+.btn-add:hover,
+.btn-add:active,
+.btn-add:focus {
+  background: rgba(231, 239, 254, 1);
+  border: 1px solid rgba(211, 211, 211, 1);
+  border-radius: 4px;
+  color: #4360ec;
 }
-.btn-del,.btn-del:hover,.btn-del:active, .btn-del:focus{
-  background:rgba(237,223,225,1);
-  border:1px solid rgba(211,211,211,1);
-  border-radius:4px;
-  color: #BE4242;
+.btn-del,
+.btn-del:hover,
+.btn-del:active,
+.btn-del:focus {
+  background: rgba(237, 223, 225, 1);
+  border: 1px solid rgba(211, 211, 211, 1);
+  border-radius: 4px;
+  color: #be4242;
 }
-.btn-upload,.btn-upload:hover,.btn-upload:active, .btn-upload:focus{
-  background-color: #5372FB;
+.btn-upload,
+.btn-upload:hover,
+.btn-upload:active,
+.btn-upload:focus {
+  background-color: #5372fb;
   color: #ffffff;
-  border-color: #5372FB;
+  border-color: #5372fb;
 }
-.btn-refresh{
-  background-color: #D3D3D3;
-  color: #4D4D4D;
-  border-radius:4px;
+.btn-refresh {
+  background-color: #d3d3d3;
+  color: #4d4d4d;
+  border-radius: 4px;
 }
-.reset{
-  width: 80px;
-  border-radius:4px;
+.reset {
+  width: 140px;
+  border-radius: 4px;
 }
 // - 表格中的操作按钮
-.btn-table{
+.btn-table {
   cursor: pointer;
   color: #666666;
 }
-.btn-table:hover{
-  color: #4360EC;
+.btn-table:hover {
+  color: #4360ec;
   text-decoration: underline;
 }
 
 // 圆角
-.br-4{
-  border-radius:4px;
+.br-4 {
+  border-radius: 4px;
 }
 
-
 // 手型
-.cursor-pointer{
+.cursor-pointer {
   cursor: pointer;
 }
 
 // 表格搜索
-.search{
-  .el-input-group__append button.el-button{
-    background-color: #4360EC;
+.search {
+  .el-input-group__append button.el-button {
+    background-color: #4360ec;
     color: #fff;
     border-top-left-radius: 0;
     border-bottom-left-radius: 0;
@@ -232,19 +271,23 @@ body {
 
 // 表格样式
 // - 表头
-.table-header{
-  background-color: #EEEEEE !important;
-  color: #4D4D4D;
+.table-header {
+  background-color: #eeeeee !important;
+  color: #4d4d4d;
 }
 // - 分页
-.el-pagination{
+.el-pagination {
   text-align: right;
 }
 
 // 弹出框
 // - 标题
 .el-dialog__header {
-  background: linear-gradient(-90deg,rgba(87,119,255,1),rgba(36,60,207,1));
+  background: linear-gradient(
+    -90deg,
+    rgba(87, 119, 255, 1),
+    rgba(36, 60, 207, 1)
+  );
   padding: 1rem;
 }
 .el-dialog__title {
@@ -255,24 +298,23 @@ body {
   color: #fff;
 }
 
-
 // 地图
 // - 标记的图标
-.BMap_Marker img{
+.BMap_Marker img {
   width: 100%;
   height: 100%;
 }
 // - 百度logo
-.anchorBL{
+.anchorBL {
   display: none;
 }
 
 // 滑块条
 .el-slider__bar {
-  background-color: #5372FB;
+  background-color: #5372fb;
 }
-.el-slider__button{
-  border-color: #5372FB;
+.el-slider__button {
+  border-color: #5372fb;
 }
 
 // 上传图片
@@ -284,7 +326,7 @@ body {
   overflow: hidden;
 }
 .avatar-uploader .el-upload:hover {
-  border-color: #409EFF;
+  border-color: #409eff;
 }
 .avatar-uploader-icon {
   font-size: 28px;
@@ -299,4 +341,3 @@ body {
   height: 178px;
   display: block;
 }
-

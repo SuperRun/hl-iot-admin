@@ -4,14 +4,14 @@ const actions = {
     return new Promise (resolve => {
       queryPlace (param).then (res => {
         console.log ('res', res);
-        resolve (res.result);
+        resolve (res.data);
       });
     });
   },
   queryPlaceDetail ({commit}, param) {
     return new Promise (resolve => {
       queryPlaceDetail (param).then (res => {
-        resolve (res.result);
+        resolve (res.data);
       });
     });
   },

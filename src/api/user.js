@@ -7,7 +7,7 @@ import {
   USER_LIST,
   USER_ADD,
   USER_EDIT,
-  USER_DEL,
+  USER_DISABLE,
 } from '@/constant/url';
 
 /**
@@ -100,13 +100,13 @@ export function editUser (data) {
 }
 
 /**
- * @description: 删除用户
+ * @description: 禁用用户
  * @param {object} data
  * @return: 
  */
-export function delUser (data) {
+export function disableUser (data) {
   return request ({
-    url: USER_DEL,
+    url: USER_DISABLE,
     method: 'post',
     data,
   });

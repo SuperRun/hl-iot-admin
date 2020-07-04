@@ -1,46 +1,49 @@
 <template>
   <div class="device-map">
-    <div id="device-map"></div>
+    <div id="device-detail-map"></div>
     <svg-icon :icon-class="'reset'" class="btn-reset" @click="reset"></svg-icon>
   </div>
 </template>
 
 <script>
-import Map from "@/utils/map-util";
-import { mapGetters } from "vuex";
+import BaiduMap from '@/utils/map-util';
+import {mapGetters} from 'vuex';
 
 export default {
-  name: "DeviceMap",
+  name: 'DeviceMap',
   data() {
     return {
-      deviceMap: {}
+      deviceMap: {},
     };
   },
   computed: {
-    ...mapGetters(["deviceDetail"])
+    ...mapGetters(['deviceDetail']),
   },
   mounted() {
-    console.log("map mounted");
-
-    this.deviceMap = new Map("device-map", {}, true, true);
-    // 编辑：添加标记点
+    console.log('map mounted');
+    this.deviceMap = new BaiduMap(
+      'device-detail-map',
+      {lng: this.deviceDetail.longitude, lat: this.deviceDetail.latitude},
+      true,
+      true,
+    );
     const point = this.deviceMap.createPoint(
       this.deviceDetail.longitude,
-      this.deviceDetail.latitude
+      this.deviceDetail.latitude,
     );
     this.deviceMap.setPoint(point);
     this.deviceMap.addMark(
       this.deviceDetail.longitude,
       this.deviceDetail.latitude,
       {},
-      true
+      true,
     );
   },
   methods: {
     reset() {
       this.deviceMap.reset();
-    }
-  }
+    },
+  },
 };
 </script>
 <style>
@@ -54,7 +57,7 @@ export default {
   font-size: 30px;
   cursor: pointer;
 }
-#device-map {
+#device-detail-map {
   width: 100%;
   height: 350px;
 }

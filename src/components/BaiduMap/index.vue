@@ -2,97 +2,441 @@
   <div id="container"></div>
 </template>
 <script>
-import { mapGetters } from "vuex";
-import { styleJson } from "@/utils/map_config.js";
-import BMap from "BMap";
-import mark from "@/utils/map-marker.js";
+import {mapGetters, createNamespacedHelpers} from 'vuex';
+// import {styleJson} from '@/utils/map_config.js';
+import BMap from 'BMap';
+import MapMark from '@/utils/map-marker';
+import _ from 'lodash';
+import {keep7Num} from '@/utils/util';
+import {showSuccessMsg} from '@/utils/message';
+const {mapActions} = createNamespacedHelpers('device');
+import {getLedWeatherData} from '@/api/device';
 
+// - 类型 1-摄像头,2-led屏,3-照明灯,4-气象站
+// - 状态 1-待检测 2-正常,3-故障,4-离线
+const typeMap = new Map([
+  [1, 'camera'],
+  [2, 'screen'],
+  [3, 'light'],
+  [4, 'weather'],
+]);
+const statusMap = new Map([
+  [1, 'Selected'],
+  [2, 'Normal'],
+  [3, 'Fault'],
+  [4, 'Offline'],
+]);
 export default {
-  name: "BaiduMap",
+  name: 'BaiduMap',
+  props: {
+    defaultSelects: {
+      type: Array,
+      default: () => [],
+    },
+    isLock: {
+      type: Boolean,
+      default: true,
+    },
+    types: {
+      type: Array,
+      default: () => [],
+    },
+    selectedDevice: {
+      type: String,
+      default: '',
+    },
+  },
   data() {
     return {
       curProject: {},
       map: {},
       deviceList: [],
-      deviceMapList: []
+      deviceMapList: [],
+      selectedIndex: 0,
+      selects: [],
+      markers: [],
+      indexArr: [0, 0, 0, 0],
     };
   },
   mounted() {
-    console.log("map mounted", this.cur_proj);
     this.configMap();
   },
   computed: {
-    ...mapGetters(["cur_proj"])
+    ...mapGetters(['cur_proj']),
   },
   watch: {
     cur_proj() {
       this.configMap();
-    }
+    },
+    isLock(newVal) {
+      if (newVal) {
+        this.markers.forEach((item, index) => item.marker.disableDragging());
+      } else {
+        this.markers.forEach((item, index) => item.marker.enableDragging());
+
+        // this.markers.forEach((marker, index) =>
+        //   this.deviceMapList[index].product_type != 4
+        //     ? marker.enableDragging()
+        //     : '',
+        // );
+      }
+    },
+    types: {
+      handler: function(val, oldVal) {
+        this.configMap();
+      },
+      deep: true,
+    },
+    selectedDevice(val, oldVal) {
+      const self = this;
+      if (val != '') {
+        const index = self.markers.findIndex(
+          (item) => item.device_number == val,
+        );
+        console.log('select marker', self.markers[index]);
+        const curType = self.markers[index].product_type;
+        let indexVal;
+        let iconSize = null;
+        let isWeather = self.markers[index].is_weather;
+        if (curType == 2 && isWeather == 1) {
+          indexVal = self.indexArr[3];
+        } else {
+          indexVal = self.indexArr[curType - 1];
+        }
+        console.log('marker', self.markers[index]);
+        console.log('indexArr', self.indexArr);
+        console.log('indexVal', indexVal);
+        console.log('curType', curType);
+
+        switch (curType) {
+          case 1:
+            iconSize = new BMap.Size(30, 30);
+            break;
+          case 2:
+            if (isWeather == 1) {
+              iconSize = new BMap.Size(26, 41);
+            } else if (isWeather == 2) {
+              iconSize = new BMap.Size(29, 49);
+            }
+            break;
+          case 3:
+            iconSize = new BMap.Size(40, 80);
+            break;
+          default:
+            break;
+        }
+
+        self.indexArr[curType - 1] = index;
+        let temp1 = self.deviceMapList[indexVal].product_type;
+        let temp2 = self.deviceMapList[index].product_type;
+        if (temp1 == 2 && self.deviceMapList[indexVal].is_weather == 1) {
+          temp1 = 4;
+        }
+        if (temp2 == 2 && self.deviceMapList[index].is_weather == 1) {
+          temp2 = 4;
+        }
+        console.log('temp1', temp1);
+        console.log('temp2', temp2);
+        if (indexVal != 0) {
+          if ((temp1 == 4 && temp2 != 4) || (temp1 != 4 && temp2 == 4)) {
+            self.markers[index].marker.setIcon(
+              new BMap.Icon(MapMark[`${typeMap.get(temp2)}Selected`], iconSize),
+            );
+          } else {
+            self.markers[indexVal].marker.setIcon(
+              new BMap.Icon(
+                MapMark[
+                  `${typeMap.get(temp1)}${statusMap.get(
+                    self.deviceMapList[indexVal].status,
+                  )}`
+                ],
+                iconSize,
+              ),
+            );
+
+            self.markers[index].marker.setIcon(
+              new BMap.Icon(MapMark[`${typeMap.get(temp2)}Selected`], iconSize),
+            );
+          }
+        }
+
+        self.detailDevice({id: self.deviceMapList[index].id}).then((res) => {
+          self.$emit('setDefaultDetail', {
+            varName: `${typeMap.get(temp2)}Detail`,
+            data: res,
+          });
+          if (temp2 == 4) {
+            self.$store.commit('app/SET_DEVICE_DETAIL', res);
+            self.$store.commit('app/OPEN_WEATHERDIALOG');
+          } else {
+            self.$store.commit('app/SET_DEVICE_DETAIL', res);
+            self.$store.commit('app/OPEN_DEVICEDIALOG');
+          }
+        });
+      }
+    },
   },
   methods: {
+    ...mapActions(['detailDevice', 'editDeviceLocation']),
     async configMap() {
       // 获取项目详情
-      console.log("cur_proj", this.cur_proj);
-      const { longitude, latitude } = await this.$store.dispatch(
-        "project/detailProject",
+      if (!this.cur_proj) {
+        return;
+      }
+      const {longitude, latitude} = await this.$store.dispatch(
+        'project/detailProject',
         {
-          id: this.cur_proj
-        }
+          id: this.cur_proj,
+        },
       );
       // 获取设备列表
-      const { list } = await this.$store.dispatch("device/listDevice", {
-        project_id: this.cur_proj
-      });
-      this.deviceList = list;
+      let params = {
+        project_id: this.cur_proj,
+        product_type_list: this.types.join(','),
+      };
+
+      const {list} = await this.$store.dispatch('device/listDevice', params);
+      console.log('this.types', this.types);
+
+      if (!this.types.includes(4)) {
+        this.deviceList = list.filter(
+          (item) => !(item.product_type == 2 && item.is_weather == 1),
+        );
+        console.log('this.deviceList', this.deviceList);
+      } else {
+        this.deviceList = list;
+      }
       this.converDeviceList();
       this.initMap(longitude, latitude);
     },
     initMap(longitude, latitude) {
       if (Object.keys(this.map).length == 0) {
-        this.map = new BMap.Map("container"); // 创建地图实例
+        this.map = new BMap.Map('container', {enableMapClick: false}); // 创建地图实例
         this.map.enableScrollWheelZoom(true); //开启鼠标滚轮缩放
       }
+      this.map.clearOverlays();
       var point = new BMap.Point(longitude, latitude); // 创建点坐标
       this.map.centerAndZoom(point, 15); // 初始化地图，设置中心点坐标和地图级别
-      this.map.setMapStyleV2({ styleJson: styleJson });
-
-      this.deviceMapList.forEach(device => {
-        let point = new BMap.Point(device.longitude, device.latitude);
-        let myIcon = new BMap.Icon(device.icon, new BMap.Size(30, 30));
-        let marker = new BMap.Marker(point, { icon: myIcon });
-        this.map.addOverlay(marker);
-      });
+      this.addMarkers();
     },
     converDeviceList() {
-      // - 类型 1-摄像头,2-led屏,3-照明灯,4-气象站
-      // - 状态 1-待检测 2-正常,3-故障,4-离线
-      const typeMap = new Map([
-        [1, "camera"],
-        [2, "screen"],
-        [3, "light"],
-        [4, "weather"]
-      ]);
-      const statusMap = new Map([
-        [1, "Selected"],
-        [2, "Normal"],
-        [3, "Fault"],
-        [4, "Offline"]
-      ]);
+      const self = this;
       this.deviceMapList = this.deviceList.reduce((pre, cur) => {
         if (cur.status != 1) {
+          let icon = '';
+          if (cur.status == 1) {
+            return pre;
+          }
+          if (cur.product_type == 3) {
+            if (self.defaultSelects.includes(cur.id)) {
+              icon = 'lightSelected';
+            } else {
+              icon = cur.is_open == 1 ? 'lightNormal' : 'lightClosed';
+            }
+          } else if (cur.product_type == 2 && cur.is_weather == 1) {
+            icon = `${typeMap.get(4)}Selected`;
+          } else if (self.defaultSelects.includes(cur.id)) {
+            icon = `${typeMap.get(cur.product_type)}Selected`;
+          } else {
+            if (cur.product_type == 2 && cur.is_weather == 1) {
+              icon = `${typeMap.get(4)}${statusMap.get(cur.status)}`;
+            } else {
+              icon = `${typeMap.get(cur.product_type)}${statusMap.get(
+                cur.status,
+              )}`;
+            }
+          }
           pre.push({
             ...cur,
-            icon:
-              mark[
-                `${typeMap.get(cur.project_type)}${statusMap.get(cur.status)}`
-              ]
+            icon: MapMark[icon],
           });
         }
         return pre;
       }, []);
-      console.log("deviceMapList", this.deviceMapList);
-    }
-  }
+      // 获取默认设备的索引号
+      this.deviceMapList.forEach((device, index) => {
+        const findIndex = this.defaultSelects.findIndex(
+          (item) => item == device.id,
+        );
+        if (findIndex != -1) {
+          this.indexArr[findIndex] = index;
+        }
+      });
+      console.log('this.deviceMapList', this.deviceMapList.length);
+    },
+    addMarkers() {
+      const self = this;
+      this.markers = [];
+      this.deviceMapList.forEach((device, index) => {
+        let point = new BMap.Point(device.longitude, device.latitude);
+        let iconSize = null;
+        let isWeather = 1;
+        if (device.product_type == 2) {
+          isWeather = device.is_weather;
+        }
+        switch (device.product_type) {
+          case 1:
+            iconSize = new BMap.Size(30, 30);
+            break;
+          case 2:
+            if (isWeather == 1) {
+              iconSize = new BMap.Size(26, 41);
+            } else if (isWeather == 2) {
+              iconSize = new BMap.Size(29, 49);
+            }
+            break;
+          case 3:
+            iconSize = new BMap.Size(40, 80);
+            break;
+          default:
+            break;
+        }
+        let myIcon = new BMap.Icon(device.icon, iconSize);
+        let marker = new BMap.Marker(point, {icon: myIcon});
+
+        const deviceData = {
+          content: `<div>设备编号：${
+            device.device_number != null ? device.device_number : '无'
+          }</div>
+                      <div>设备位号：${
+                        device.place_number != null ? device.place_number : '无'
+                      }</div>
+                      <div>产品名称：${this.deviceType(
+                        device.product_type,
+                      )}</div>
+                      <div>产品型号：${
+                        device.product && device.product.model != null
+                          ? device.product.model
+                          : '无'
+                      }</div>`,
+          opts: {
+            width: 250, // 信息窗口宽度
+            height: 100, // 信息窗口高度
+            title: '基本信息', // 信息窗口标题
+            enableMessage: true, //设置允许信息窗发送短息
+          },
+        };
+
+        const addInfoWinFunc = function(_point) {
+          return _.debounce(function() {
+            self.map.openInfoWindow(
+              new BMap.InfoWindow(deviceData.content, deviceData.opts),
+              _point,
+            );
+          }, 500);
+        };
+
+        const clickFunc = function(e) {
+          const curType = self.markers[index].product_type;
+          const indexVal = self.indexArr[curType - 1];
+          let temp1 = self.deviceMapList[indexVal].product_type;
+          let temp2 = self.deviceMapList[index].product_type;
+          if (temp1 == 2 && self.deviceMapList[indexVal].is_weather == 1) {
+            temp1 = 4;
+          }
+          if (temp2 == 2 && self.deviceMapList[index].is_weather == 1) {
+            temp2 = 4;
+          }
+
+          self.indexArr[curType - 1] = index;
+          if ((temp1 == 4 && temp2 != 4) || (temp1 != 4 && temp2 == 4)) {
+            self.markers[index].marker.setIcon(
+              new BMap.Icon(MapMark[`${typeMap.get(temp2)}Selected`], iconSize),
+            );
+          } else {
+            self.markers[indexVal].marker.setIcon(
+              new BMap.Icon(
+                MapMark[
+                  `${typeMap.get(temp1)}${statusMap.get(
+                    self.deviceMapList[indexVal].status,
+                  )}`
+                ],
+                iconSize,
+              ),
+            );
+
+            self.markers[index].marker.setIcon(
+              new BMap.Icon(MapMark[`${typeMap.get(temp2)}Selected`], iconSize),
+            );
+          }
+
+          self.detailDevice({id: device.id}).then((res1) => {
+            console.log('setDefaultDetail res', res1);
+            if (temp2 == 4) {
+              getLedWeatherData({device_id: device.id}).then((res2) => {
+                if (res2.data && res2.data.list && res2.data.list.length > 0) {
+                  self.$emit('setDefaultDetail', {
+                    varName: `${typeMap.get(temp2)}Detail`,
+                    data: {...res1, weatherInfo: res.data.list[0]},
+                  });
+                } else {
+                  self.$emit('setDefaultDetail', {
+                    varName: `${typeMap.get(temp2)}Detail`,
+                    data: {...res, weatherInfo: null},
+                  });
+                }
+                self.$store.commit('app/SET_DEVICE_DETAIL', res);
+                self.$store.commit('app/OPEN_WEATHERDIALOG');
+              });
+            } else {
+              self.$emit('setDefaultDetail', {
+                varName: `${typeMap.get(temp2)}Detail`,
+                data: res,
+              });
+              self.$store.commit('app/SET_DEVICE_DETAIL', res);
+              self.$store.commit('app/OPEN_DEVICEDIALOG');
+            }
+          });
+        };
+
+        const dragendFunc = function(point) {
+          return new Promise((resolve, reject) => {
+            self
+              .editDeviceLocation({
+                id: device.id,
+                longitude: keep7Num(point.lng),
+                latitude: keep7Num(point.lat),
+              })
+              .then(
+                (res) => {
+                  showSuccessMsg('成功更改定位!');
+                  resolve();
+                },
+                (err) => {
+                  reject(err.msg);
+                },
+              );
+          });
+        };
+
+        marker.addEventListener('mouseover', addInfoWinFunc(point));
+        marker.addEventListener('click', clickFunc);
+        marker.addEventListener('dragstart', function() {
+          this.map.closeInfoWindow();
+        });
+        marker.addEventListener(
+          'dragend',
+          _.debounce(function({type, target, pixel, point}) {
+            dragendFunc(point).then((_) => {
+              marker.removeEventListener('mouseover', addInfoWinFunc(_point));
+              marker.addEventListener('mouseover', addInfoWinFunc(point));
+            });
+          }, 500),
+        );
+        this.markers.push({marker, ...device});
+        this.map.addOverlay(marker);
+      });
+    },
+    deviceType(type) {
+      const map = new Map([
+        [1, '摄像头'],
+        [2, 'LED屏'],
+        [3, '照明灯'],
+        [4, '气象站'],
+      ]);
+      return map.get(type);
+    },
+  },
 };
 </script>
 <style>

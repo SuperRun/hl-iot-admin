@@ -1,5 +1,6 @@
 import {
   editDevice,
+  editDeviceLocation,
   addDevice,
   listDevice,
   detailDevice,
@@ -7,38 +8,45 @@ import {
 } from '@/api/device';
 const state = {};
 const actions = {
-  editDevice ({commit}, data) {
-    return new Promise ((resolve, reject) => {
-      editDevice (data).then (res => {
-        resolve (res);
+  editDevice({commit}, data) {
+    return new Promise((resolve, reject) => {
+      editDevice(data).then((res) => {
+        resolve(res);
       });
     });
   },
-  addDevice ({commit}, data) {
-    return new Promise ((resolve, reject) => {
-      addDevice (data).then (res => {
-        resolve (res);
+  editDeviceLocation({commit}, data) {
+    return new Promise((resolve, reject) => {
+      editDeviceLocation(data).then((res) => {
+        resolve(res);
       });
     });
   },
-  listDevice ({commit}, params) {
-    return new Promise ((resolve, reject) => {
-      listDevice (params).then (res => {
-        resolve (res.data);
+  addDevice({commit}, data) {
+    return new Promise((resolve, reject) => {
+      addDevice(data).then((res) => {
+        resolve(res);
       });
     });
   },
-  detailDevice ({commit}, params) {
-    return new Promise ((resolve, reject) => {
-      detailDevice (params).then (res => {
-        resolve (res.data);
+  listDevice({commit}, params) {
+    return new Promise((resolve, reject) => {
+      listDevice(params).then((res) => {
+        resolve(res.data);
       });
     });
   },
-  delDevice ({commit}, data) {
-    return new Promise ((resolve, reject) => {
-      delDevice (data).then (res => {
-        resolve (res);
+  detailDevice({commit}, params) {
+    return new Promise((resolve, reject) => {
+      detailDevice(params).then((res) => {
+        resolve(res.data);
+      });
+    });
+  },
+  delDevice({commit}, data) {
+    return new Promise((resolve, reject) => {
+      delDevice(data).then((res) => {
+        resolve(res);
       });
     });
   },

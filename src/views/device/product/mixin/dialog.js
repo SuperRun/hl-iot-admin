@@ -22,7 +22,9 @@ export default {
       this.productId = id;
       this.model = Object.assign (this.model, {title, model, image});
       // 添加图片
-      this.imgList.push ({url: this.model.image});
+      if (this.model.image) {
+        this.imgList.push ({url: this.model.image});
+      }
     },
     confirm () {
       console.log (this.model);

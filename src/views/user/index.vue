@@ -3,13 +3,29 @@
     <!-- 搜索栏 -->
     <div class="operate flex">
       <button type="button" class="btn btn-add" @click="add">添加</button>
-      <button type="button" class="btn btn-del" @click="del">删除</button>
+      <button type="button" class="btn btn-del" @click="del">禁用</button>
       <div class="search flex">
-        <el-input placeholder="搜索名称" v-model="params.name" class="mg-right-1" @input="search"></el-input>
-        <el-input placeholder="搜索账号" v-model="params.username" @input="search" class="mg-right-1"></el-input>
-        <el-input placeholder="搜索手机号" v-model="params.mobile" @input="search"></el-input>
+        <el-input
+          placeholder="搜索名称"
+          v-model="params.name"
+          class="mg-right-1"
+          @input="search"
+        ></el-input>
+        <el-input
+          placeholder="搜索账号"
+          v-model="params.username"
+          @input="search"
+          class="mg-right-1"
+        ></el-input>
+        <el-input
+          placeholder="搜索手机号"
+          v-model="params.mobile"
+          @input="search"
+        ></el-input>
       </div>
-      <button type="button" class="btn btn-light mg-left-1 br-4" @click="reset">重置</button>
+      <button type="button" class="btn btn-light mg-left-1 br-4" @click="reset">
+        重置
+      </button>
     </div>
     <!-- 表格 -->
     <div class="table">
@@ -20,14 +36,28 @@
         header-cell-class-name="table-header"
         v-loading="listLoading"
         @selection-change="handleSelectionChange"
+        element-loading-spinner="el-icon-loading"
       >
         <el-table-column type="selection" width="55"></el-table-column>
         <el-table-column prop="name" label="名称" width="220"></el-table-column>
-        <el-table-column prop="username" label="账号" width="220"></el-table-column>
-        <el-table-column prop="mobile" label="手机" width="220"></el-table-column>
+        <el-table-column
+          prop="username"
+          label="账号"
+          width="220"
+        ></el-table-column>
+        <el-table-column
+          prop="mobile"
+          label="手机"
+          width="220"
+        ></el-table-column>
+        <el-table-column label="状态" width="220">
+          <template slot-scope="scope">
+            {{ scope.row.status == 1 ? '正常' : '禁用' }}
+          </template>
+        </el-table-column>
         <el-table-column label="项目" width="220">
           <template slot-scope="scope">
-            <span>{{ scope.row.project_user | projFilter}}</span>
+            <span>{{ scope.row.project_user | projFilter }}</span>
           </template>
         </el-table-column>
         <el-table-column prop="operation" label="操作">
@@ -49,7 +79,13 @@
       </div>
     </div>
     <!-- 弹出框 -->
-    <el-dialog :title="title" :visible.sync="showDialog" center width="600px" @closed="closed">
+    <el-dialog
+      :title="title"
+      :visible.sync="showDialog"
+      center
+      width="600px"
+      @closed="closed"
+    >
       <el-form
         :model="model"
         :label-width="formLabelWidth"
@@ -69,14 +105,14 @@
         <el-form-item label="密码" prop="show_pwd">
           <el-input
             v-model="model.show_pwd"
-            :type="showPwd?'text':'password'"
+            :type="showPwd ? 'text' : 'password'"
             autocomplete="off"
             maxlength="20"
           >
             <svg-icon
               slot="suffix"
-              :icon-class="showPwd?'eye-open':'eye-off'"
-              @click="showPwd=!showPwd"
+              :icon-class="showPwd ? 'eye-open' : 'eye-off'"
+              @click="showPwd = !showPwd"
             ></svg-icon>
           </el-input>
         </el-form-item>
@@ -90,7 +126,12 @@
           ></el-input>
         </el-form-item>
         <el-form-item label="手机" prop="mobile">
-          <el-input v-model="model.mobile" autocomplete="off" maxlength="11" show-word-limit></el-input>
+          <el-input
+            v-model="model.mobile"
+            autocomplete="off"
+            maxlength="11"
+            show-word-limit
+          ></el-input>
         </el-form-item>
         <el-form-item label="性别" prop="sex">
           <el-select v-model="model.sex" class="w-100">
@@ -100,39 +141,61 @@
         </el-form-item>
         <el-form-item label="角色" prop="role_id">
           <el-select v-model="model.role_id" class="w-100">
-            <el-option :label="item.name" :value="item.id" :key="item.id" v-for="item in roleList"></el-option>
+            <el-option
+              :label="item.name"
+              :value="item.id"
+              :key="item.id"
+              v-for="item in roleList"
+            ></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="项目配置">
           <el-select v-model="projIds" multiple class="w-100">
-            <el-option :label="item.title" :value="item.id" :key="item.id" v-for="item in projList"></el-option>
+            <el-option
+              :label="item.title"
+              :value="item.id"
+              :key="item.id"
+              v-for="item in projList"
+            ></el-option>
           </el-select>
+        </el-form-item>
+        <el-form-item label="状态" v-if="mode == 'edit'" prop="status">
+          <el-switch
+            class="mg-right-1"
+            v-model="isEnable"
+            active-color="#5372FB"
+            inactive-color="#D6DAEF"
+          ></el-switch>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button class="dialog-btn btn-light" @click="showDialog = false">取 消</el-button>
-        <el-button class="dialog-btn btn-dark" type="primary" @click="confirm">确 定</el-button>
+        <el-button class="dialog-btn btn-light" @click="showDialog = false"
+          >取 消</el-button
+        >
+        <el-button class="dialog-btn btn-dark" type="primary" @click="confirm"
+          >确 定</el-button
+        >
       </div>
     </el-dialog>
   </div>
 </template>
 
 <script>
-import { validPhoneNumber } from "@/utils/validate";
-import _ from "lodash";
-import { showSuccessMsg, showInfoMsg } from "@/utils/message";
-import { getValByKey } from "@/utils/util";
-import { getProjlist } from "@/utils/auth";
-import { createNamespacedHelpers, mapGetters } from "vuex";
-const { mapActions } = createNamespacedHelpers("user");
+import {validPhoneNumber} from '@/utils/validate';
+import _ from 'lodash';
+import {showSuccessMsg, showInfoMsg} from '@/utils/message';
+import {getValByKey} from '@/utils/util';
+import {getProjlist} from '@/utils/auth';
+import {createNamespacedHelpers, mapGetters} from 'vuex';
+const {mapActions} = createNamespacedHelpers('user');
 const projList = getProjlist();
 export default {
-  name: "UserManage",
+  name: 'UserManage',
   computed: {
-    ...mapGetters(["projList"]),
+    ...mapGetters(['projList']),
     title() {
-      return this.mode == "add" ? "添加用户" : "编辑用户";
-    }
+      return this.mode == 'add' ? '添加用户' : '编辑用户';
+    },
   },
   filters: {
     projFilter(projs) {
@@ -143,9 +206,9 @@ export default {
           }
           return pre;
         }, [])
-        .join(", ");
-      return proj_list_id == ""
-        ? "无"
+        .join(', ');
+      return proj_list_id == ''
+        ? '无'
         : projList
             .reduce((pre, cur) => {
               if (proj_list_id.includes(cur.id)) {
@@ -153,86 +216,93 @@ export default {
               }
               return pre;
             }, [])
-            .join(", ");
-    }
+            .join(', ');
+    },
   },
   data() {
     // 验证手机号
     var checkPhone = (rule, value, callback) => {
       if (!validPhoneNumber(value)) {
-        return callback(new Error("请输入正确手机号"));
+        return callback(new Error('请输入正确手机号'));
       } else {
         callback();
       }
     };
     return {
-      formLabelWidth: "80px",
+      isEnable: false,
+      formLabelWidth: '80px',
       showDialog: false, // 弹出框
       showPwd: false,
       projIds: [],
       model: {
-        username: "", // 账号
-        password: "", // 密码
-        show_pwd: "", // 未加密的密码
-        name: "", // 名称
-        mobile: "", // 手机
-        sex: "1", // 性别 1-男,2-女
-        role_id: "", // 角色id
-        project_id_list: "" // 项目配置 项目id多个用逗号拼接如（1,2）
+        username: '', // 账号
+        password: '', // 密码
+        show_pwd: '', // 未加密的密码
+        name: '', // 名称
+        mobile: '', // 手机
+        sex: '1', // 性别 1-男,2-女
+        role_id: '', // 角色id
+        project_id_list: '', // 项目配置 项目id多个用逗号拼接如（1,2）
+        status: 1,
       },
       rules: {
         username: [
-          { required: true, message: "请填写账号", trigger: "blur" },
-          { min: 5, max: 20, message: "长度在 5 到 20 个字符", trigger: "blur" }
+          {required: true, message: '请填写账号', trigger: 'blur'},
+          {min: 5, max: 20, message: '长度在 5 到 20 个字符', trigger: 'blur'},
         ],
         show_pwd: [
-          { required: true, message: "请填写密码", trigger: "blur" },
-          { min: 6, max: 20, message: "长度在 6 到 20 个字符", trigger: "blur" }
+          {required: true, message: '请填写密码', trigger: 'blur'},
+          {min: 6, max: 20, message: '长度在 6 到 20 个字符', trigger: 'blur'},
         ],
         mobile: [
-          { required: true, message: "请填写手机号", trigger: "blur" },
-          { max: 11, message: "手机号不能超过11个字符", trigger: "blur" },
-          { validator: checkPhone, trigger: "blur" }
+          {required: true, message: '请填写手机号', trigger: 'blur'},
+          {max: 11, message: '手机号不能超过11个字符', trigger: 'blur'},
+          {validator: checkPhone, trigger: 'blur'},
         ],
-        sex: [{ required: true, message: "请选择性别", trigger: "blur" }],
-        role_id: [{ required: true, message: "请选择角色", trigger: "blur" }]
+        sex: [{required: true, message: '请选择性别', trigger: 'blur'}],
+        role_id: [{required: true, message: '请选择角色', trigger: 'blur'}],
       },
       roleList: [],
       params: {
-        username: "", // 账号
-        mobile: "", // 手机号
-        name: "" // 名称
+        username: '', // 账号
+        mobile: '', // 手机号
+        name: '', // 名称
       },
       total: 0,
       page: 1,
-      limit: 5,
+      limit: 10,
       listLoading: false,
       tableData: [],
-      mode: "add",
-      names: "",
-      ids: ""
+      mode: 'add',
+      names: '',
+      ids: '',
     };
   },
   async mounted() {
     this.getList();
     // 获取角色、项目列表
-    const { totla, list } = await this.$store.dispatch("role/listRole");
+    const {totla, list} = await this.$store.dispatch('role/listRole');
     this.roleList = list;
-    console.log("role", this.roleList);
+    console.log('role', this.roleList);
+  },
+  watch: {
+    isEnable() {
+      this.isEnable ? (this.model.status = 1) : (this.model.status = 2);
+    },
   },
   methods: {
-    ...mapActions(["listUser", "addUser", "editUser", "delUser"]),
+    ...mapActions(['listUser', 'addUser', 'editUser', 'disableUser']),
     async getList() {
       this.listLoading = true;
       // 过滤空值的属性
       let param = {};
-      Object.keys(this.params).forEach(key =>
-        this.params[key] ? (param[key] = this.params[key]) : ""
+      Object.keys(this.params).forEach((key) =>
+        this.params[key] ? (param[key] = this.params[key]) : '',
       );
-      const { total, list } = await this.listUser({
+      const {total, list} = await this.listUser({
         ...param,
         page: this.page,
-        limit: this.limit
+        limit: this.limit,
       });
       this.listLoading = false;
       this.tableData = list;
@@ -246,90 +316,90 @@ export default {
       this.getList();
     },
     reset() {
-      Object.keys(this.params).forEach(key => (this.params[key] = ""));
+      Object.keys(this.params).forEach((key) => (this.params[key] = ''));
       this.getList();
     },
     add() {
       this.showDialog = true;
-      this.mode = "add";
-      console.log("title", this.title);
+      this.mode = 'add';
+      console.log('title', this.title);
     },
     edit(item) {
-      this.mode = "edit";
+      this.mode = 'edit';
       this.showDialog = true;
       this.model = Object.assign({}, item);
-      this.model.sex += "";
-      const ids = this.model.project_user.map(proj =>
-        proj.project ? proj.project_id : ""
+      this.model.sex += '';
+      const ids = this.model.project_user.map((proj) =>
+        proj.project ? proj.project_id : '',
       );
-      console.log(ids.filter(id => id != ""));
-
-      this.projIds = ids.filter(id => id != "");
+      this.projIds = ids.filter((id) => id != '');
+      this.model.status == 1 ? (this.isEnable = true) : (this.isEnable = false);
     },
     confirm() {
-      this.$refs["form"].validate(async valid => {
+      this.$refs['form'].validate(async (valid) => {
         if (!valid) return;
-        if (this.mode == "add") {
-          this.model.project_id_list = this.projIds.join(",");
+        if (this.mode == 'add') {
+          this.model.project_id_list = this.projIds.join(',');
+          this.model.password = this.model.show_pwd;
           await this.addUser(this.model);
-          showSuccessMsg("添加成功");
+          showSuccessMsg('添加成功');
         } else {
-          this.model.project_id_list = this.projIds.join(",");
+          this.model.project_id_list = this.projIds.join(',');
           this.model.password = this.model.show_pwd;
           await this.editUser(this.model);
-          showSuccessMsg("编辑成功");
+          showSuccessMsg('编辑成功');
         }
         this.showDialog = false;
         this.getList();
       });
     },
     del() {
-      if (this.ids == "") {
-        showInfoMsg("未选中任何用户");
+      if (this.ids == '') {
+        showInfoMsg('未选中任何用户');
         return;
       }
       const h = this.$createElement;
       this.$confirm(
-        h("div", null, [
+        h('div', null, [
           h(
-            "p",
+            'p',
             {
-              style: "text-align: center;padding:.2rem 0;font-size:0.9rem;"
+              style: 'text-align: center;padding:.2rem 0;font-size:0.9rem;',
             },
-            "确认删除以下用户？"
+            '确认禁用以下用户？',
           ),
           h(
-            "p",
+            'p',
             {
-              style: "text-align: center;padding:.2rem 0;font-size:0.9rem;"
+              style: 'text-align: center;padding:.2rem 0;font-size:0.9rem;',
             },
-            `${this.names}`
-          )
+            `${this.names}`,
+          ),
         ]),
-        "提示",
+        '提示',
         {
-          confirmButtonText: "确定",
-          cancelButtonText: "取消"
-        }
-      ).then(async _ => {
-        await this.delUser({ ids: this.ids });
-        showSuccessMsg("删除成功");
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+        },
+      ).then(async (_) => {
+        await this.disableUser({user_ids: this.ids});
+        showSuccessMsg('禁用成功');
         this.getList();
       });
     },
     handleSelectionChange(val) {
-      this.names = getValByKey("name", val, ", ");
-      this.ids = getValByKey("id", val);
+      this.names = getValByKey('name', val, ', ');
+      this.ids = getValByKey('id', val);
     },
     closed() {
-      this.$refs["form"].resetFields();
-      Object.keys(this.model).forEach(key =>
-        key !== "sex" ? (this.model[key] = "") : ""
+      this.$refs['form'].resetFields();
+      Object.keys(this.model).forEach((key) =>
+        key !== 'sex' ? (this.model[key] = '') : '',
       );
       this.projIds = [];
       this.showPwd = false;
-    }
-  }
+    },
+  },
 };
 </script>
 

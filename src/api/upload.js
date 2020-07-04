@@ -4,10 +4,10 @@ import {UPLOAD_IMAGE, UPLOAD_VIDEO} from '@/constant/url';
 /**
  * @description: 获取上传图片配置
  * @param {object} data
- * @return: 
+ * @return:
  */
-export function getUploadImgConfig () {
-  return request ({
+export function getUploadImgConfig() {
+  return request({
     url: UPLOAD_IMAGE,
     method: 'get',
   });
@@ -16,10 +16,10 @@ export function getUploadImgConfig () {
 /**
  * @description: 上传图片
  * @param {object} config
- * @return: 
+ * @return:
  */
-export function uploadImg (config) {
-  return request ({
+export function uploadImg(config) {
+  return request({
     url: config.url,
     method: 'post',
     headers: {'Content-Type': 'multipart/form-data'},
@@ -30,10 +30,10 @@ export function uploadImg (config) {
 /**
  * @description: 删除图片
  * @param {object} config
- * @return: 
+ * @return:
  */
-export function delImg (config) {
-  return request ({
+export function delImg(config) {
+  return request({
     url: config.url,
     method: 'delete',
     headers: {Authorization: config.signature},
@@ -43,11 +43,12 @@ export function delImg (config) {
 /**
  * @description: 获取上传视频配置
  * @param {object} data
- * @return: 
+ * @return:
  */
-export function getUploadVideoConfig () {
-  return request ({
+export function getUploadVideoConfig(params) {
+  return request({
     url: UPLOAD_VIDEO,
     method: 'get',
+    params,
   });
 }

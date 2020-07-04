@@ -1,13 +1,13 @@
 <template funtional>
   <div class="flex flex-column ai-center">
     <img src="@/assets/images/no-faults.png" alt />
-    <span class="text-grey">暂无告警</span>
+    <span class="text-white">暂无告警</span>
   </div>
 </template>
 <style scoped>
 img {
-  width: 60px;
-  height: 60px;
+  width: 50px;
+  height: 50px;
 }
 span {
   padding: 1rem 0;

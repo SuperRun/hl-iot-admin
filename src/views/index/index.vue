@@ -1,351 +1,486 @@
 <template>
   <div class="index w-100 flex flex-column">
     <header class="w-100 flex jc-between ai-center">
-      <div class="flex-1">
-        <el-select class="proj-select" v-model="projId" filterable @change="change">
-          <el-option v-for="item in projList" :key="item.id" :label="item.title" :value="item.id"></el-option>
+      <div class="flex-3">
+        <el-select
+          class="proj-select"
+          v-model="projId"
+          filterable
+          @change="change"
+        >
+          <el-option
+            v-for="item in projList"
+            :key="item.id"
+            :label="item.title"
+            :value="item.id"
+          ></el-option>
         </el-select>
       </div>
-      <div class="header-center flex flex-2 flex-column ai-center">
-        <img src="@/assets/images/index-logo.png" alt />
+      <div class="header-center flex flex-3 ai-center jc-center">
+        <!-- <img src="@/assets/images/index-logo.png" alt /> -->
         <h1 class="title">城市智慧路灯物联云平台</h1>
       </div>
-      <div class="flex ai-center jc-around flex-1">
+      <div class="flex ai-center jc-end flex-3">
         <router-link to="/device/list">
-          <span class="text-grey-4">管理中心</span>
+          <span class="btn-admin text-grey-4 gradient-blue-4">管理中心</span>
         </router-link>
-        <user-account></user-account>
+        <user-account class="mg-left-1"></user-account>
       </div>
     </header>
-    <main class="flex">
-      <div :class="['map', isFold?'w-100':'']">
-        <div class="tool flex jc-between ai-center">
-          <div class="flex search-input">
-            <input type="text" placeholder="搜索设备编号" />
-            <svg-icon icon-class="search"></svg-icon>
-          </div>
-          <div class="flex">
-            <i :class="['lock', isLock?'el-icon-lock':'el-icon-unlock']" @click="lockMap"></i>
-            <i :class="['el-icon-s-unfold','fold', isFold?'fold-rotate':'']" @click="foldEquips"></i>
-          </div>
-        </div>
-        <baidu-map></baidu-map>
-      </div>
-      <transition name="fade">
-        <div class="equips" v-show="!isFold">
-          <ul class="flex">
-            <li
-              :class="['equip-tab', 'flex-1','flex', 'flex-column', 'jc-between', 'ai-center', currentTab.includes(1)?'active':'']"
-              @click="chooseDevice(1)"
+    <main class="flex flex-column">
+      <div class="menu-list flex w-100 jc-around">
+        <div
+          class="menu-item flex  ai-center jc-around "
+          :class="[
+            `menu-item-bg${index}`,
+            !currentTab.includes(index) ? 'menu-item-inactive' : '',
+          ]"
+          :key="index"
+          v-for="(menu, index) in menus"
+          @click="chooseDevice(index)"
+        >
+          <svg-icon :icon-class="menu.iconName" class="menu-icon"></svg-icon>
+          <div class="item-info flex flex-column ">
+            <h3 class="text-white ">{{ menu.title }}</h3>
+            <span class="text-white fs-sm" v-if="menu.online != null"
+              >在线：<strong class="fs-xl">{{ menu.online }}</strong></span
             >
-              <img
-                :src="require(`@/assets/images/control${currentTab.includes(1)?'-active':''}.png`)"
-                alt
-              />
-              <span :class="{'active': currentTab.includes(1)}">智慧监控</span>
-            </li>
-            <li
-              :class="['equip-tab', 'flex-1','flex', 'flex-column', 'jc-between', 'ai-center', currentTab.includes(2)?'active':'']"
-              @click="chooseDevice(2)"
+            <span class="text-white fs-sm" v-if="menu.total != null"
+              >总数：<strong class="fs-xl">{{ menu.total }}</strong></span
             >
-              <img
-                :src="require(`@/assets/images/screen${currentTab.includes(2)?'-active':''}.png`)"
-                alt
-              />
-              <span :class="{'active': currentTab.includes(2)}">智慧屏</span>
-            </li>
-            <li
-              :class="['equip-tab', 'flex-1','flex', 'flex-column', 'jc-between', 'ai-center', currentTab.includes(3)?'active':'']"
-              @click="chooseDevice(3)"
-            >
-              <img
-                :src="require(`@/assets/images/light${currentTab.includes(3)?'-active':''}.png`)"
-                alt
-              />
-              <span :class="{'active':currentTab.includes(3)}">智慧照明</span>
-            </li>
-            <li
-              :class="['equip-tab', 'flex-1','flex', 'flex-column', 'jc-between', 'ai-center', currentTab.includes(4)?'active':'']"
-              @click="chooseDevice(4)"
-            >
-              <img
-                :src="require(`@/assets/images/detect${currentTab.includes(4)?'-active':''}.png`)"
-                alt
-              />
-              <span :class="{'active': currentTab.includes(4)}">智慧检测</span>
-            </li>
-          </ul>
-          <h3 v-if="faultList.length>0">当前警告</h3>
-          <el-collapse class="alarms-list" accordion v-if="faultList.length>0">
-            <el-collapse-item>
-              <template slot="title">
-                设备SN
-                <span class="alarm-num">01</span>
-              </template>
-              <div class="detail">{{detail|limitStrLen}}</div>
-            </el-collapse-item>
-            <el-collapse-item>
-              <template slot="title">
-                设备SN
-                <span class="alarm-num">01</span>
-              </template>
-              <div class="detail">控制反馈：通过界面样式和交互动效让用户可以清晰的感知自己的操作；</div>
-            </el-collapse-item>
-            <el-collapse-item>
-              <template slot="title">
-                设备SN
-                <span class="alarm-num">01</span>
-              </template>
-              <div class="detail">{{detail|limitStrLen}}</div>
-            </el-collapse-item>
-            <el-collapse-item>
-              <template slot="title">
-                设备SN
-                <span class="alarm-num">01</span>
-              </template>
-              <div class="detail">控制反馈：通过界面样式和交互动效让用户可以清晰的感知自己的操作；</div>
-            </el-collapse-item>
-            <el-collapse-item>
-              <template slot="title">
-                设备SN
-                <span class="alarm-num">01</span>
-              </template>
-              <div class="detail">{{detail|limitStrLen}}</div>
-            </el-collapse-item>
-            <el-collapse-item>
-              <template slot="title">
-                设备SN
-                <span class="alarm-num">01</span>
-              </template>
-              <div class="detail">控制反馈：通过界面样式和交互动效让用户可以清晰的感知自己的操作；</div>
-            </el-collapse-item>
-            <el-collapse-item>
-              <template slot="title">
-                设备SN
-                <span class="alarm-num">01</span>
-              </template>
-              <div class="detail">控制反馈：通过界面样式和交互动效让用户可以清晰的感知自己的操作；</div>
-            </el-collapse-item>
-            <el-collapse-item>
-              <template slot="title">
-                设备SN
-                <span class="alarm-num">01</span>
-              </template>
-              <div class="detail">控制反馈：通过界面样式和交互动效让用户可以清晰的感知自己的操作；</div>
-            </el-collapse-item>
-          </el-collapse>
-          <no-fault class="mg-top-3" v-else></no-fault>
-        </div>
-      </transition>
-    </main>
-    <footer class="flex jc-between">
-      <div class="flex flex-column footer-left jc-end">
-        <!-- 摄像头详情 -->
-        <div class="tip flex jc-between ai-center" v-show="currentTab.includes(1)">
-          <div>
-            <svg-icon icon-class="camera"></svg-icon>
-            <span class="text-white">摄像头：</span>
-          </div>
-          <div>
-            <span class="state-name text-normal">正常：</span>
-            <span class="state-name text-fault">故障：</span>
-            <span class="state-name text-offline">离线：</span>
-          </div>
-        </div>
-        <!-- LED屏详情 -->
-        <div class="tip flex jc-between ai-center" v-show="currentTab.includes(2)">
-          <div>
-            <svg-icon icon-class="screen"></svg-icon>
-            <span class="text-white">LED屏：</span>
-          </div>
-          <div>
-            <span class="state-name text-normal">正常：</span>
-            <span class="state-name text-fault">故障：</span>
-            <span class="state-name text-offline">离线：</span>
-          </div>
-        </div>
-        <!-- 照明灯详情 -->
-        <div class="tip flex jc-between ai-center" v-show="currentTab.includes(3)">
-          <div>
-            <svg-icon icon-class="light"></svg-icon>
-            <span class="text-white">照明灯：</span>
-          </div>
-          <div>
-            <span class="state-name text-normal">正常：</span>
-            <span class="state-name text-fault">故障：</span>
-            <span class="state-name text-offline">离线：</span>
-          </div>
-        </div>
-        <!-- 气象站详情 -->
-        <div class="tip flex jc-between ai-center" v-show="currentTab.includes(4)">
-          <div>
-            <svg-icon icon-class="detect"></svg-icon>
-            <span class="text-white">气象站：</span>
-          </div>
-          <div>
-            <span class="state-name text-normal">正常：</span>
-            <span class="state-name text-fault">故障：</span>
-            <span class="state-name text-offline">离线：</span>
           </div>
         </div>
       </div>
-      <!-- 摄像头 -->
-      <div class="device-content footer-right" v-show="false">
-        <div class="device-item">
-          <div class="top flex jc-start">
-            <div>
-              <svg-icon icon-class="camera"></svg-icon>
-              <span class="device-name">摄像头</span>
+      <div class="content flex">
+        <!-- 当前告警+搜索框 -->
+        <div
+          class="flex cur-fault"
+          :class="
+            isFold ? 'cur-fault-translate-right' : 'cur-fault-translate-left'
+          "
+        >
+          <div class="tool flex jc-between ai-center">
+            <el-select
+              class="search-input"
+              v-model="searchKey"
+              filterable
+              remote
+              :remote-method="searchDevice"
+              placeholder="搜索设备编号"
+              :loading="loading"
+              @change="searchChange"
+            >
+              <el-option
+                v-for="device in deviceOptions"
+                :key="device.device_number"
+                :label="device.device_number"
+                :value="device.device_number"
+              ></el-option>
+            </el-select>
+            <div class="flex">
+              <i
+                :class="['lock', isLock ? 'el-icon-lock' : 'el-icon-unlock']"
+                @click="lockMap"
+              ></i>
+              <i
+                :class="[
+                  'el-icon-s-unfold',
+                  'fold',
+                  isFold ? 'fold-rotate' : '',
+                ]"
+                @click="foldEquips"
+              ></i>
             </div>
           </div>
-          <div class="device flex jc-between">
-            <span class="text-light fs-sm">设备编号</span>
-            <span class="text-light detail-btn" @click="openDeviceDetail(1)">详情/设置 ></span>
+          <div class="flex-1 equips">
+            <h3>当前警告</h3>
+            <el-collapse
+              class="alarms-list"
+              accordion
+              v-if="faultList != null && faultList.length > 0"
+            >
+              <el-collapse-item
+                v-for="(fault, index) in faultList"
+                :key="index"
+              >
+                <template slot="title">
+                  设备SN:{{ fault.device.device_number }}
+                  <!-- <span class="alarm-num">01</span> -->
+                </template>
+                <div class="detail flex jc-between">
+                  <span @click="faultDetail(fault.device.id)">{{
+                    '设备故障' | limitStrLen
+                  }}</span
+                  ><span
+                    class="text-light detail-btn"
+                    @click="faultDetail(fault.device.id)"
+                    >详情/设置 ></span
+                  >
+                </div>
+              </el-collapse-item>
+            </el-collapse>
+            <template v-else>
+              <no-fault class="mg-top-1"></no-fault>
+            </template>
           </div>
-          <div class="content flex flex-column"></div>
+        </div>
+        <!-- 地图 -->
+        <baidu-map
+          v-if="defaultSelects != null"
+          @setDefaultDetail="setDefaultDetail"
+          :defaultSelects="defaultSelects"
+          :isLock="isLock"
+          :types="types"
+          :selectedDevice="selectedDevice"
+        ></baidu-map>
+        <!-- 智慧路灯 -->
+        <div class="fun-intro"></div>
+      </div>
+    </main>
+    <footer class="flex jc-start">
+      <!-- 摄像头 -->
+      <div class="device-content" v-show="currentTab.includes(0)">
+        <div class="device-item">
+          <h3>摄像头+音频广播+语音对讲</h3>
+          <div class="device flex jc-between">
+            <span class="text-light fs-sm"
+              >设备编号:{{
+                cameraDetail != null ? cameraDetail.device_number : '无'
+              }}</span
+            >
+            <span
+              class="text-light detail-btn"
+              v-if="cameraDetail != null"
+              @click="openDeviceDetail(cameraDetail.id)"
+              >详情/设置 ></span
+            >
+          </div>
+          <div class="content flex flex-column">
+            <template v-if="cameraDetail != null">
+              <iframe
+                :src="videoSrc"
+                width="300"
+                height="100"
+                id="ysOpenDevice"
+                class="mg-top-1"
+                allowfullscreen
+              >
+              </iframe>
+            </template>
+            <template v-else>
+              <no-device></no-device>
+            </template>
+          </div>
         </div>
       </div>
       <!-- LED屏 -->
-      <div class="device-content flex-1" v-show="false">
+      <div class="device-content" v-show="currentTab.includes(1)">
         <div class="device-item">
-          <div class="top flex jc-start">
-            <div>
-              <svg-icon icon-class="screen"></svg-icon>
-              <span class="device-name">LED屏</span>
-            </div>
-          </div>
+          <h3>LED屏</h3>
           <div class="device flex jc-between">
-            <span class="text-light fs-sm">设备编号</span>
-            <span class="text-light detail-btn" @click="openDeviceDetail(2)">详情/设置 ></span>
+            <span class="text-light fs-sm"
+              >设备编号:{{
+                screenDetail != null ? screenDetail.device_number : '无'
+              }}</span
+            >
+            <span
+              class="text-light detail-btn"
+              v-if="screenDetail != null"
+              @click="openDeviceDetail(screenDetail.id)"
+              >详情/设置 ></span
+            >
           </div>
-          <div class="content flex flex-column"></div>
+          <div class="content flex flex-column text-white">
+            <template v-if="screenDetail != null">
+              <div
+                class="flex flex-column"
+                v-if="screenDetail.is_open == 1 && files != null"
+              >
+                <a
+                  class="text-white"
+                  v-for="(file, index) in files"
+                  :key="index"
+                  :href="file.link"
+                >
+                  {{ file.filename }}
+                </a>
+              </div>
+              <p v-if="screenDetail.is_open == 2">LED屏未开启</p>
+            </template>
+            <template v-else>
+              <no-device></no-device>
+            </template>
+          </div>
         </div>
       </div>
       <!-- 照明灯 -->
-      <div class="device-content flex-1" v-show="false">
+      <div class="device-content" v-show="currentTab.includes(2)">
         <div class="device-item">
-          <div class="top flex jc-start">
-            <div>
-              <svg-icon icon-class="light"></svg-icon>
-              <span class="device-name">照明灯</span>
-            </div>
-          </div>
+          <h3>照明灯</h3>
           <div class="device flex jc-between">
-            <span class="text-light fs-sm">设备编号</span>
-            <span class="text-light detail-btn" @click="openDeviceDetail(3)">详情/设置 ></span>
+            <span class="text-light fs-sm"
+              >设备编号:{{
+                lightDetail != null ? lightDetail.device_number : '无'
+              }}</span
+            >
+            <span
+              class="text-light detail-btn"
+              v-if="lightDetail != null"
+              @click="openDeviceDetail(lightDetail.id)"
+              >详情/设置 ></span
+            >
           </div>
           <div class="content flex flex-column">
-            <div class="parameter flex">
-              <span class="flex-1 text-light fs-sm">亮度：</span>
-              <span class="flex-1 text-light fs-sm">功率：</span>
-            </div>
-            <div class="parameter flex">
-              <span class="flex-1 text-light fs-sm">电压：</span>
-              <span class="flex-1 text-light fs-sm">电流：</span>
-            </div>
-            <div class="parameter flex">
-              <span class="flex-1 text-light fs-sm">温度：</span>
-            </div>
-            <div class="parameter flex">
-              <span class="flex-1 text-light fs-sm">定时控灯</span>
-            </div>
-            <div class="parameter flex">
-              <span class="flex-1 text-light fs-sm">6:00</span>
-              <span class="flex-1 text-light fs-sm">0%</span>
-            </div>
+            <template v-if="lightDetail != null">
+              <template v-if="lightDetail.status == 4">
+                <span class="text-white fs-sm">设备离线，无法获取数据</span>
+              </template>
+              <template v-else-if="lightDetail.light_report_data != null">
+                <div class="parameter flex">
+                  <span class="flex-1 text-light fs-sm"
+                    >亮度：{{ lightDetail.light_report_data.brightness }}</span
+                  >
+                  <span class="flex-1 text-light fs-sm"
+                    >功率：{{ lightDetail.light_report_data.power }}mW</span
+                  >
+                </div>
+                <div class="parameter flex">
+                  <span class="flex-1 text-light fs-sm"
+                    >电压：{{ lightDetail.light_report_data.voltage }}V</span
+                  >
+                  <span class="flex-1 text-light fs-sm"
+                    >电流：{{
+                      lightDetail.light_report_data.electric_current
+                    }}mA</span
+                  >
+                </div>
+                <div class="parameter flex">
+                  <span class="flex-1 text-light fs-sm"
+                    >温度：{{
+                      lightDetail.light_report_data.temperature
+                    }}ºC</span
+                  >
+                </div>
+                <div class="parameter flex">
+                  <span class="flex-1 text-light fs-sm">定时控灯:</span>
+                </div>
+                <template v-if="controlList != null && controlList.length > 0">
+                  <div
+                    class="parameter flex"
+                    v-for="(control, index) in controlList"
+                    :key="index"
+                  >
+                    <span class="flex-1 text-light fs-sm"
+                      >{{ control.hour }}:{{ control.minute }}</span
+                    >
+                    <span class="flex-1 text-light fs-sm"
+                      >{{ control.brightness }}%</span
+                    >
+                  </div>
+                </template>
+                <span class="text-white fs-sm" v-else>暂无数据</span>
+              </template>
+              <template v-else>
+                <span class="text-white fs-sm">暂无数据</span>
+              </template>
+            </template>
+            <template v-else>
+              <no-device></no-device>
+            </template>
           </div>
         </div>
       </div>
       <!-- 气象站 -->
-      <div class="device-content flex-1" v-show="true">
+      <div class="device-content" v-show="currentTab.includes(3)">
         <div class="device-item">
-          <div class="top flex jc-start">
-            <div>
-              <svg-icon icon-class="detect"></svg-icon>
-              <span class="device-name">气象站</span>
-            </div>
-          </div>
+          <h3>气象站</h3>
           <div class="device flex jc-between">
-            <span class="text-light fs-sm">设备编号</span>
-            <span class="text-light detail-btn" @click="openDeviceDetail(4)">详情/设置 ></span>
+            <span class="text-light fs-sm"
+              >设备编号:{{
+                weatherDetail != null ? weatherDetail.device_number : '无'
+              }}</span
+            >
+            <span
+              class="text-light detail-btn"
+              v-if="weatherDetail != null"
+              @click="openDeviceDetail(weatherDetail.id)"
+              >详情/设置 ></span
+            >
           </div>
           <div class="content flex flex-column">
-            <div class="parameter flex">
-              <span class="flex-1 text-light fs-sm">PM2.5：</span>
-              <span class="flex-1 text-light fs-sm">PM10：</span>
-            </div>
-            <div class="parameter flex">
-              <span class="flex-1 text-light fs-sm">光照：</span>
-              <span class="flex-1 text-light fs-sm">气温：</span>
-            </div>
-            <div class="parameter flex">
-              <span class="flex-1 text-light fs-sm">温度：</span>
-              <span class="flex-1 text-light fs-sm">噪声：</span>
-            </div>
-            <div class="parameter flex">
-              <span class="flex-1 text-light fs-sm">风力：</span>
-              <span class="flex-1 text-light fs-sm">风向：</span>
-            </div>
+            <template v-if="weatherDetail != null">
+              <template v-if="weatherDetail.status == 4">
+                <span class="text-white fs-sm">设备离线，无法获取数据</span>
+              </template>
+              <template v-else-if="weatherDetail.weather_info != null">
+                <div class="parameter flex">
+                  <span class="flex-1 text-light fs-sm"
+                    >PM2.5：{{ weatherDetail.weather_info.pm2 }}μg/m³</span
+                  >
+                  <span class="flex-1 text-light fs-sm"
+                    >PM10：{{ weatherDetail.weather_info.pm10 }}μg/m³</span
+                  >
+                </div>
+                <div class="parameter flex">
+                  <span class="flex-1 text-light fs-sm"
+                    >气温：{{ weatherDetail.weather_info.t }}ºC</span
+                  >
+                  <span class="flex-1 text-light fs-sm"
+                    >温度：{{ weatherDetail.weather_info.t }}ºC</span
+                  >
+                </div>
+                <div class="parameter flex">
+                  <span class="flex-1 text-light fs-sm"
+                    >噪声：{{ weatherDetail.weather_info.ns }}db</span
+                  >
+                  <span class="flex-1 text-light fs-sm"
+                    >风力：{{ weatherDetail.weather_info.ws }}m/s</span
+                  >
+                </div>
+                <div class="parameter flex">
+                  <span class="flex-1 text-light fs-sm"
+                    >风向：{{
+                      weatherDetail.weather_info.wd | directionFilter
+                    }}</span
+                  >
+                </div>
+              </template>
+              <template v-else>
+                <span class="text-white fs-sm">暂无数据</span>
+              </template>
+            </template>
+            <template v-else>
+              <no-device></no-device>
+            </template>
           </div>
         </div>
       </div>
     </footer>
-    <!-- 设备详情弹出框 -->
-    <!-- <device-detail></device-detail> -->
     <!-- 编辑密码 -->
     <edit-pwd></edit-pwd>
+    <!-- 设备详情弹出框 -->
+    <device-detail
+      :content="content"
+      v-if="isShow"
+      @hideDetail="hideDetail"
+    ></device-detail>
+    <!-- 气象站设备详情弹出框 -->
+    <weather-detail></weather-detail>
   </div>
 </template>
 
 <script>
-import BaiduMap from "@/components/BaiduMap/index";
-import UserAccount from "@/components/UserAccount/index";
-import DeviceDetail from "@/components/DeviceDetail";
-import EditPwd from "@/components/EditPwd";
-import NoFault from "@/components/NoFault";
-import { mapGetters } from "vuex";
+import BaiduMap from '@/components/BaiduMap/index';
+import UserAccount from '@/components/UserAccount/index';
+import DeviceDetail from '@/components/DeviceDetail';
+import WeatherDetail from '@/components/WeatherDetail';
+import EditPwd from '@/components/EditPwd';
+import NoFault from '@/components/NoFault';
+import NoDevice from '@/components/NoDevice';
+import {mapGetters} from 'vuex';
+import {countDevice, firstDevice} from '@/api/device';
+import {getCameraToken, setCameraDirection} from '@/api/device';
+import {setGroupBrightness, controlGroup} from '@/api/group';
 
 export default {
-  name: "Index",
+  name: 'Index',
   components: {
     BaiduMap,
     UserAccount,
     DeviceDetail,
     EditPwd,
-    NoFault
+    NoFault,
+    NoDevice,
+    WeatherDetail,
   },
   filters: {
     limitStrLen(str) {
-      return str.length > 41 ? str.slice(0, 41) : str;
-    }
+      return str != null && str.length > 41 ? str.slice(0, 41) : str;
+    },
   },
   computed: {
-    ...mapGetters(["projList", "cur_proj"])
+    ...mapGetters(['projList', 'cur_proj']),
+    videoSrc() {
+      return `https://open.ys7.com/ezopen/h5/iframe?url=ezopen://${this.cameraDetail.validate_code}@open.ys7.com/${this.cameraDetail.device_number}/1.hd.live&audio=1&autoplay=1&accessToken=${this.cameraToken}`;
+    },
+  },
+  watch: {
+    cur_proj() {
+      this.getDefaultDevice();
+      this.countDeviceNum();
+      this.getToken();
+      this.getFaults();
+    },
   },
   data() {
     return {
       deviceType: 1,
-      currentTab: [1, 2, 3, 4],
+      currentTab: [0, 1, 2, 3, 4, 5, 6],
+      types: [1, 2, 3, 4],
       isFold: false,
       isLock: true,
       faultList: [],
-      projId: "",
-      detail:
-        "故障信息描述内容故障信息描述内容故障信息描述内容故障信息描述内容故障信息描述内容故障信息描述内容信息描述内容"
+      projId: '',
+      menus: [
+        {iconName: 'menu-icon1', title: '智慧监控', online: 12, total: 10},
+        {iconName: 'menu-icon2', title: '智慧显示', online: 12, total: 10},
+        {iconName: 'menu-icon3', title: '智慧照明', online: 12, total: 10},
+        {iconName: 'menu-icon4', title: '气象检测', online: 12, total: 10},
+        {iconName: 'menu-icon5', title: '城市热点', online: null, total: null},
+        {iconName: 'menu-icon6', title: '智慧充电', online: null, total: null},
+        {iconName: 'menu-icon7', title: '一键求助', online: null, total: null},
+      ],
+      cameraDetail: null,
+      screenDetail: null,
+      lightDetail: null,
+      weatherDetail: null,
+      files: null,
+      cameraToken: '',
+      defaultSelects: null,
+      params: {
+        product_type: 3, // 产品类型 3-照明灯
+        status: 3, // 状态
+      },
+      controlList: [],
+      loading: false,
+      searchKey: '',
+      deviceOptions: [],
+      selectedDevice: '',
+      isShow: false,
     };
   },
   async created() {
     // 获取项目列表
-    if (this.projList.length == 0) {
-      await this.$store.dispatch("project/allProject");
+    if (this.projList != null && this.projList.length == 0) {
+      await this.$store.dispatch('project/allProject');
     }
-    console.log("this.cur_proj", this.cur_proj);
-
     this.projId = this.cur_proj;
+
+    // 获取设备数目统计
+    this.countDeviceNum();
+    // 获取初始状态默认设备详情
+    this.getDefaultDevice();
+    this.getToken();
+    this.getFaults();
   },
   methods: {
+    async getFaults() {
+      const res = await this.$store.dispatch('fault/listWarn', {
+        type: 1,
+        project_id: this.cur_proj,
+        page: 1,
+        limit: 10,
+      });
+      this.faultList = res.data.list;
+    },
+    getToken() {
+      getCameraToken().then((res) => {
+        console.log('res', res);
+        this.cameraToken = res.data.accessToken;
+      });
+    },
     change() {
-      this.$store.commit("project/SET_CURPROJ", this.projId);
+      this.$store.commit('project/SET_CURPROJ', this.projId);
     },
     lockMap() {
       this.isLock = !this.isLock;
@@ -354,29 +489,155 @@ export default {
       this.isFold = !this.isFold;
     },
     chooseDevice(type) {
-      this.currentTab.includes(type)
-        ? this.currentTab.splice(this.currentTab.indexOf(type), 1)
-        : this.currentTab.push(type);
+      if (type < 4) {
+        this.currentTab.includes(type)
+          ? this.currentTab.splice(this.currentTab.indexOf(type), 1)
+          : this.currentTab.push(type);
+        this.types.includes(type + 1)
+          ? this.types.splice(this.types.indexOf(type + 1), 1)
+          : this.types.push(type + 1);
+      }
     },
-    openDeviceDetail(type) {
-      this.deviceType = type;
-      this.$store.dispatch("app/openDeviceDialog");
-    }
-  }
+    openDeviceDetail(id) {
+      this.isShow = true;
+      this.content = 'Content';
+      this.$store.dispatch('device/detailDevice', {id}).then((res) => {
+        if (res.product_type == 2 && res.is_weather == 1) {
+          this.$store.commit('app/SET_DEVICE_DETAIL', res);
+          this.$store.commit('app/OPEN_WEATHERDIALOG');
+        } else {
+          this.$store.commit('app/SET_DEVICE_DETAIL', res);
+          this.$store.commit('app/OPEN_DEVICEDIALOG');
+        }
+      });
+    },
+    countDeviceNum() {
+      countDevice({project_id: this.cur_proj}).then((res) => {
+        this.menus.map((menu, index) => {
+          switch (index) {
+            case 0:
+              menu.online = res.data.camera_online_count;
+              menu.total = res.data.camera_total_count;
+              break;
+            case 1:
+              menu.online = res.data.led_online_count;
+              menu.total = res.data.led_total_count;
+              break;
+            case 2:
+              menu.online = res.data.light_online_count;
+              menu.total = res.data.light_total_count;
+              break;
+            case 3:
+              menu.online = res.data.weather_online_count;
+              menu.total = res.data.weather_total_count;
+              break;
+          }
+          return menu;
+        });
+      });
+    },
+    getDefaultDevice() {
+      firstDevice({project_id: this.cur_proj}).then((res) => {
+        console.log('res', res);
+        if (res.data) {
+          this.cameraDetail = res.data.camera_data;
+          this.screenDetail = res.data.led_data;
+          this.lightDetail = res.data.light_data;
+          this.weatherDetail = res.data.weather_data;
+          this.defaultSelects = [
+            this.cameraDetail != null ? this.cameraDetail.id : 0,
+            this.screenDetail != null ? this.screenDetail.id : 0,
+            this.lightDetail != null ? this.lightDetail.id : 0,
+            this.weatherDetail != null ? this.weatherDetail.id : 0,
+          ];
+          if (this.lightDetail != null && this.lightDetail.group != null) {
+            this.getLightTimeControl(this.lightDetail.group.id);
+          }
+
+          if (
+            this.screenDetail.playerContent != null &&
+            this.screenDetail.playerContent.content != null
+          ) {
+            const arr = JSON.parse(this.screenDetail.playerContent.content);
+            this.files = arr.map((item) => {
+              return {filename: item.url.split('/').pop(), link: item.url};
+            });
+            console.log('this.files', this.files);
+          }
+        }
+      });
+    },
+    setDefaultDetail({varName, data}) {
+      console.log('varName', varName);
+      console.log('data', data);
+      this[varName] = data;
+    },
+    async getLightTimeControl(group_id) {
+      const {list} = await this.$store.dispatch('group/detailControlGroup', {
+        group_id,
+      });
+      this.controlList = list;
+    },
+    async searchDevice(keyword) {
+      this.loading = true;
+      const {list} = await this.$store.dispatch('device/listDevice', {
+        project_id: this.cur_proj,
+        device_number: keyword,
+        product_type_list: this.types.join(','),
+      });
+      if (!this.types.include(4)) {
+        this.deviceOptions = list.filter(
+          (item) => !(item.product_type == 2 && item.is_weather == 1),
+        );
+        console.log('this.deviceOptions', this.deviceOptions);
+      } else {
+        this.deviceOptions = list;
+      }
+      this.loading = false;
+    },
+    searchChange(val) {
+      this.selectedDevice = val;
+    },
+    faultDetail(id) {
+      this.isShow = true;
+      this.content = 'Fault';
+      this.$store.dispatch('device/detailDevice', {id}).then((res) => {
+        this.$store.commit('app/SET_DEVICE_DETAIL', res);
+        this.$store.commit('app/OPEN_DEVICEDIALOG');
+      });
+    },
+    hideDetail() {
+      this.isShow = false;
+    },
+  },
 };
 </script>
 <style scoped>
 .proj-select >>> .el-input__inner {
-  background: linear-gradient(90deg, rgba(9, 56, 170, 1), rgba(32, 62, 171, 1));
+  background: linear-gradient(
+    90deg,
+    rgba(0, 112, 255, 0.77),
+    rgba(0, 207, 255, 0.77)
+  );
   border: none;
   border-radius: 19px;
   color: #ffffffff;
+  width: 150px;
+  /* height: 40px; */
+}
+.search-input >>> .el-input__inner {
+  background: #385de9;
+  border: none;
+  border-radius: 19px;
+  color: #ffffffff;
+  width: 200px;
+  /* height: 40px; */
 }
 .alarms-list {
   height: 50%;
-  overflow: scroll;
+  overflow: auto;
   width: 100%;
-  margin: 0 auto;
+  margin: 1vh auto;
   border: none;
   padding: 0 1rem;
 }
@@ -400,7 +661,7 @@ export default {
   line-height: 16px;
   text-align: center;
   display: inline-block;
-  background-color: #ff6d02ff;
+  background-color: #ff6d12ff;
   color: #fefefeff;
   font-size: 12px;
   border-radius: 0.8rem;
@@ -413,11 +674,10 @@ export default {
   -moz-box-orient: vertical;
   text-overflow: ellipsis;
   overflow: hidden;
-  height: 46px;
-  pointer-events: none;
+  /* pointer-events: none; */
 }
-.detail::after {
-  content: "详情/设置 >";
+/* .detail::after {
+  content: '详情/设置 >';
   display: inline-block;
   padding: 2px 14px;
   border-radius: 10px;
@@ -426,18 +686,31 @@ export default {
   background: linear-gradient(90deg, rgba(9, 56, 170, 1), rgba(11, 32, 103, 1));
   transform: scale(0.8);
   cursor: pointer;
-}
+} */
 </style>
 <style lang="scss" scoped>
 .index {
   position: relative;
-  min-height: 100%;
-  background-image: url(../../assets/images/index-bg.png);
+  width: 100%;
+  height: 100%;
+  background-image: url(../../assets/images/index-bg2.png);
+  background-size: 100% 100%;
+  overflow: hidden;
+  .detail-btn {
+    display: inline-block;
+    padding: 2px 14px;
+    border-radius: 10px;
+    font-size: 12px;
+    background: linear-gradient(
+      90deg,
+      rgba(9, 56, 170, 1),
+      rgba(11, 32, 103, 1)
+    );
+    transform: scale(0.8);
+    cursor: pointer;
+  }
   header {
-    height: 100px;
-    background-image: url(../../assets/images/index-header-bg.png);
-    background-size: 100% 110%;
-    background-repeat: no-repeat;
+    height: 6vh;
     .proj-select {
       margin-left: 2rem;
     }
@@ -454,185 +727,185 @@ export default {
         margin: 0.5rem;
       }
     }
+    .btn-admin {
+      display: inline-block;
+      padding: 5px 10px;
+      border-radius: 20px;
+    }
   }
   main {
-    height: calc(100vh - 120px);
-    padding: 0 1rem;
-    margin-top: 1rem;
-    .map {
-      width: 75%;
+    height: 94vh;
+    .menu-list {
+      height: 23vh;
+      // border: 1px solid #fff;
+      padding: 2vh 1vw;
+    }
+    .menu-item {
+      cursor: pointer;
+      background-size: 100% 100%;
+      width: 13vw;
+    }
+    .menu-item-inactive {
+      filter: grayscale(1);
+    }
+    .menu-icon {
+      font-size: 45px;
+    }
+    .menu-item-bg0 {
+      background-image: url(../../assets/images/menu-item-bg1.png);
+    }
+    .menu-item-bg1 {
+      background-image: url(../../assets/images/menu-item-bg2.png);
+    }
+    .menu-item-bg2 {
+      background-image: url(../../assets/images/menu-item-bg3.png);
+    }
+    .menu-item-bg3 {
+      background-image: url(../../assets/images/menu-item-bg4.png);
+    }
+    .menu-item-bg4 {
+      background-image: url(../../assets/images/menu-item-bg5.png);
+    }
+    .menu-item-bg5 {
+      background-image: url(../../assets/images/menu-item-bg6.png);
+    }
+    .menu-item-bg6 {
+      background-image: url(../../assets/images/menu-item-bg7.png);
+    }
+    .content {
+      height: 72vh;
+      width: 100%;
+      // border: 1px solid #fff;
       transition: width 0.5s;
       position: relative;
-      .tool {
-        width: 240px;
+      padding: 1vh 1vw 3vh;
+      .cur-fault {
         position: absolute;
         top: 1rem;
         right: 1rem;
         z-index: 1;
-        .search-input {
-          padding: 0.5rem 1.5rem;
-          background: linear-gradient(
-            90deg,
-            rgba(9, 56, 170, 1),
-            rgba(11, 32, 103, 1)
-          );
-          border-radius: 19px;
-          input {
-            background: transparent;
-            border: none;
-            color: #fefefe;
+        height: 50px;
+        // pointer-events: none;
+        .tool {
+          // width: 240px;
+          // .search-input {
+          //   padding: 0.5rem 1.5rem;
+          //   background: #385de9;
+          //   border-radius: 19px;
+          //   input {
+          //     background: transparent;
+          //     border: none;
+          //     color: #fefefe;
+          //   }
+          //   ::-webkit-input-placeholder {
+          //     /* WebKit browsers */
+          //     color: #fefefe;
+          //   }
+
+          //   ::-moz-placeholder {
+          //     /* Mozilla Firefox 19+ */
+          //     color: #fefefe;
+          //   }
+          // }
+          .fold,
+          .lock {
+            color: #a3a3a3;
+            font-size: 20px;
+            transition: all 0.5s;
+            cursor: pointer;
+          }
+          .lock {
+            font-size: 18px;
+            font-weight: 600;
+            margin-right: 0.5rem;
+          }
+          .fold-rotate {
+            transform: rotate(180deg);
           }
         }
-        .fold,
-        .lock {
-          color: #d7d7d7;
-          font-size: 20px;
-          transition: all 0.5s;
-          cursor: pointer;
-        }
-        .lock {
-          font-size: 18px;
-          font-weight: 600;
-          margin-right: 0.5rem;
-        }
-        .fold-rotate {
-          transform: rotate(180deg);
-        }
-      }
-    }
-    .w-100 {
-      width: 100%;
-    }
-    .equips {
-      width: 25%;
-      height: 68%;
-      background-image: url(../../assets/images/equips-bg.png);
-      background-size: 100% 90%;
-      background-repeat: no-repeat;
-      ul {
-        width: 97%;
-        margin: 0 auto;
-      }
-      li {
-        height: 60px;
-        padding: 1rem 0;
-        cursor: pointer;
-        transition: background 0.5s;
-        &.active {
-          background: rgba(10, 84, 255, 0.3);
-        }
-        img {
-          width: 1.5rem;
-          height: 1.5rem;
-        }
-        span {
-          background: linear-gradient(
-            0deg,
-            rgba(158, 186, 255, 1) 0%,
-            rgba(107, 141, 255, 1) 100%
-          );
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-          font-size: 12px;
-          display: inline-block;
-          transition: all 0.5s;
-          &.active {
-            background: #fefefe;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+        .equips {
+          width: 24vw;
+          height: 30vh;
+          background-image: url(../../assets/images/block-bg.png);
+          background-size: 100% 100%;
+          background-repeat: no-repeat;
+          padding: 1vh 1rem;
+          h3 {
+            width: 100%;
+            margin: 0;
+            color: #fefefeff;
+            font-size: 1rem;
+            height: 6vh;
+            line-height: 6vh;
+            padding: 0 1vw;
           }
         }
+        &-translate-right {
+          transition: all 0.5s;
+          transform: translateX(24vw);
+        }
+        &-translate-left {
+          transition: all 0.5s;
+          transform: translateX(0);
+        }
       }
-      h3 {
-        width: 100%;
-        margin: 1rem auto;
-        color: #fefefeff;
-        font-size: 1rem;
-        padding: 0 1rem;
+      .fun-intro {
+        position: absolute;
+        top: 1rem;
+        left: 2rem;
+        width: 24vw;
+        height: 35vh;
+        background-image: url(../../assets/images/fun-intro.png);
+        background-size: 100% 100%;
       }
     }
   }
   footer {
     width: 100%;
-    height: 30vh;
-    padding: 0 1rem;
     position: absolute;
-    left: 0;
-    bottom: 0.5rem;
-    .footer-left,
-    .footer-right {
-      align-self: flex-end;
-      height: 100%;
+    bottom: 4vh;
+    height: 30vh;
+    padding: 0 1vw;
+    .device-content {
+      width: 25vw;
+      // padding: 0 1rem;
     }
-    .footer-left {
-      width: 75%;
-    }
-    .footer-right {
-      width: 25%;
-    }
-    .tip {
-      width: 320px;
-      height: 40px;
-      padding: 0 1rem;
-      background-image: url(../../assets/images/tip-bg.png);
-      background-size: 100% 100%;
-      margin-bottom: 0.3rem;
-      margin-left: 0.5rem;
-      span.text-white {
-        padding: 0 0.5rem;
-      }
-    }
-    // .device-content {
-    //   width: 100%;
-    // }
     .device-item {
       width: 100%;
+      height: 100%;
       margin: 0 auto;
-      background-image: url(../../assets/images/device-item-bg.png);
+      background-image: url(../../assets/images/block-bg.png);
       background-size: 100% 100%;
       background-repeat: no-repeat;
-      .top {
-        width: 95%;
-        margin: 0 auto;
-        padding: 2% 1%;
-        span.state-name {
-          display: inline-block;
-          font-size: 12px;
-          transform: scale(0.9);
-        }
-        span.device-name {
-          font-size: 0.8rem;
-          color: #fefefeff;
-          padding: 0 0.5rem;
-        }
+      padding: 1vh 1rem;
+      h3 {
+        width: 100%;
+        margin: 0;
+        color: #fefefeff;
+        font-size: 1rem;
+        height: 6vh;
+        line-height: 6vh;
+        padding: 0 1vw;
       }
       .device {
-        width: 95%;
-        margin: 1rem auto;
+        // width: 95%;
+        margin: 1vh auto;
+        margin-bottom: 0;
         padding: 0 0.5rem;
-        .detail-btn {
-          display: inline-block;
-          padding: 2px 14px;
-          border-radius: 10px;
-          font-size: 12px;
-          background: linear-gradient(
-            90deg,
-            rgba(9, 56, 170, 1),
-            rgba(11, 32, 103, 1)
-          );
-          transform: scale(0.8);
-          cursor: pointer;
-        }
       }
       .content {
-        width: 95%;
+        // width: 95%;
         margin: 0 auto;
         padding: 0 0.5rem;
         height: 120px;
-        overflow: scroll;
+        overflow: auto;
         .parameter {
-          padding: 0.3rem 0;
+          padding: 0.5rem 0;
         }
+      }
+      .light-content {
+        height: 120px;
+        overflow: auto;
       }
     }
   }

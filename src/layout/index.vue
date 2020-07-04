@@ -2,14 +2,29 @@
   <div :class="classObj">
     <nav-bar></nav-bar>
     <section class="flex app-section">
-      <div v-if="device==='mobile'&&sidebar.opened" class="drawer-bg" @click="handleClickOutside" />
+      <div
+        v-if="device === 'mobile' && sidebar.opened"
+        class="drawer-bg"
+        @click="handleClickOutside"
+      />
       <side-bar
-        :class="['sidebar-container',device==='mobile'&&sidebar.opened?'sidebar-container-index':'' ]"
+        :class="[
+          'sidebar-container',
+          device === 'mobile' && sidebar.opened
+            ? 'sidebar-container-index'
+            : '',
+        ]"
       ></side-bar>
       <div class="main-container flex flex-column">
         <div class="flex ai-center">
           <i
-            :class="[isFold?'fold-rotate':'','el-icon-s-unfold','fold', 'fs-xxl' ,'text-grey-5']"
+            :class="[
+              isFold ? 'fold-rotate' : '',
+              'el-icon-s-unfold',
+              'fold',
+              'fs-xxl',
+              'text-grey-5',
+            ]"
             @click="toggleSidebar"
           ></i>
           <breadcrumb />
@@ -18,20 +33,20 @@
       </div>
     </section>
     <!-- 设备详情弹出框 -->
-    <device-detail :deviceType="deviceType"></device-detail>
+    <!-- <device-detail></device-detail> -->
     <!-- 编辑密码 -->
     <edit-pwd></edit-pwd>
   </div>
 </template>
 
 <script>
-import NavBar from "./components/NavBar";
-import SideBar from "./components/SideBar";
-import Breadcrumb from "./components/Breadcrumb";
-import AppMain from "./components/AppMain";
-import ResizeMixin from "./mixin/ResizeHandler";
-import DeviceDetail from "@/components/DeviceDetail";
-import EditPwd from "@/components/EditPwd";
+import NavBar from './components/NavBar';
+import SideBar from './components/SideBar';
+import Breadcrumb from './components/Breadcrumb';
+import AppMain from './components/AppMain';
+import ResizeMixin from './mixin/ResizeHandler';
+import DeviceDetail from '@/components/DeviceDetail';
+import EditPwd from '@/components/EditPwd';
 
 export default {
   components: {
@@ -40,7 +55,7 @@ export default {
     Breadcrumb,
     AppMain,
     DeviceDetail,
-    EditPwd
+    EditPwd,
   },
   mixins: [ResizeMixin],
   computed: {
@@ -55,24 +70,24 @@ export default {
         hideSidebar: !this.sidebar.opened,
         openSidebar: this.sidebar.opened,
         withoutAnimation: this.sidebar.withoutAnimation,
-        mobile: this.device === "mobile"
+        mobile: this.device === 'mobile',
       };
-    }
+    },
   },
   data() {
     return {
-      isFold: false
+      isFold: false,
     };
   },
   methods: {
     toggleSidebar() {
       this.isFold = !this.isFold;
-      this.$store.dispatch("app/toggleSideBar");
+      this.$store.dispatch('app/toggleSideBar');
     },
     handleClickOutside() {
-      this.$store.dispatch("app/closeSideBar", { withoutAnimation: false });
-    }
-  }
+      this.$store.dispatch('app/closeSideBar', {withoutAnimation: false});
+    },
+  },
 };
 </script>
 

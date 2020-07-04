@@ -1,13 +1,33 @@
 <template>
-  <div class="nav-bar gradient-blue-2 flex ai-center jc-between w-100 bg-white bx-shadow-1">
+  <div
+    class="nav-bar gradient-blue-2 flex ai-center jc-between w-100 bg-white bx-shadow-1"
+  >
     <div class="flex flex-4 ai-center">
-      <div :class="['logo', 'flex', 'ai-center', device==='mobile'?'hide-text':'']">
+      <div
+        :class="[
+          'logo',
+          'flex',
+          'ai-center',
+          device === 'mobile' ? 'hide-text' : '',
+        ]"
+      >
         <img src="@/assets/images/index-logo.png" alt />
         <!-- <span class="text-white">|</span> -->
         <h1 class="title">城市智慧路灯物联云平台</h1>
       </div>
-      <el-select class="proj-select" v-model="projId" filterable placeholder="请选择" @change="change">
-        <el-option v-for="item in projList" :key="item.id" :label="item.title" :value="item.id"></el-option>
+      <el-select
+        class="proj-select"
+        v-model="projId"
+        filterable
+        placeholder="请选择"
+        @change="change"
+      >
+        <el-option
+          v-for="item in projList"
+          :key="item.id"
+          :label="item.title"
+          :value="item.id"
+        ></el-option>
       </el-select>
     </div>
     <div class="flex ai-center flex-2 jc-end">
@@ -20,44 +40,42 @@
 </template>
 
 <script>
-import UserAccount from "@/components/UserAccount";
-import { mapGetters } from "vuex";
+import UserAccount from '@/components/UserAccount';
+import {mapGetters} from 'vuex';
 export default {
-  name: "nav-bar",
+  name: 'nav-bar',
   components: {
-    UserAccount
+    UserAccount,
   },
   computed: {
-    ...mapGetters(["projList", "cur_proj"]),
+    ...mapGetters(['projList', 'cur_proj']),
     device() {
       return this.$store.state.app.device;
-    }
+    },
   },
   data() {
     return {
       chargeOrAdmin: true,
-      projId: ""
+      projId: '',
     };
   },
   async mounted() {
     // 获取项目列表
     if (this.projList.length == 0) {
-      console.log("length", this.projList.length);
-      await this.$store.dispatch("project/allProject");
+      await this.$store.dispatch('project/allProject');
     }
     this.projId = this.cur_proj;
-    console.log(typeof this.projId);
   },
   watch: {
     cur_proj() {
       this.projId = this.cur_proj;
-    }
+    },
   },
   methods: {
     change() {
-      this.$store.commit("project/SET_CURPROJ", this.projId);
-    }
-  }
+      this.$store.commit('project/SET_CURPROJ', this.projId);
+    },
+  },
 };
 </script>
 <style scoped>

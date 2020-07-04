@@ -3,39 +3,67 @@
     <el-dialog
       title="分组详情"
       :visible="showDialog"
-      @close="$listeners.closeDialog('detail')"
+      @close="
+        $listeners.closeDialog('detail');
+        params.device_number = '';
+      "
       @open="open"
     >
       <!-- 组号 -->
       <div class="flex text-dark">
         <span>组号：</span>
-        <span>组号</span>
+        <span>{{ model.group_number }}</span>
       </div>
       <!-- 定时控灯 -->
       <div class="flex flex-column mg-top-1 text-dark">
         <div class="flex">
           <span>定时控灯：</span>
-          <span>{{'开启/关闭'}}</span>
+          <span>{{ model.is_timing == 1 ? '开启' : '关闭' }}</span>
         </div>
-        <ul class="mg-top-1 time-list">
-          <li class="flex">
-            <span class="flex-1">时间</span>
-            <span class="flex-1">亮度</span>
-          </li>
-          <li class="flex time mg-top-1">
-            <span class="w-50">08:00</span>
-            <span class="w-50">0%</span>
-          </li>
-          <li class="flex time mg-top-1">
-            <span class="w-50">08:00</span>
-            <span class="w-50">0%</span>
-          </li>
-        </ul>
+        <template
+          v-if="
+            model.is_timing == 1 &&
+              model.group_controls &&
+              model.group_controls.length > 0
+          "
+        >
+          <ul class="mg-top-1 time-list">
+            <li class="flex">
+              <span class="flex-1">时间</span>
+              <span class="flex-1">亮度</span>
+            </li>
+            <li
+              class="flex time mg-top-1"
+              v-for="control in model.group_controls"
+              :key="control.time"
+            >
+              <span class="w-50">{{
+                control.hour + ':' + control.minute
+              }}</span>
+              <span class="w-50">{{ control.brightness }}%</span>
+            </li>
+          </ul>
+        </template>
+        <template v-else-if="model.is_timing == 1">
+          <p>暂无内容</p>
+        </template>
       </div>
       <!-- 搜索栏 -->
       <div class="flex mg-top-1">
-        <el-input placeholder="搜索设备编号" v-model="sn" class="wpx-200 mg-right-1"></el-input>
-        <button type="button" class="btn-del wpx-100">移除</button>
+        <!-- <button
+          type="button"
+          size="small"
+          class="btn-del wpx-100 mg-right-1"
+          @click="del"
+        >
+          移除
+        </button> -->
+        <el-input
+          placeholder="搜索设备编号"
+          v-model="params.device_number"
+          class="wpx-200 "
+          @input="search"
+        ></el-input>
       </div>
       <!-- 表格 -->
       <div class="table mg-top-1">
@@ -46,58 +74,85 @@
           header-cell-class-name="table-header"
           @selection-change="handleSelectionChange"
           v-loading="listLoading"
+          element-loading-spinner="el-icon-loading"
         >
-          <el-table-column type="selection" width="55"></el-table-column>
+          <el-table-column label="序号">
+            <template slot-scope="scope">{{ scope.$index + 1 }}</template>
+          </el-table-column>
           <el-table-column prop="device_number" label="编号"></el-table-column>
           <el-table-column prop="place_number" label="位号"></el-table-column>
-          <el-table-column prop="brightness" label="亮度"></el-table-column>
+          <el-table-column label="亮度">
+            <template slot-scope="scope">
+              {{
+                scope.row.light_report_data != null
+                  ? scope.row.light_report_data.brightness
+                  : '无'
+              }}
+            </template>
+          </el-table-column>
           <el-table-column label="状态">
-            <template slot-scope="scope">{{scope.row.status | faultStatus}}</template>
+            <template slot-scope="scope">{{
+              scope.row.status | faultStatus
+            }}</template>
           </el-table-column>
         </el-table>
-        <!-- 分页 -->
-        <div class="page">
-          <el-pagination
-            background
-            layout="total,prev, pager, next"
-            :total="total"
-            :page-size="limit"
-            :current-page="page"
-            @current-change="currentPage"
-          ></el-pagination>
-        </div>
       </div>
     </el-dialog>
   </div>
 </template>
 
 <script>
+import _ from 'lodash';
 export default {
-  name: "GroupdetailDialog",
+  name: 'GroupdetailDialog',
   props: {
     showDialog: {
       type: Boolean,
-      default: false
+      default: false,
     },
-    group_id: {
+    id: {
       type: Number,
-      default: 0
-    }
+      default: 0,
+    },
   },
   data() {
     return {
-      model: {}
+      model: {},
+      tableData: [],
+      params: {
+        device_number: '',
+        group_id: '',
+      },
+      listLoading: false,
     };
   },
   methods: {
     async open() {
       if (this.group_id != 0) {
-        this.model = await this.$store.dispatch("group/detailGroup", {
-          id: this.group_id
+        this.model = await this.$store.dispatch('group/detailGroup', {
+          id: this.id,
         });
+        this.getDeviceList();
       }
-    }
-  }
+    },
+    async getDeviceList() {
+      this.params.group_id = this.id;
+      this.listLoading = true;
+      const {list} = await this.$store.dispatch(
+        'group/deviceListGroup',
+        this.params,
+      );
+      this.tableData = list;
+      console.log('list', list);
+
+      this.listLoading = false;
+    },
+    search: _.debounce(function() {
+      this.getDeviceList();
+    }, 500),
+    del() {},
+    handleSelectionChange() {},
+  },
 };
 </script>
 <style scoped>
