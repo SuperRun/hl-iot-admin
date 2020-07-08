@@ -113,7 +113,7 @@ export default {
             iconSize = new BMap.Size(30, 30);
             break;
           case 2:
-            if (isWeather == 1) {
+            if (isWeather == 1 && this.types.includes(4)) {
               iconSize = new BMap.Size(26, 41);
             } else if (isWeather == 2) {
               iconSize = new BMap.Size(29, 49);
@@ -190,19 +190,32 @@ export default {
         },
       );
       // 获取设备列表
+      let typesCopy = [];
+      if (this.types.includes(4) && !this.types.includes(2)) {
+        typesCopy = [...this.types];
+        typesCopy[this.types.findIndex((type) => type == 4)] = 2;
+      } else {
+        typesCopy = [...this.types];
+      }
       let params = {
         project_id: this.cur_proj,
-        product_type_list: this.types.join(','),
+        product_type_list: typesCopy.join(','),
       };
 
       const {list} = await this.$store.dispatch('device/listDevice', params);
-      console.log('this.types', this.types);
 
-      if (!this.types.includes(4)) {
-        this.deviceList = list.filter(
-          (item) => !(item.product_type == 2 && item.is_weather == 1),
-        );
-        console.log('this.deviceList', this.deviceList);
+      if (this.types.includes(4) && !this.types.includes(2)) {
+        this.deviceList = list.filter((item) => {
+          if (item.product_type == 2) {
+            if (item.is_weather == 1) {
+              return true;
+            } else {
+              return false;
+            }
+          } else {
+            return true;
+          }
+        });
       } else {
         this.deviceList = list;
       }
@@ -210,14 +223,16 @@ export default {
       this.initMap(longitude, latitude);
     },
     initMap(longitude, latitude) {
-      if (Object.keys(this.map).length == 0) {
-        this.map = new BMap.Map('container', {enableMapClick: false}); // 创建地图实例
-        this.map.enableScrollWheelZoom(true); //开启鼠标滚轮缩放
-      }
+      // if (Object.keys(this.map).length == 0) {
+      //   console.log('map');
+      this.map = new BMap.Map('container', {enableMapClick: false}); // 创建地图实例
+      this.map.enableScrollWheelZoom(true); //开启鼠标滚轮缩放
+      // }
       this.map.clearOverlays();
       var point = new BMap.Point(longitude, latitude); // 创建点坐标
       this.map.centerAndZoom(point, 15); // 初始化地图，设置中心点坐标和地图级别
       this.addMarkers();
+      // this.map.clearOverlays();
     },
     converDeviceList() {
       const self = this;
@@ -231,20 +246,38 @@ export default {
             if (self.defaultSelects.includes(cur.id)) {
               icon = 'lightSelected';
             } else {
-              icon = cur.is_open == 1 ? 'lightNormal' : 'lightClosed';
+              if (cur.status == 2) {
+                icon = cur.is_open == 1 ? 'lightNormal' : 'lightClosed';
+              } else if (cur.status == 3) {
+                icon = 'lightFault';
+              } else if (cur.status == 4) {
+                icon = 'lightOffline';
+              }
             }
-          } else if (cur.product_type == 2 && cur.is_weather == 1) {
-            icon = `${typeMap.get(4)}Selected`;
+          } else if (cur.product_type == 2) {
+            if (cur.is_weather == 1 && self.types.includes(4)) {
+              if (self.defaultSelects.includes(cur.id)) {
+                icon = `${typeMap.get(4)}Selected`;
+              } else {
+                icon = `${typeMap.get(4)}${statusMap.get(cur.status)}`;
+              }
+            } else if (self.types.includes(2)) {
+              if (self.defaultSelects.includes(cur.id)) {
+                icon = `${typeMap.get(2)}Selected`;
+              } else {
+                if (cur.status == 2) {
+                  icon = cur.is_open == 1 ? 'screenNormal' : 'screenClosed';
+                } else if (cur.status == 4) {
+                  icon = 'screenOffline';
+                }
+              }
+            }
           } else if (self.defaultSelects.includes(cur.id)) {
             icon = `${typeMap.get(cur.product_type)}Selected`;
           } else {
-            if (cur.product_type == 2 && cur.is_weather == 1) {
-              icon = `${typeMap.get(4)}${statusMap.get(cur.status)}`;
-            } else {
-              icon = `${typeMap.get(cur.product_type)}${statusMap.get(
-                cur.status,
-              )}`;
-            }
+            icon = `${typeMap.get(cur.product_type)}${statusMap.get(
+              cur.status,
+            )}`;
           }
           pre.push({
             ...cur,
@@ -262,11 +295,13 @@ export default {
           this.indexArr[findIndex] = index;
         }
       });
-      console.log('this.deviceMapList', this.deviceMapList.length);
+      console.log('this.deviceMapList', this.deviceMapList);
     },
     addMarkers() {
+      console.log('this.markers', this.markers);
       const self = this;
       this.markers = [];
+      this.map.clearOverlays();
       this.deviceMapList.forEach((device, index) => {
         let point = new BMap.Point(device.longitude, device.latitude);
         let iconSize = null;
@@ -279,9 +314,9 @@ export default {
             iconSize = new BMap.Size(30, 30);
             break;
           case 2:
-            if (isWeather == 1) {
+            if (isWeather == 1 && this.types.includes(4)) {
               iconSize = new BMap.Size(26, 41);
-            } else if (isWeather == 2) {
+            } else {
               iconSize = new BMap.Size(29, 49);
             }
             break;
@@ -327,14 +362,31 @@ export default {
         };
 
         const clickFunc = function(e) {
-          const curType = self.markers[index].product_type;
+          let curType = self.markers[index].product_type;
+          if (
+            curType == 2 &&
+            self.types.includes(4) &&
+            self.markers[index].is_weather == 1
+          ) {
+            curType = 4;
+          }
+          console.log('curType', curType);
+
           const indexVal = self.indexArr[curType - 1];
           let temp1 = self.deviceMapList[indexVal].product_type;
           let temp2 = self.deviceMapList[index].product_type;
-          if (temp1 == 2 && self.deviceMapList[indexVal].is_weather == 1) {
+          if (
+            temp1 == 2 &&
+            self.deviceMapList[indexVal].is_weather == 1 &&
+            self.types.includes(4)
+          ) {
             temp1 = 4;
           }
-          if (temp2 == 2 && self.deviceMapList[index].is_weather == 1) {
+          if (
+            temp2 == 2 &&
+            self.deviceMapList[index].is_weather == 1 &&
+            self.types.includes(4)
+          ) {
             temp2 = 4;
           }
 
@@ -344,46 +396,65 @@ export default {
               new BMap.Icon(MapMark[`${typeMap.get(temp2)}Selected`], iconSize),
             );
           } else {
-            self.markers[indexVal].marker.setIcon(
-              new BMap.Icon(
-                MapMark[
-                  `${typeMap.get(temp1)}${statusMap.get(
-                    self.deviceMapList[indexVal].status,
-                  )}`
-                ],
-                iconSize,
-              ),
-            );
+            let icon = '';
+            let cur = self.markers[indexVal];
+            if (cur.product_type == 3) {
+              if (cur.status == 2) {
+                icon = cur.is_open == 1 ? 'lightNormal' : 'lightClosed';
+              } else if (cur.status == 3) {
+                icon = 'lightFault';
+              } else if (cur.status == 4) {
+                icon = 'lightOffline';
+              }
+            } else if (cur.product_type == 2) {
+              if (cur.is_weather == 1 && self.types.includes(4)) {
+                icon = `${typeMap.get(4)}${statusMap.get(cur.status)}`;
+              } else if (self.types.includes(2)) {
+                if (cur.status == 2) {
+                  icon = cur.is_open == 1 ? 'screenNormal' : 'screenClosed';
+                } else if (cur.status == 4) {
+                  icon = 'screenOffline';
+                }
+              }
+            } else {
+              icon = `${typeMap.get(cur.product_type)}${statusMap.get(
+                cur.status,
+              )}`;
+            }
 
+            self.markers[indexVal].marker.setIcon(
+              new BMap.Icon(MapMark[icon], iconSize),
+            );
             self.markers[index].marker.setIcon(
               new BMap.Icon(MapMark[`${typeMap.get(temp2)}Selected`], iconSize),
             );
           }
 
           self.detailDevice({id: device.id}).then((res1) => {
-            console.log('setDefaultDetail res', res1);
+            console.log('temp2', temp2);
             if (temp2 == 4) {
               getLedWeatherData({device_id: device.id}).then((res2) => {
                 if (res2.data && res2.data.list && res2.data.list.length > 0) {
                   self.$emit('setDefaultDetail', {
                     varName: `${typeMap.get(temp2)}Detail`,
-                    data: {...res1, weatherInfo: res.data.list[0]},
+                    data: {...res1, weatherInfo: res2.data.list[0]},
                   });
                 } else {
                   self.$emit('setDefaultDetail', {
                     varName: `${typeMap.get(temp2)}Detail`,
-                    data: {...res, weatherInfo: null},
+                    data: {...res1, weatherInfo: null},
                   });
                 }
-                self.$store.commit('app/SET_DEVICE_DETAIL', res);
+                self.$store.commit('app/SET_DEVICE_DETAIL', res1);
                 self.$store.commit('app/OPEN_WEATHERDIALOG');
               });
             } else {
               self.$emit('setDefaultDetail', {
                 varName: `${typeMap.get(temp2)}Detail`,
-                data: res,
+                data: res1,
               });
-              self.$store.commit('app/SET_DEVICE_DETAIL', res);
+              self.$emit('showDetail');
+              self.$store.commit('app/SET_DEVICE_DETAIL', res1);
               self.$store.commit('app/OPEN_DEVICEDIALOG');
             }
           });
@@ -426,6 +497,7 @@ export default {
         this.markers.push({marker, ...device});
         this.map.addOverlay(marker);
       });
+      console.log('this.markers', this.markers);
     },
     deviceType(type) {
       const map = new Map([

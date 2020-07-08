@@ -128,6 +128,7 @@
         <baidu-map
           v-if="defaultSelects != null"
           @setDefaultDetail="setDefaultDetail"
+          @showDetail="showDetail"
           :defaultSelects="defaultSelects"
           :isLock="isLock"
           :types="types"
@@ -360,7 +361,7 @@
     <edit-pwd></edit-pwd>
     <!-- 设备详情弹出框 -->
     <device-detail
-      :content="content"
+      :curContent="content"
       v-if="isShow"
       @hideDetail="hideDetail"
     ></device-detail>
@@ -437,6 +438,7 @@ export default {
       files: null,
       cameraToken: '',
       defaultSelects: null,
+      defaultSelectsNoChange: null, // 记录初始状态默认选中的设备
       params: {
         product_type: 3, // 产品类型 3-照明灯
         status: 3, // 状态
@@ -496,13 +498,23 @@ export default {
         this.types.includes(type + 1)
           ? this.types.splice(this.types.indexOf(type + 1), 1)
           : this.types.push(type + 1);
+        let arr = [0, 0, 0, 0];
+        this.types.map((type) => {
+          arr[type - 1] = this.defaultSelectsNoChange[type - 1];
+        });
+        this.defaultSelects = arr;
       }
     },
     openDeviceDetail(id) {
       this.isShow = true;
       this.content = 'Content';
       this.$store.dispatch('device/detailDevice', {id}).then((res) => {
-        if (res.product_type == 2 && res.is_weather == 1) {
+        console.log('res', res);
+        if (
+          res.product_type == 2 &&
+          res.is_weather == 1 &&
+          this.types.includes(4)
+        ) {
           this.$store.commit('app/SET_DEVICE_DETAIL', res);
           this.$store.commit('app/OPEN_WEATHERDIALOG');
         } else {
@@ -550,11 +562,13 @@ export default {
             this.lightDetail != null ? this.lightDetail.id : 0,
             this.weatherDetail != null ? this.weatherDetail.id : 0,
           ];
+          this.defaultSelectsNoChange = this.defaultSelects;
           if (this.lightDetail != null && this.lightDetail.group != null) {
             this.getLightTimeControl(this.lightDetail.group.id);
           }
 
           if (
+            this.screenDetail != null &&
             this.screenDetail.playerContent != null &&
             this.screenDetail.playerContent.content != null
           ) {
@@ -580,19 +594,35 @@ export default {
     },
     async searchDevice(keyword) {
       this.loading = true;
+      let typesCopy = [];
+      if (this.types.includes(4) && !this.types.includes(2)) {
+        typesCopy = [...this.types];
+        typesCopy[this.types.findIndex((type) => type == 4)] = 2;
+      } else {
+        typesCopy = [...this.types];
+      }
       const {list} = await this.$store.dispatch('device/listDevice', {
         project_id: this.cur_proj,
         device_number: keyword,
-        product_type_list: this.types.join(','),
+        product_type_list: typesCopy.join(','),
       });
-      if (!this.types.include(4)) {
-        this.deviceOptions = list.filter(
-          (item) => !(item.product_type == 2 && item.is_weather == 1),
-        );
+      if (this.types.includes(4) && !this.types.includes(2)) {
+        this.deviceOptions = list.filter((item) => {
+          if (item.product_type == 2) {
+            if (item.is_weather == 1) {
+              return true;
+            } else {
+              return false;
+            }
+          } else {
+            return true;
+          }
+        });
         console.log('this.deviceOptions', this.deviceOptions);
       } else {
         this.deviceOptions = list;
       }
+      console.log('this.deviceOptions', this.deviceOptions);
       this.loading = false;
     },
     searchChange(val) {
@@ -608,6 +638,9 @@ export default {
     },
     hideDetail() {
       this.isShow = false;
+    },
+    showDetail() {
+      this.isShow = true;
     },
   },
 };

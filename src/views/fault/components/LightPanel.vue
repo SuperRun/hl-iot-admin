@@ -69,7 +69,7 @@
     </div>
     <!-- 设备详情弹出框 -->
     <device-detail
-      :content="content"
+      :curContent="content"
       @hideDetail="hideDetail"
       v-if="isShow"
     ></device-detail>

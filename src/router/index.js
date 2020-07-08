@@ -94,16 +94,15 @@ export const constantRoutes = [
     component: Layout,
     redirect: '/role/list',
     name: 'RoleManage',
-    meta: {
-      title: '角色管理',
-      icon: 'nav-auth',
-    },
     children: [
       {
         path: 'list',
         component: () => import('@/views/role/list/index'),
         name: 'RoleList',
-        hidden: true,
+        meta: {
+          title: '角色管理',
+          icon: 'nav-auth',
+        },
       },
       {
         path: 'add',
@@ -133,18 +132,18 @@ export const constantRoutes = [
       },
     ],
   },
-  {
-    path: '/platform',
-    component: Layout,
-    children: [
-      {
-        path: 'index',
-        component: () => import('@/views/platform/index'),
-        name: 'Platform',
-        meta: {title: '平台管理', icon: 'nav-platform'},
-      },
-    ],
-  },
+  // {
+  //   path: '/platform',
+  //   component: Layout,
+  //   children: [
+  //     {
+  //       path: 'index',
+  //       component: () => import('@/views/platform/index'),
+  //       name: 'Platform',
+  //       meta: {title: '平台管理', icon: 'nav-platform'},
+  //     },
+  //   ],
+  // },
 ];
 
 const createRouter = () =>

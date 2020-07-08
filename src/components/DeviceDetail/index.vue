@@ -2,6 +2,7 @@
   <el-dialog
     :title="title"
     :visible="deviceDetailDialogOpened"
+    :destroy-on-close="true"
     center
     @open="open"
     @close="close"
@@ -119,10 +120,6 @@ export default {
       type: Number,
       default: 1,
     },
-    content: {
-      type: String,
-      default: 'Content',
-    },
     curContent: {
       type: String,
       default: 'Content',
@@ -165,7 +162,8 @@ export default {
     },
   },
   created() {
-    this.currentTab = this.content;
+    console.log('created');
+    this.currentTab = this.curContent;
   },
   methods: {
     open() {
@@ -174,9 +172,9 @@ export default {
     close() {
       this.$store.dispatch('app/closeDeviceDialog');
       this.currentTab = 'Content';
-      if (this.content == 'Fault') {
-        this.$emit('hideDetail');
-      }
+      // if (this.selectedContent == 'Fault') {
+      this.$emit('hideDetail');
+      // }
     },
   },
 };

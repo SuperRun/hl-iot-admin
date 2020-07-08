@@ -1,7 +1,8 @@
 <template>
   <div class="flex flex-column">
     <div class="refresh" @click="refresh">
-      <i class="el-icon-refresh"></i>
+      读状态
+      <!-- <i class="el-icon-refresh"></i> -->
     </div>
     <ul
       class="flex mg-top-1"
@@ -180,15 +181,14 @@ export default {
 
 <style scoped>
 .refresh {
-  width: 30px;
+  width: 60px;
   height: 30px;
-  border-radius: 30px;
+  border-radius: 3px;
   background-color: #c4c4c4;
   line-height: 30px;
   text-align: center;
   cursor: pointer;
   color: #fff;
-  font-weight: bold;
 }
 .light {
   display: inline-block;

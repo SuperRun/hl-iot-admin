@@ -23,7 +23,6 @@ service.interceptors.request.use(
 service.interceptors.response.use(
   (response) => {
     const res = response.data;
-    console.log('response', response);
     if (
       response.config.url == '/device/index' &&
       response.config.params.is_export == 1
