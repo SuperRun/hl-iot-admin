@@ -26,6 +26,7 @@ const AUTH_LIST = '/permission/index';
 const AUTH_EDIT = '/permission/update';
 const AUTH_ADD = '/permission/store';
 const AUTH_DETAIL = '/permission/detail';
+const AUTH_TREE = '/permission/menus_all';
 
 // product
 const PRODUCT_EDIT = '/product/update';
@@ -108,6 +109,7 @@ export {
   AUTH_ADD,
   AUTH_EDIT,
   AUTH_DETAIL,
+  AUTH_TREE,
   PRODUCT_EDIT,
   PRODUCT_ADD,
   PRODUCT_LIST,

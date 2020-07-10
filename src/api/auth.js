@@ -1,5 +1,11 @@
 import request from '@/utils/request';
-import {AUTH_LIST, AUTH_ADD, AUTH_EDIT, AUTH_DETAIL} from '@/constant/url';
+import {
+  AUTH_LIST,
+  AUTH_ADD,
+  AUTH_EDIT,
+  AUTH_DETAIL,
+  AUTH_TREE,
+} from '@/constant/url';
 
 /**
  * @description: 权限列表
@@ -50,5 +56,17 @@ export function detailAuth(params) {
     url: AUTH_DETAIL,
     method: 'get',
     params,
+  });
+}
+
+/**
+ * @description: 权限树状列表
+ * @param {object} data
+ * @return:
+ */
+export function treeAuthList() {
+  return request({
+    url: AUTH_TREE,
+    method: 'get',
   });
 }

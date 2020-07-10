@@ -52,3 +52,16 @@ export function detailRole (params) {
     params,
   });
 }
+
+/**
+ * @description: 角色详情
+ * @param {object} data
+ * @return: 
+ */
+export function roleAuthList (params) {
+  return request ({
+    url: '/role/role_permission',
+    method: 'get',
+    params,
+  });
+}

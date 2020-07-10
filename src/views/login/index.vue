@@ -123,7 +123,7 @@ export default {
 
 <style lang="scss" scoped>
 .login {
-  background-image: url(../../assets/images/login-bg.jpeg);
+  background-image: url(../../assets/images/login-bg.jpg);
   background-size: 100% 100%;
   overflow: hidden;
   h1 {

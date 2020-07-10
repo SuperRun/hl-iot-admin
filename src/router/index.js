@@ -13,15 +13,15 @@ export const constantRoutes = [
     path: '/',
     component: Layout,
     hidden: true,
-    redirect: '/index',
+    redirect: '/role',
   },
-  {
-    path: '/index',
-    name: 'Index',
-    component: () => import('@/views/index/index'),
-    hidden: true,
-    meta: {title: '监控中心', icon: 'screen-active'},
-  },
+  // {
+  //   path: '/index',
+  //   name: 'Index',
+  //   component: () => import('@/views/index/index'),
+  //   hidden: true,
+  //   meta: {title: '监控中心', icon: 'screen-active'},
+  // },
   {
     path: '/device',
     component: Layout,
