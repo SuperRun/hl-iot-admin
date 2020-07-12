@@ -118,6 +118,9 @@ body {
   flex: 5;
 }
 // margin
+.mg-top5 {
+  margin-top: 5px;
+}
 .mg-left-1 {
   margin-left: 1rem;
 }
@@ -340,4 +343,17 @@ body {
   width: 178px;
   height: 178px;
   display: block;
+}
+
+// 滚动条
+::-webkit-scrollbar {
+  display: block;
+  height: 8px;
+}
+::-webkit-scrollbar-thumb {
+  border-radius: 8px;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+::-webkit-scrollbar-trackwei {
+  background-color: transparent;
 }

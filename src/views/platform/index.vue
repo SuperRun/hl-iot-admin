@@ -4,9 +4,7 @@
       <span class="text-grey-2 fs-md">平台名称：</span>
       <div v-if="!isEditName" class="flex ai-center">
         <span class="fs-md pd-right-1">{{ model.title }}</span>
-        <el-button type="button" class="btn btn-dark" @click="isEditName = true"
-          >编辑</el-button
-        >
+        <el-button type="button" class="btn btn-dark" @click="isEditName = true">编辑</el-button>
       </div>
       <div class="flex" v-else>
         <el-input
@@ -16,15 +14,8 @@
           maxlength="12"
           show-word-limit
         ></el-input>
-        <el-button type="button" class="btn btn-dark" @click="editPName"
-          >确定</el-button
-        >
-        <el-button
-          type="button"
-          class="btn btn-light"
-          @click="isEditName = false"
-          >取消</el-button
-        >
+        <el-button type="button" class="btn btn-dark" @click="editPName">确定</el-button>
+        <el-button type="button" class="btn btn-light" @click="isEditName = false">取消</el-button>
       </div>
     </div>
     <div class="flex mg-top-1">
@@ -32,6 +23,7 @@
       <div class="flex flex-column">
         <el-upload
           action
+          class="upload-logo"
           list-type="picture-card"
           :before-upload="beforeImgUpload"
           :http-request="uploadLogo"
@@ -51,8 +43,8 @@
 </template>
 
 <script>
-import {getSystem, setSystem} from '@/api/platform';
-import {showSuccessMsg} from '@/utils/message';
+import { getSystem, setSystem } from '@/api/platform';
+import { showSuccessMsg } from '@/utils/message';
 
 export default {
   name: 'PlatformManage',
@@ -72,20 +64,20 @@ export default {
   },
   methods: {
     editPName() {
-      setSystem({title: this.model.title, logo: this.model.image}).then(
-        (res) => {
+      setSystem({ title: this.model.title, logo: this.model.image }).then(
+        res => {
           showSuccessMsg('编辑成功');
           this.isEditName = false;
         },
       );
     },
     getSetting() {
-      getSystem().then((res) => {
+      getSystem().then(res => {
         console.log(res);
-        const {title, logo} = res.data;
+        const { title, logo } = res.data;
         this.model.title = title;
         this.model.image = logo;
-        this.imgList = [{url: logo}];
+        this.imgList = [{ url: logo }];
       });
     },
     uploadSuccess() {
@@ -94,7 +86,17 @@ export default {
   },
 };
 </script>
-
+<style scoped>
+.platform-manage >>> .el-upload--picture-card {
+  width: 300px;
+  height: 120px;
+  line-height: 120px;
+}
+.platform-manage >>> .el-upload-list__item {
+  width: 300px;
+  height: 120px;
+}
+</style>
 <style lang="scss" scoped>
 .platform-manage {
   padding: 2rem;
@@ -106,5 +108,9 @@ export default {
     width: 150px;
     height: 150px;
   }
+  // .upload-logo {
+  //   width: 200px;
+  //   height: 80px;
+  // }
 }
 </style>

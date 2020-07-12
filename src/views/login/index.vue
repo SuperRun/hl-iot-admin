@@ -36,12 +36,7 @@
             <img :src="code" alt @click="getValidCode" />
           </div>
           <p ref="tip">{{ !loading ? tip : '' }}</p>
-          <el-button
-            :loading="loading"
-            class="btn gradient-blue text-white fs-md"
-            @click="login"
-            >登录</el-button
-          >
+          <el-button :loading="loading" class="btn gradient-blue text-white fs-md" @click="login">登录</el-button>
         </form>
       </div>
     </main>
@@ -49,7 +44,9 @@
 </template>
 
 <script>
-import {validUsername} from '@/utils/validate';
+import { validUsername } from '@/utils/validate';
+import request from '@/utils/request';
+import { setPlatform } from '@/utils/auth';
 export default {
   name: 'Login',
   data() {
@@ -67,10 +64,13 @@ export default {
       tip: '', // 登录提示语
       userTip: 'ndjsnk', // 账号提示语
       code: '', // 验证码
+      platName: '',
+      logo: '',
     };
   },
   mounted() {
     this.getValidCode();
+    this.getLogo();
   },
   methods: {
     valid() {
@@ -97,8 +97,8 @@ export default {
           await this.$store.dispatch('user/userLogin', this.model);
           // 获取上传图片信息
           this.$store.dispatch('upload/getUploadImgConfig');
-          this.$store.dispatch('upload/getUploadVideoConfig', {type: 1});
-          this.$router.push({path: '/'});
+          this.$store.dispatch('upload/getUploadVideoConfig', { type: 1 });
+          this.$router.push({ path: '/' });
         } catch (error) {
           this.tip = error;
           this.$refs['tip'].style.opacity = 1;
@@ -113,9 +113,20 @@ export default {
       }
     },
     async getValidCode() {
-      const {img, key} = await this.$store.dispatch('user/getValidCode');
+      const { img, key } = await this.$store.dispatch('user/getValidCode');
       this.code = img;
       this.model.captcha_key = key;
+    },
+    async getLogo() {
+      request({
+        url: '/getSystem',
+        methods: 'get',
+      }).then(res => {
+        console.log(res);
+        this.platName = res.data.title;
+        this.logo = res.data.logo;
+        setPlatform(res.data);
+      });
     },
   },
 };
@@ -123,7 +134,7 @@ export default {
 
 <style lang="scss" scoped>
 .login {
-  background-image: url(../../assets/images/login-bg.jpg);
+  background-image: url(../../assets/images/login-bg.jpeg);
   background-size: 100% 100%;
   overflow: hidden;
   h1 {

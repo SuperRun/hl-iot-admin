@@ -2,23 +2,13 @@
   <div class="index w-100 flex flex-column">
     <header class="w-100 flex jc-between ai-center">
       <div class="flex-3">
-        <el-select
-          class="proj-select"
-          v-model="projId"
-          filterable
-          @change="change"
-        >
-          <el-option
-            v-for="item in projList"
-            :key="item.id"
-            :label="item.title"
-            :value="item.id"
-          ></el-option>
+        <el-select class="proj-select" v-model="projId" filterable @change="change">
+          <el-option v-for="item in projList" :key="item.id" :label="item.title" :value="item.id"></el-option>
         </el-select>
       </div>
       <div class="header-center flex flex-3 ai-center jc-center">
         <!-- <img src="@/assets/images/index-logo.png" alt /> -->
-        <h1 class="title">城市智慧路灯物联云平台</h1>
+        <h1 class="title">{{platName}}</h1>
       </div>
       <div class="flex ai-center jc-end flex-3">
         <router-link to="/device/list">
@@ -30,7 +20,7 @@
     <main class="flex flex-column">
       <div class="menu-list flex w-100 jc-around">
         <div
-          class="menu-item flex  ai-center jc-around "
+          class="menu-item flex ai-center jc-around"
           :class="[
             `menu-item-bg${index}`,
             !currentTab.includes(index) ? 'menu-item-inactive' : '',
@@ -40,14 +30,16 @@
           @click="chooseDevice(index)"
         >
           <svg-icon :icon-class="menu.iconName" class="menu-icon"></svg-icon>
-          <div class="item-info flex flex-column ">
-            <h3 class="text-white ">{{ menu.title }}</h3>
-            <span class="text-white fs-sm" v-if="menu.online != null"
-              >在线：<strong class="fs-xl">{{ menu.online }}</strong></span
-            >
-            <span class="text-white fs-sm" v-if="menu.total != null"
-              >总数：<strong class="fs-xl">{{ menu.total }}</strong></span
-            >
+          <div class="item-info flex flex-column">
+            <h2 class="text-white">{{ menu.title }}</h2>
+            <span class="text-white fs-md" v-if="menu.online != null">
+              在线：
+              <strong class="txt-num">{{ menu.online }}</strong>
+            </span>
+            <span class="text-white fs-md mg-top5" v-if="menu.total != null">
+              总数：
+              <strong class="txt-num">{{ menu.total }}</strong>
+            </span>
           </div>
         </div>
       </div>
@@ -78,10 +70,7 @@
               ></el-option>
             </el-select>
             <div class="flex">
-              <i
-                :class="['lock', isLock ? 'el-icon-lock' : 'el-icon-unlock']"
-                @click="lockMap"
-              ></i>
+              <i :class="['lock', isLock ? 'el-icon-lock' : 'el-icon-unlock']" @click="lockMap"></i>
               <i
                 :class="[
                   'el-icon-s-unfold',
@@ -99,23 +88,18 @@
               accordion
               v-if="faultList != null && faultList.length > 0"
             >
-              <el-collapse-item
-                v-for="(fault, index) in faultList"
-                :key="index"
-              >
+              <el-collapse-item v-for="(fault, index) in faultList" :key="index">
                 <template slot="title">
                   设备SN:{{ fault.device.device_number }}
                   <!-- <span class="alarm-num">01</span> -->
                 </template>
                 <div class="detail flex jc-between">
-                  <span @click="faultDetail(fault.device.id)">{{
+                  <span @click="faultDetail(fault.device.id)">
+                    {{
                     '设备故障' | limitStrLen
-                  }}</span
-                  ><span
-                    class="text-light detail-btn"
-                    @click="faultDetail(fault.device.id)"
-                    >详情/设置 ></span
-                  >
+                    }}
+                  </span>
+                  <span class="text-light detail-btn" @click="faultDetail(fault.device.id)">详情/设置 ></span>
                 </div>
               </el-collapse-item>
             </el-collapse>
@@ -144,17 +128,16 @@
         <div class="device-item">
           <h3>摄像头+音频广播+语音对讲</h3>
           <div class="device flex jc-between">
-            <span class="text-light fs-sm"
-              >设备编号:{{
-                cameraDetail != null ? cameraDetail.device_number : '无'
-              }}</span
-            >
+            <span class="text-light fs-sm">
+              设备编号:{{
+              cameraDetail != null ? cameraDetail.device_number : '无'
+              }}
+            </span>
             <span
               class="text-light detail-btn"
               v-if="cameraDetail != null"
               @click="openDeviceDetail(cameraDetail.id)"
-              >详情/设置 ></span
-            >
+            >详情/设置 ></span>
           </div>
           <div class="content flex flex-column">
             <template v-if="cameraDetail != null">
@@ -165,8 +148,7 @@
                 id="ysOpenDevice"
                 class="mg-top-1"
                 allowfullscreen
-              >
-              </iframe>
+              ></iframe>
             </template>
             <template v-else>
               <no-device></no-device>
@@ -179,32 +161,26 @@
         <div class="device-item">
           <h3>LED屏</h3>
           <div class="device flex jc-between">
-            <span class="text-light fs-sm"
-              >设备编号:{{
-                screenDetail != null ? screenDetail.device_number : '无'
-              }}</span
-            >
+            <span class="text-light fs-sm">
+              设备编号:{{
+              screenDetail != null ? screenDetail.device_number : '无'
+              }}
+            </span>
             <span
               class="text-light detail-btn"
               v-if="screenDetail != null"
               @click="openDeviceDetail(screenDetail.id)"
-              >详情/设置 ></span
-            >
+            >详情/设置 ></span>
           </div>
           <div class="content flex flex-column text-white">
             <template v-if="screenDetail != null">
-              <div
-                class="flex flex-column"
-                v-if="screenDetail.is_open == 1 && files != null"
-              >
+              <div class="flex flex-column" v-if="screenDetail.is_open == 1 && files != null">
                 <a
                   class="text-white"
                   v-for="(file, index) in files"
                   :key="index"
                   :href="file.link"
-                >
-                  {{ file.filename }}
-                </a>
+                >{{ file.filename }}</a>
               </div>
               <p v-if="screenDetail.is_open == 2">LED屏未开启</p>
             </template>
@@ -219,17 +195,16 @@
         <div class="device-item">
           <h3>照明灯</h3>
           <div class="device flex jc-between">
-            <span class="text-light fs-sm"
-              >设备编号:{{
-                lightDetail != null ? lightDetail.device_number : '无'
-              }}</span
-            >
+            <span class="text-light fs-sm">
+              设备编号:{{
+              lightDetail != null ? lightDetail.device_number : '无'
+              }}
+            </span>
             <span
               class="text-light detail-btn"
               v-if="lightDetail != null"
               @click="openDeviceDetail(lightDetail.id)"
-              >详情/设置 ></span
-            >
+            >详情/设置 ></span>
           </div>
           <div class="content flex flex-column">
             <template v-if="lightDetail != null">
@@ -238,45 +213,37 @@
               </template>
               <template v-else-if="lightDetail.light_report_data != null">
                 <div class="parameter flex">
-                  <span class="flex-1 text-light fs-sm"
-                    >亮度：{{ lightDetail.light_report_data.brightness }}</span
-                  >
-                  <span class="flex-1 text-light fs-sm"
-                    >功率：{{ lightDetail.light_report_data.power }}mW</span
-                  >
+                  <span
+                    class="flex-1 text-light fs-sm"
+                  >亮度：{{ lightDetail.light_report_data.brightness }}</span>
+                  <span
+                    class="flex-1 text-light fs-sm"
+                  >功率：{{ lightDetail.light_report_data.power }}mW</span>
                 </div>
                 <div class="parameter flex">
-                  <span class="flex-1 text-light fs-sm"
-                    >电压：{{ lightDetail.light_report_data.voltage }}V</span
-                  >
-                  <span class="flex-1 text-light fs-sm"
-                    >电流：{{
-                      lightDetail.light_report_data.electric_current
-                    }}mA</span
-                  >
+                  <span
+                    class="flex-1 text-light fs-sm"
+                  >电压：{{ lightDetail.light_report_data.voltage }}V</span>
+                  <span class="flex-1 text-light fs-sm">
+                    电流：{{
+                    lightDetail.light_report_data.electric_current
+                    }}mA
+                  </span>
                 </div>
                 <div class="parameter flex">
-                  <span class="flex-1 text-light fs-sm"
-                    >温度：{{
-                      lightDetail.light_report_data.temperature
-                    }}ºC</span
-                  >
+                  <span class="flex-1 text-light fs-sm">
+                    温度：{{
+                    lightDetail.light_report_data.temperature
+                    }}ºC
+                  </span>
                 </div>
                 <div class="parameter flex">
                   <span class="flex-1 text-light fs-sm">定时控灯:</span>
                 </div>
                 <template v-if="controlList != null && controlList.length > 0">
-                  <div
-                    class="parameter flex"
-                    v-for="(control, index) in controlList"
-                    :key="index"
-                  >
-                    <span class="flex-1 text-light fs-sm"
-                      >{{ control.hour }}:{{ control.minute }}</span
-                    >
-                    <span class="flex-1 text-light fs-sm"
-                      >{{ control.brightness }}%</span
-                    >
+                  <div class="parameter flex" v-for="(control, index) in controlList" :key="index">
+                    <span class="flex-1 text-light fs-sm">{{ control.hour }}:{{ control.minute }}</span>
+                    <span class="flex-1 text-light fs-sm">{{ control.brightness }}%</span>
                   </div>
                 </template>
                 <span class="text-white fs-sm" v-else>暂无数据</span>
@@ -296,17 +263,16 @@
         <div class="device-item">
           <h3>气象站</h3>
           <div class="device flex jc-between">
-            <span class="text-light fs-sm"
-              >设备编号:{{
-                weatherDetail != null ? weatherDetail.device_number : '无'
-              }}</span
-            >
+            <span class="text-light fs-sm">
+              设备编号:{{
+              weatherDetail != null ? weatherDetail.device_number : '无'
+              }}
+            </span>
             <span
               class="text-light detail-btn"
               v-if="weatherDetail != null"
               @click="openDeviceDetail(weatherDetail.id)"
-              >详情/设置 ></span
-            >
+            >详情/设置 ></span>
           </div>
           <div class="content flex flex-column">
             <template v-if="weatherDetail != null">
@@ -315,35 +281,27 @@
               </template>
               <template v-else-if="weatherDetail.weather_info != null">
                 <div class="parameter flex">
-                  <span class="flex-1 text-light fs-sm"
-                    >PM2.5：{{ weatherDetail.weather_info.pm2 }}μg/m³</span
-                  >
-                  <span class="flex-1 text-light fs-sm"
-                    >PM10：{{ weatherDetail.weather_info.pm10 }}μg/m³</span
-                  >
+                  <span
+                    class="flex-1 text-light fs-sm"
+                  >PM2.5：{{ weatherDetail.weather_info.pm2 }}μg/m³</span>
+                  <span
+                    class="flex-1 text-light fs-sm"
+                  >PM10：{{ weatherDetail.weather_info.pm10 }}μg/m³</span>
                 </div>
                 <div class="parameter flex">
-                  <span class="flex-1 text-light fs-sm"
-                    >气温：{{ weatherDetail.weather_info.t }}ºC</span
-                  >
-                  <span class="flex-1 text-light fs-sm"
-                    >温度：{{ weatherDetail.weather_info.t }}ºC</span
-                  >
+                  <span class="flex-1 text-light fs-sm">气温：{{ weatherDetail.weather_info.t }}ºC</span>
+                  <span class="flex-1 text-light fs-sm">温度：{{ weatherDetail.weather_info.t }}ºC</span>
                 </div>
                 <div class="parameter flex">
-                  <span class="flex-1 text-light fs-sm"
-                    >噪声：{{ weatherDetail.weather_info.ns }}db</span
-                  >
-                  <span class="flex-1 text-light fs-sm"
-                    >风力：{{ weatherDetail.weather_info.ws }}m/s</span
-                  >
+                  <span class="flex-1 text-light fs-sm">噪声：{{ weatherDetail.weather_info.ns }}db</span>
+                  <span class="flex-1 text-light fs-sm">风力：{{ weatherDetail.weather_info.ws }}m/s</span>
                 </div>
                 <div class="parameter flex">
-                  <span class="flex-1 text-light fs-sm"
-                    >风向：{{
-                      weatherDetail.weather_info.wd | directionFilter
-                    }}</span
-                  >
+                  <span class="flex-1 text-light fs-sm">
+                    风向：{{
+                    weatherDetail.weather_info.wd | directionFilter
+                    }}
+                  </span>
                 </div>
               </template>
               <template v-else>
@@ -360,11 +318,7 @@
     <!-- 编辑密码 -->
     <edit-pwd></edit-pwd>
     <!-- 设备详情弹出框 -->
-    <device-detail
-      :curContent="content"
-      v-if="isShow"
-      @hideDetail="hideDetail"
-    ></device-detail>
+    <device-detail :curContent="content" v-if="isShow" @hideDetail="hideDetail"></device-detail>
     <!-- 气象站设备详情弹出框 -->
     <weather-detail></weather-detail>
   </div>
@@ -378,11 +332,12 @@ import WeatherDetail from '@/components/WeatherDetail';
 import EditPwd from '@/components/EditPwd';
 import NoFault from '@/components/NoFault';
 import NoDevice from '@/components/NoDevice';
-import {mapGetters} from 'vuex';
-import {countDevice, firstDevice} from '@/api/device';
-import {getCameraToken, setCameraDirection} from '@/api/device';
-import {setGroupBrightness, controlGroup} from '@/api/group';
-
+import { mapGetters } from 'vuex';
+import { countDevice, firstDevice } from '@/api/device';
+import { getCameraToken, setCameraDirection } from '@/api/device';
+import { setGroupBrightness, controlGroup } from '@/api/group';
+import { getPlatform } from '@/utils/auth';
+import request from '@/utils/request';
 export default {
   name: 'Index',
   components: {
@@ -423,13 +378,28 @@ export default {
       faultList: [],
       projId: '',
       menus: [
-        {iconName: 'menu-icon1', title: '智慧监控', online: 12, total: 10},
-        {iconName: 'menu-icon2', title: '智慧显示', online: 12, total: 10},
-        {iconName: 'menu-icon3', title: '智慧照明', online: 12, total: 10},
-        {iconName: 'menu-icon4', title: '气象检测', online: 12, total: 10},
-        {iconName: 'menu-icon5', title: '城市热点', online: null, total: null},
-        {iconName: 'menu-icon6', title: '智慧充电', online: null, total: null},
-        {iconName: 'menu-icon7', title: '一键求助', online: null, total: null},
+        { iconName: 'menu-icon1', title: '智慧监控', online: 12, total: 10 },
+        { iconName: 'menu-icon2', title: '智慧显示', online: 12, total: 10 },
+        { iconName: 'menu-icon3', title: '智慧照明', online: 12, total: 10 },
+        { iconName: 'menu-icon4', title: '气象检测', online: 12, total: 10 },
+        {
+          iconName: 'menu-icon5',
+          title: '城市热点',
+          online: null,
+          total: null,
+        },
+        {
+          iconName: 'menu-icon6',
+          title: '智慧充电',
+          online: null,
+          total: null,
+        },
+        {
+          iconName: 'menu-icon7',
+          title: '一键求助',
+          online: null,
+          total: null,
+        },
       ],
       cameraDetail: null,
       screenDetail: null,
@@ -449,6 +419,8 @@ export default {
       deviceOptions: [],
       selectedDevice: '',
       isShow: false,
+      platName: '',
+      logo: '',
     };
   },
   async created() {
@@ -464,8 +436,30 @@ export default {
     this.getDefaultDevice();
     this.getToken();
     this.getFaults();
+    this.getPlatformConfig();
   },
   methods: {
+    getPlatformConfig() {
+      const config = getPlatform();
+      if (!config) {
+        const p = JSON.parse(config);
+        // this.logo = p.logo;
+        this.platName = p.title;
+        return;
+      }
+      this.getLogo();
+    },
+    getLogo() {
+      request({
+        url: '/getSystem',
+        methods: 'get',
+      }).then(res => {
+        console.log(res);
+        this.platName = res.data.title;
+        this.logo = res.data.logo;
+        setPlatform(res.data);
+      });
+    },
     async getFaults() {
       const res = await this.$store.dispatch('fault/listWarn', {
         type: 1,
@@ -476,7 +470,7 @@ export default {
       this.faultList = res.data.list;
     },
     getToken() {
-      getCameraToken().then((res) => {
+      getCameraToken().then(res => {
         console.log('res', res);
         this.cameraToken = res.data.accessToken;
       });
@@ -499,7 +493,7 @@ export default {
           ? this.types.splice(this.types.indexOf(type + 1), 1)
           : this.types.push(type + 1);
         let arr = [0, 0, 0, 0];
-        this.types.map((type) => {
+        this.types.map(type => {
           arr[type - 1] = this.defaultSelectsNoChange[type - 1];
         });
         this.defaultSelects = arr;
@@ -508,7 +502,7 @@ export default {
     openDeviceDetail(id) {
       this.isShow = true;
       this.content = 'Content';
-      this.$store.dispatch('device/detailDevice', {id}).then((res) => {
+      this.$store.dispatch('device/detailDevice', { id }).then(res => {
         console.log('res', res);
         if (
           res.product_type == 2 &&
@@ -524,7 +518,7 @@ export default {
       });
     },
     countDeviceNum() {
-      countDevice({project_id: this.cur_proj}).then((res) => {
+      countDevice({ project_id: this.cur_proj }).then(res => {
         this.menus.map((menu, index) => {
           switch (index) {
             case 0:
@@ -549,7 +543,7 @@ export default {
       });
     },
     getDefaultDevice() {
-      firstDevice({project_id: this.cur_proj}).then((res) => {
+      firstDevice({ project_id: this.cur_proj }).then(res => {
         console.log('res', res);
         if (res.data) {
           this.cameraDetail = res.data.camera_data;
@@ -573,21 +567,21 @@ export default {
             this.screenDetail.playerContent.content != null
           ) {
             const arr = JSON.parse(this.screenDetail.playerContent.content);
-            this.files = arr.map((item) => {
-              return {filename: item.url.split('/').pop(), link: item.url};
+            this.files = arr.map(item => {
+              return { filename: item.url.split('/').pop(), link: item.url };
             });
             console.log('this.files', this.files);
           }
         }
       });
     },
-    setDefaultDetail({varName, data}) {
+    setDefaultDetail({ varName, data }) {
       console.log('varName', varName);
       console.log('data', data);
       this[varName] = data;
     },
     async getLightTimeControl(group_id) {
-      const {list} = await this.$store.dispatch('group/detailControlGroup', {
+      const { list } = await this.$store.dispatch('group/detailControlGroup', {
         group_id,
       });
       this.controlList = list;
@@ -597,17 +591,17 @@ export default {
       let typesCopy = [];
       if (this.types.includes(4) && !this.types.includes(2)) {
         typesCopy = [...this.types];
-        typesCopy[this.types.findIndex((type) => type == 4)] = 2;
+        typesCopy[this.types.findIndex(type => type == 4)] = 2;
       } else {
         typesCopy = [...this.types];
       }
-      const {list} = await this.$store.dispatch('device/listDevice', {
+      const { list } = await this.$store.dispatch('device/listDevice', {
         project_id: this.cur_proj,
         device_number: keyword,
         product_type_list: typesCopy.join(','),
       });
       if (this.types.includes(4) && !this.types.includes(2)) {
-        this.deviceOptions = list.filter((item) => {
+        this.deviceOptions = list.filter(item => {
           if (item.product_type == 2) {
             if (item.is_weather == 1) {
               return true;
@@ -631,7 +625,7 @@ export default {
     faultDetail(id) {
       this.isShow = true;
       this.content = 'Fault';
-      this.$store.dispatch('device/detailDevice', {id}).then((res) => {
+      this.$store.dispatch('device/detailDevice', { id }).then(res => {
         this.$store.commit('app/SET_DEVICE_DETAIL', res);
         this.$store.commit('app/OPEN_DEVICEDIALOG');
       });
@@ -782,7 +776,7 @@ export default {
       filter: grayscale(1);
     }
     .menu-icon {
-      font-size: 45px;
+      font-size: 4rem;
     }
     .menu-item-bg0 {
       background-image: url(../../assets/images/menu-item-bg1.png);
@@ -804,6 +798,9 @@ export default {
     }
     .menu-item-bg6 {
       background-image: url(../../assets/images/menu-item-bg7.png);
+    }
+    .txt-num {
+      font-size: 25px;
     }
     .content {
       height: 72vh;
@@ -915,7 +912,7 @@ export default {
         width: 100%;
         margin: 0;
         color: #fefefeff;
-        font-size: 1rem;
+        font-size: 18px;
         height: 6vh;
         line-height: 6vh;
         padding: 0 1vw;

@@ -1,7 +1,5 @@
 <template>
-  <div
-    class="nav-bar gradient-blue-2 flex ai-center jc-between w-100 bg-white bx-shadow-1"
-  >
+  <div class="nav-bar gradient-blue-2 flex ai-center jc-between w-100 bg-white bx-shadow-1">
     <div class="flex flex-4 ai-center">
       <div
         :class="[
@@ -11,23 +9,12 @@
           device === 'mobile' ? 'hide-text' : '',
         ]"
       >
-        <img src="@/assets/images/index-logo.png" alt />
+        <img :src="logo" alt />
         <!-- <span class="text-white">|</span> -->
-        <h1 class="title">城市智慧路灯物联云平台</h1>
+        <h1 class="title">{{platName}}</h1>
       </div>
-      <el-select
-        class="proj-select"
-        v-model="projId"
-        filterable
-        placeholder="请选择"
-        @change="change"
-      >
-        <el-option
-          v-for="item in projList"
-          :key="item.id"
-          :label="item.title"
-          :value="item.id"
-        ></el-option>
+      <el-select class="proj-select" v-model="projId" filterable placeholder="请选择" @change="change">
+        <el-option v-for="item in projList" :key="item.id" :label="item.title" :value="item.id"></el-option>
       </el-select>
     </div>
     <div class="flex ai-center flex-2 jc-end">
@@ -41,7 +28,10 @@
 
 <script>
 import UserAccount from '@/components/UserAccount';
-import {mapGetters} from 'vuex';
+import { mapGetters } from 'vuex';
+import { setPlatform, getPlatform } from '@/utils/auth';
+import request from '@/utils/request';
+
 export default {
   name: 'nav-bar',
   components: {
@@ -57,6 +47,8 @@ export default {
     return {
       chargeOrAdmin: true,
       projId: '',
+      logo: '',
+      platName: '',
     };
   },
   async mounted() {
@@ -65,6 +57,7 @@ export default {
       await this.$store.dispatch('project/allProject');
     }
     this.projId = this.cur_proj;
+    this.getPlatformConfig();
   },
   watch: {
     cur_proj() {
@@ -74,6 +67,28 @@ export default {
   methods: {
     change() {
       this.$store.commit('project/SET_CURPROJ', this.projId);
+    },
+    getPlatformConfig() {
+      const config = getPlatform();
+      console.log('config', config);
+      if (!config) {
+        const p = JSON.parse(config);
+        this.logo = p.logo;
+        this.platName = p.title;
+        return;
+      }
+      this.getLogo();
+    },
+    getLogo() {
+      request({
+        url: '/getSystem',
+        methods: 'get',
+      }).then(res => {
+        console.log(res);
+        this.platName = res.data.title;
+        this.logo = res.data.logo;
+        setPlatform(res.data);
+      });
     },
   },
 };
@@ -94,8 +109,9 @@ export default {
   padding: 0 1rem;
   .logo {
     img {
-      width: 156px;
-      height: 50px;
+      width: 100px;
+      height: 40px;
+      margin-right: 10px;
     }
     span {
       display: inline-block;
