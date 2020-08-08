@@ -12,6 +12,7 @@ const state = {
   weatherDetailDialogOpened: false,
   editPwdDialogOpened: false,
   deviceDetail: {},
+  platformConfig: Cookies.get('platform'),
 };
 const mutations = {
   TOGGLE_SIDEBAR: (state) => {
@@ -53,6 +54,9 @@ const mutations = {
   SET_DEVICE_DETAIL: (state, detail) => {
     state.deviceDetail = detail;
   },
+  SET_PLATFORM_CONFIG: (state, config) => {
+    state.platformConfig = config;
+  },
 };
 
 const actions = {
@@ -82,6 +86,9 @@ const actions = {
   },
   closePwdDialog({commit}) {
     commit('CLOSE_PWDDIALOG');
+  },
+  setPlatformConfig({commit}, config) {
+    commit('SET_PLATFORM_CONFIG', config);
   },
 };
 

@@ -18,6 +18,7 @@ import {
   removeProjlist,
   removeProjid,
   removeUploadimgConfig,
+  removePlatform,
 } from '@/utils/auth';
 
 const state = {
@@ -64,6 +65,7 @@ const actions = {
           removeProjlist();
           removeProjid();
           removeUploadimgConfig();
+          removePlatform();
           resolve();
         })
         .catch((error) => {

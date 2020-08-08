@@ -4,7 +4,9 @@
       <span class="text-grey-2 fs-md">平台名称：</span>
       <div v-if="!isEditName" class="flex ai-center">
         <span class="fs-md pd-right-1">{{ model.title }}</span>
-        <el-button type="button" class="btn btn-dark" @click="isEditName = true">编辑</el-button>
+        <el-button type="button" class="btn btn-dark" @click="isEditName = true"
+          >编辑</el-button
+        >
       </div>
       <div class="flex" v-else>
         <el-input
@@ -14,8 +16,12 @@
           maxlength="12"
           show-word-limit
         ></el-input>
-        <el-button type="button" class="btn btn-dark" @click="editPName">确定</el-button>
-        <el-button type="button" class="btn btn-light" @click="isEditName = false">取消</el-button>
+        <el-button type="button" class="btn btn-dark" @click="editPName"
+          >确定</el-button
+        >
+        <el-button type="button" class="btn btn-light" @click="cancel"
+          >取消</el-button
+        >
       </div>
     </div>
     <div class="flex mg-top-1">
@@ -43,8 +49,9 @@
 </template>
 
 <script>
-import { getSystem, setSystem } from '@/api/platform';
-import { showSuccessMsg } from '@/utils/message';
+import {getSystem, setSystem} from '@/api/platform';
+import {showSuccessMsg} from '@/utils/message';
+import {setPlatform, getPlatform} from '@/utils/auth';
 
 export default {
   name: 'PlatformManage',
@@ -57,6 +64,7 @@ export default {
         image: '',
         title: '',
       },
+      copyTitle: '',
     };
   },
   mounted() {
@@ -64,24 +72,32 @@ export default {
   },
   methods: {
     editPName() {
-      setSystem({ title: this.model.title, logo: this.model.image }).then(
-        res => {
+      setSystem({title: this.model.title, logo: this.model.image}).then(
+        (res) => {
           showSuccessMsg('编辑成功');
           this.isEditName = false;
+          this.copyTitle = res.data.title;
+          this.$store.dispatch('app/setPlatformConfig', res.data);
         },
       );
     },
     getSetting() {
-      getSystem().then(res => {
+      getSystem().then((res) => {
         console.log(res);
-        const { title, logo } = res.data;
+        const {title, logo} = res.data;
+        this.copyTitle = title;
         this.model.title = title;
         this.model.image = logo;
-        this.imgList = [{ url: logo }];
+        this.imgList = [{url: logo}];
+        setPlatform(res.data);
       });
     },
     uploadSuccess() {
       console.log('uploadSuccess');
+    },
+    cancel() {
+      this.isEditName = false;
+      this.model.title = this.copyTitle;
     },
   },
 };

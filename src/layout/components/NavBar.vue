@@ -1,5 +1,7 @@
 <template>
-  <div class="nav-bar gradient-blue-2 flex ai-center jc-between w-100 bg-white bx-shadow-1">
+  <div
+    class="nav-bar gradient-blue-2 flex ai-center jc-between w-100 bg-white bx-shadow-1"
+  >
     <div class="flex flex-4 ai-center">
       <div
         :class="[
@@ -9,12 +11,23 @@
           device === 'mobile' ? 'hide-text' : '',
         ]"
       >
-        <img :src="logo" alt />
+        <img :src="platformConfig.logo" alt />
         <!-- <span class="text-white">|</span> -->
-        <h1 class="title">{{platName}}</h1>
+        <h1 class="title">{{ platformConfig.title }}</h1>
       </div>
-      <el-select class="proj-select" v-model="projId" filterable placeholder="请选择" @change="change">
-        <el-option v-for="item in projList" :key="item.id" :label="item.title" :value="item.id"></el-option>
+      <el-select
+        class="proj-select"
+        v-model="projId"
+        filterable
+        placeholder="请选择"
+        @change="change"
+      >
+        <el-option
+          v-for="item in projList"
+          :key="item.id"
+          :label="item.title"
+          :value="item.id"
+        ></el-option>
       </el-select>
     </div>
     <div class="flex ai-center flex-2 jc-end">
@@ -28,8 +41,8 @@
 
 <script>
 import UserAccount from '@/components/UserAccount';
-import { mapGetters } from 'vuex';
-import { setPlatform, getPlatform } from '@/utils/auth';
+import {mapGetters} from 'vuex';
+import {setPlatform, getPlatform} from '@/utils/auth';
 import request from '@/utils/request';
 
 export default {
@@ -38,7 +51,7 @@ export default {
     UserAccount,
   },
   computed: {
-    ...mapGetters(['projList', 'cur_proj']),
+    ...mapGetters(['projList', 'cur_proj', 'platformConfig']),
     device() {
       return this.$store.state.app.device;
     },
@@ -47,8 +60,8 @@ export default {
     return {
       chargeOrAdmin: true,
       projId: '',
-      logo: '',
-      platName: '',
+      // logo: '',
+      // platName: '',
     };
   },
   async mounted() {
@@ -69,12 +82,9 @@ export default {
       this.$store.commit('project/SET_CURPROJ', this.projId);
     },
     getPlatformConfig() {
-      const config = getPlatform();
-      console.log('config', config);
-      if (!config) {
+      if (!this.platformConfig) {
         const p = JSON.parse(config);
-        this.logo = p.logo;
-        this.platName = p.title;
+        this.$store.dispatch('app/setPlatformConfig', p);
         return;
       }
       this.getLogo();
@@ -83,11 +93,9 @@ export default {
       request({
         url: '/getSystem',
         methods: 'get',
-      }).then(res => {
-        console.log(res);
-        this.platName = res.data.title;
-        this.logo = res.data.logo;
+      }).then((res) => {
         setPlatform(res.data);
+        this.$store.dispatch('app/setPlatformConfig', res.data);
       });
     },
   },

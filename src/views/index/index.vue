@@ -290,7 +290,7 @@
                 </div>
                 <div class="parameter flex">
                   <span class="flex-1 text-light fs-sm">气温：{{ weatherDetail.weather_info.t }}ºC</span>
-                  <span class="flex-1 text-light fs-sm">温度：{{ weatherDetail.weather_info.t }}ºC</span>
+                  <span class="flex-1 text-light fs-sm">湿度：{{ weatherDetail.weather_info.h }}%rh</span>
                 </div>
                 <div class="parameter flex">
                   <span class="flex-1 text-light fs-sm">噪声：{{ weatherDetail.weather_info.ns }}db</span>

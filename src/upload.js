@@ -87,8 +87,9 @@ export default {
         setSystem({
           title: this.model.title,
           logo: this.uploadimgConfig.host + '/' + this.config,
-        }).then((_) => {
+        }).then((res) => {
           showSuccessMsg('上传成功');
+          this.$store.dispatch('app/setPlatformConfig', res.data);
         });
       });
     },

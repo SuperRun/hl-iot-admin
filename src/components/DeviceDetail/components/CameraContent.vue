@@ -42,7 +42,7 @@
         </el-option>
       </el-select>
     </div>
-    <div id="monitor"></div>
+    <!-- <div id="monitor"></div> -->
     <iframe
       :src="url"
       width="750"
@@ -102,11 +102,13 @@ export default {
       //open.ys7.com/ezopen/h5/iframe?url=ezopen://MLXIYY@open.ys7.com/D95050244/1.hd.live&audio=1&autoplay=1&accessToken=at.7obzyhqhbbp6cq2md2ra78oxctpfh4qc-64c4bpfe5q-12voqre-zxs0vthui
       https: return `https://open.ys7.com/ezopen/h5/${
         this.iframeType
-      }?url=ezopen://${this.deviceDetail.validate_code}@open.ys7.com/${
-        this.deviceDetail.device_number
-      }/1.${this.isLive ? 'hd.live' : 'cloud.rec'}&accessToken=${
-        this.cameraToken
-      }&audio=1&autoplay=1&${
+      }?url=ezopen://${
+        this.deviceDetail.validate_code
+          ? `${this.deviceDetail.validate_code}@`
+          : ''
+      }open.ys7.com/${this.deviceDetail.device_number}/1.${
+        this.isLive ? 'hd.live' : 'cloud.rec'
+      }&accessToken=${this.cameraToken}&audio=1&autoplay=1&${
         this.iframeType == 'iframe_se' ? 'templete=2' : ''
       }`;
     },
@@ -150,20 +152,28 @@ export default {
     getCameraToken().then((res) => {
       this.cameraToken = res.data.accessToken;
       this.getAudioList();
+      this.initCamera();
     });
   },
   methods: {
     initCamera() {
-      ezuikitTalkData = {
+      var ezuikitTalkData = {
         // 应用accessToken
         accessToken: this.cameraToken,
         // 包含设备信息的ezopen协议
-        ezopen: this.url,
+        ezopen: `ezopen://open.ys7.com/${this.deviceDetail.device_number}/1.live`,
         // 当前页面与插件主文件ezuiit-talk相对路径
-        decoderPath: '../',
+        decoderPath: './lib',
       };
-      $('#monitor').load('../../../lib/ui-voice.html');
-      // ezuikitTalkData = this.ezuikitTalkData;
+      console.log('ezuikitTalkData', ezuikitTalkData);
+
+      $('#monitor').load('./lib/ui-voice.html', null, function(
+        response,
+        status,
+        xhr,
+      ) {
+        console.log('response', response);
+      });
     },
     replay() {
       // if (this.dateRange != null && this.dateRange.length == 0) {

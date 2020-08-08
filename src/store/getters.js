@@ -8,5 +8,6 @@ const getters = {
   userInfo: (state) => state.user.userInfo,
   projList: (state) => state.project.projList,
   cur_proj: (state) => state.project.cur_proj,
+  platformConfig: (state) => state.app.platformConfig,
 };
 export default getters;
