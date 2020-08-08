@@ -24,7 +24,7 @@
         >
       </div>
     </div>
-    <div class="flex mg-top-1">
+    <div class="flex mg-top-1 logo">
       <span class="text-grey-2 fs-md pd-right-1">平台LOGO：</span>
       <div class="flex flex-column">
         <el-upload
@@ -45,13 +45,16 @@
         </el-upload>
       </div>
     </div>
+    <el-dialog title="图片预览" :visible.sync="dialogVisible">
+      <img class="w-100" :src="dialogImageUrl" alt="" />
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import {getSystem, setSystem} from '@/api/platform';
-import {showSuccessMsg} from '@/utils/message';
-import {setPlatform, getPlatform} from '@/utils/auth';
+import { getSystem, setSystem } from '@/api/platform';
+import { showSuccessMsg } from '@/utils/message';
+import { setPlatform, getPlatform } from '@/utils/auth';
 
 export default {
   name: 'PlatformManage',
@@ -65,6 +68,7 @@ export default {
         title: '',
       },
       copyTitle: '',
+      dialogVisible: false,
     };
   },
   mounted() {
@@ -72,7 +76,7 @@ export default {
   },
   methods: {
     editPName() {
-      setSystem({title: this.model.title, logo: this.model.image}).then(
+      setSystem({ title: this.model.title, logo: this.model.image }).then(
         (res) => {
           showSuccessMsg('编辑成功');
           this.isEditName = false;
@@ -84,11 +88,11 @@ export default {
     getSetting() {
       getSystem().then((res) => {
         console.log(res);
-        const {title, logo} = res.data;
+        const { title, logo } = res.data;
         this.copyTitle = title;
         this.model.title = title;
         this.model.image = logo;
-        this.imgList = [{url: logo}];
+        this.imgList = [{ url: logo }];
         setPlatform(res.data);
       });
     },
@@ -98,6 +102,10 @@ export default {
     cancel() {
       this.isEditName = false;
       this.model.title = this.copyTitle;
+    },
+    handlePictureCardPreview(file) {
+      this.dialogImageUrl = file.url;
+      this.dialogVisible = true;
     },
   },
 };
@@ -112,6 +120,9 @@ export default {
   width: 300px;
   height: 120px;
 }
+.platform-manage >>> .el-dialog__body {
+  background-color: #e7effe;
+}
 </style>
 <style lang="scss" scoped>
 .platform-manage {
@@ -120,7 +131,7 @@ export default {
   .btn {
     font-size: 10px;
   }
-  img {
+  .logo img {
     width: 150px;
     height: 150px;
   }
