@@ -12,9 +12,7 @@
           showGroupaddDialog = true;
           mode = 'add';
         "
-      >
-        添加
-      </button>
+      >添加</button>
       <button type="button" class="btn btn-del" @click="del">删除</button>
       <el-input
         placeholder="搜索组号"
@@ -44,16 +42,14 @@
               showGroupdetailDialog = true;
               id = scope.row.id;
             "
-            >详情</span
-          >
+          >详情</span>
           <span
             class="btn-table mg-right-1"
             @click="
               showGroupcontrolDialog = true;
               id = scope.row.id;
             "
-            >控制</span
-          >
+          >控制</span>
           <span
             class="btn-table"
             @click="
@@ -62,8 +58,7 @@
               num = scope.row.group_number;
               id = scope.row.id;
             "
-            >编辑</span
-          >
+          >编辑</span>
         </template>
       </el-table-column>
     </el-table>
@@ -88,27 +83,19 @@
       :id="id"
     ></addgroup-dialog>
     <!-- 控制分组弹出框 -->
-    <controlgroup-dialog
-      :showDialog="showGroupcontrolDialog"
-      :id="id"
-      @closeDialog="closeDialog"
-    ></controlgroup-dialog>
+    <controlgroup-dialog :showDialog="showGroupcontrolDialog" :id="id" @closeDialog="closeDialog"></controlgroup-dialog>
     <!-- 分组详情弹出框 -->
-    <groupdetail-dialog
-      :showDialog="showGroupdetailDialog"
-      @closeDialog="closeDialog"
-      :id="id"
-    ></groupdetail-dialog>
+    <groupdetail-dialog :showDialog="showGroupdetailDialog" @closeDialog="closeDialog" :id="id"></groupdetail-dialog>
   </div>
 </template>
 
 <script>
-import {getValByKey} from '@/utils/util';
-import {showInfoMsg, showSuccessMsg} from '@/utils/message';
+import { getValByKey } from '@/utils/util';
+import { showInfoMsg, showSuccessMsg } from '@/utils/message';
 import AddgroupDialog from './components/AddgroupDialog';
 import ControlgroupDialog from './components/ControlgroupDialog';
 import GroupdetailDialog from './components/GroupdetailDialog';
-import {mapGetters} from 'vuex';
+import { mapGetters } from 'vuex';
 import _ from 'lodash';
 
 export default {
@@ -153,7 +140,7 @@ export default {
   methods: {
     async getList() {
       this.listLoading = true;
-      const {list, total} = await this.$store.dispatch('group/listGroup', {
+      const { list, total } = await this.$store.dispatch('group/listGroup', {
         ...this.params,
         project_id: this.cur_proj,
         page: this.page,
@@ -203,7 +190,7 @@ export default {
       )
         .then(async (_) => {
           this.$store
-            .dispatch('group/destroyGroup', {ids: this.ids})
+            .dispatch('group/destroyGroup', { ids: this.ids })
             .then((res) => {
               showSuccessMsg('删除成功');
               this.getList();
@@ -213,7 +200,7 @@ export default {
           // showInfoMsg('取消删除');
         });
     },
-    search: _.debounce(function() {
+    search: _.debounce(function () {
       this.getList();
     }, 500),
     closeDialog(operate) {

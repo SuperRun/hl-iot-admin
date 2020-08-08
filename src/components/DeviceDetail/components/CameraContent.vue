@@ -15,6 +15,16 @@
         @click="replay"
         >回放</el-button
       >
+      <el-date-picker
+        class="mg-left-1"
+        v-model="dateRange"
+        type="daterange"
+        range-separator="~"
+        value-format="timestamp"
+        start-placeholder="开始日期"
+        end-placeholder="结束日期"
+      >
+      </el-date-picker>
       <el-upload
         action="https://open.ys7.com/api/lapp/voice/upload"
         class="upload-demo ai-center mg-left-1"
@@ -42,8 +52,8 @@
         </el-option>
       </el-select>
     </div>
-    <!-- <div id="monitor"></div> -->
-    <iframe
+    <div id="monitor"></div>
+    <!-- <iframe
       :src="url"
       width="750"
       height="400"
@@ -52,7 +62,7 @@
       allowfullscreen
       name="videoIframe"
     >
-    </iframe>
+    </iframe>-->
     <!-- <iframe
       :src="iframeSrc"
       width="750"
@@ -61,19 +71,19 @@
       class="mg-top-1"
       allowfullscreen
     >
-    </iframe> -->
+    </iframe>-->
     <!-- 控制方向 -->
     <div class="direction flex flex-column jc-center" v-if="!isReplay">
       <div class="up">
         <svg-icon :icon-class="'up'" @click="setDirection(0)"></svg-icon>
       </div>
-      <div class="center flex  jc-between ai-center">
-        <span @click="setDirection(2)"
-          ><svg-icon :icon-class="'left'"></svg-icon
-        ></span>
-        <span
-          ><svg-icon @click="setDirection(3)" :icon-class="'right'"></svg-icon
-        ></span>
+      <div class="center flex jc-between ai-center">
+        <span @click="setDirection(2)">
+          <svg-icon :icon-class="'left'"></svg-icon>
+        </span>
+        <span>
+          <svg-icon @click="setDirection(3)" :icon-class="'right'"></svg-icon>
+        </span>
       </div>
       <div class="down">
         <svg-icon @click="setDirection(1)" :icon-class="'down'"></svg-icon>
@@ -83,17 +93,17 @@
 </template>
 
 <script>
-import {mapGetters} from 'vuex';
-import {showSuccessMsg, showWarningMsg} from '@/utils/message';
-import {getCameraToken, setCameraDirection} from '@/api/device';
+import { mapGetters } from 'vuex';
+import { showSuccessMsg, showWarningMsg } from '@/utils/message';
+import { getCameraToken, setCameraDirection } from '@/api/device';
 import {
   uploadAudioFile,
   getAudioFile,
   delAudioFile,
   queryAudioFile,
 } from '@/api/camera';
-import $ from 'jquery';
-var ezuikitTalkData = null;
+import EZUIKit from 'ezuikit-js';
+
 export default {
   name: 'CameraContent',
   computed: {
@@ -110,6 +120,15 @@ export default {
         this.isLive ? 'hd.live' : 'cloud.rec'
       }&accessToken=${this.cameraToken}&audio=1&autoplay=1&${
         this.iframeType == 'iframe_se' ? 'templete=2' : ''
+      }`;
+    },
+    ezopenUrl() {
+      return `ezopen://${
+        this.deviceDetail.validate_code
+          ? `${this.deviceDetail.validate_code}@`
+          : ''
+      }open.ys7.com/${this.deviceDetail.device_number}/1.${
+        this.isLive ? 'hd.live' : 'cloud.rec'
       }`;
     },
   },
@@ -136,7 +155,6 @@ export default {
       seconds: 0,
       audioList: [],
       isReplay: false,
-      ezuikitTalkData: null,
       isLive: true,
       iframeType: 'iframe_voice',
       uploadData: {
@@ -146,6 +164,7 @@ export default {
       },
       loading: false,
       audio: '',
+      player: null,
     };
   },
   created() {
@@ -157,37 +176,42 @@ export default {
   },
   methods: {
     initCamera() {
-      var ezuikitTalkData = {
-        // 应用accessToken
+      console.log('this.ezopenUrl', this.ezopenUrl);
+      this.player = new EZUIKit.EZUIKitPlayer({
+        autoplay: true,
+        id: 'monitor',
         accessToken: this.cameraToken,
-        // 包含设备信息的ezopen协议
-        ezopen: `ezopen://open.ys7.com/${this.deviceDetail.device_number}/1.live`,
-        // 当前页面与插件主文件ezuiit-talk相对路径
-        decoderPath: './lib',
-      };
-      console.log('ezuikitTalkData', ezuikitTalkData);
-
-      $('#monitor').load('./lib/ui-voice.html', null, function(
-        response,
-        status,
-        xhr,
-      ) {
-        console.log('response', response);
+        url: this.ezopenUrl,
+        template: 'voice',
+        width: 750,
+        height: 400,
+        plugin: ['talk'],
+        footer: ['talk', 'broadcast', 'hd', 'fullScreen'],
       });
+      console.log('player', player);
     },
     replay() {
-      // if (this.dateRange != null && this.dateRange.length == 0) {
-      //   showWarningMsg('请选择回放时间');
-      //   return;
-      // }
+      console.log(this.dateRange);
+      if (this.dateRange.length == 0) {
+        showWarningMsg('请选择回放时间');
+        return;
+      }
       this.isLive = false;
       this.beginTime = this.dateRange[0];
       this.endTime = this.dateRange[1];
       this.isReplay = true;
-      this.iframeType = 'iframe_se';
+      console.log(
+        'this.ezopenUrl',
+        this.ezopenUrl + `&begin=${this.beginTime}` + `&end=${this.endTime}`,
+      );
+      this.player.play({
+        accessToken: this.cameraToken,
+        url:
+          this.ezopenUrl + `&begin=${this.beginTime}` + `&end=${this.endTime}`,
+      });
     },
     setDirection(direction) {
-      setCameraDirection({device_id: this.deviceDetail.id, direction}).then(
+      setCameraDirection({ device_id: this.deviceDetail.id, direction }).then(
         (res) => {
           if (res.data.code == 200) {
             showSuccessMsg('操作成功');
@@ -247,7 +271,8 @@ export default {
       this.isReplay = false;
       this.dateRange = [];
       this.isLive = true;
-      this.iframeType = 'iframe_voice';
+      console.log('this.ezopenUrl', this.ezopenUrl);
+      this.player.play({ accessToken: this.cameraToken, url: this.ezopenUrl });
     },
     beforeUpload(file) {
       const isLimit20M = file.size / 1024 / 1024 < 20;
@@ -321,5 +346,10 @@ export default {
 }
 .center {
   height: 30px;
+}
+#monitor {
+  margin-top: 20px;
+  width: 750px;
+  height: 600px;
 }
 </style>

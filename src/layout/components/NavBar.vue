@@ -1,7 +1,5 @@
 <template>
-  <div
-    class="nav-bar gradient-blue-2 flex ai-center jc-between w-100 bg-white bx-shadow-1"
-  >
+  <div class="nav-bar gradient-blue-2 flex ai-center jc-between w-100 bg-white bx-shadow-1">
     <div class="flex flex-4 ai-center">
       <div
         :class="[
@@ -15,19 +13,8 @@
         <!-- <span class="text-white">|</span> -->
         <h1 class="title">{{ platformConfig.title }}</h1>
       </div>
-      <el-select
-        class="proj-select"
-        v-model="projId"
-        filterable
-        placeholder="请选择"
-        @change="change"
-      >
-        <el-option
-          v-for="item in projList"
-          :key="item.id"
-          :label="item.title"
-          :value="item.id"
-        ></el-option>
+      <el-select class="proj-select" v-model="projId" filterable placeholder="请选择" @change="change">
+        <el-option v-for="item in projList" :key="item.id" :label="item.title" :value="item.id"></el-option>
       </el-select>
     </div>
     <div class="flex ai-center flex-2 jc-end">
@@ -41,8 +28,8 @@
 
 <script>
 import UserAccount from '@/components/UserAccount';
-import {mapGetters} from 'vuex';
-import {setPlatform, getPlatform} from '@/utils/auth';
+import { mapGetters } from 'vuex';
+import { setPlatform, getPlatform } from '@/utils/auth';
 import request from '@/utils/request';
 
 export default {
@@ -83,7 +70,7 @@ export default {
     },
     getPlatformConfig() {
       if (!this.platformConfig) {
-        const p = JSON.parse(config);
+        const p = JSON.parse(this.platformConfig);
         this.$store.dispatch('app/setPlatformConfig', p);
         return;
       }

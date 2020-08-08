@@ -18,8 +18,7 @@
         show-checkbox
         :props="defaultProps"
         @check-change="handleCheckChange"
-      >
-      </el-tree>
+      ></el-tree>
     </div>
     <div class="flex jc-end mg-top-1">
       <el-button class="btn-dark" type="button" @click="add">创建</el-button>
@@ -28,11 +27,8 @@
 </template>
 
 <script>
-import {showSuccessMsg} from '@/utils/message';
-import {listAuth, treeAuthList} from '@/api/auth';
-let modelIndex1 = 0; // 合并行数索引，需要合并的第一行
-let modelIndex2 = 0; // 合并行数索引，需要合并的第一行
-let isInit = false; // 判断表格是否初始化，以防表格重新渲染出错
+import { showSuccessMsg } from '@/utils/message';
+import { listAuth, treeAuthList } from '@/api/auth';
 export default {
   name: 'AddAuth',
   data() {
@@ -86,7 +82,7 @@ export default {
           })
           .then((_) => {
             showSuccessMsg('添加成功');
-            this.$router.push({path: '/role/list'});
+            this.$router.push({ path: '/role/list' });
           });
       });
     },
