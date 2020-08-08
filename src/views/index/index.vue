@@ -196,7 +196,11 @@
             <template v-if="screenDetail != null">
               <div
                 class="flex flex-column"
-                v-if="screenDetail.is_open == 1 && files != null"
+                v-if="
+                  screenDetail.status == 2 &&
+                    screenDetail.is_open == 1 &&
+                    files != null
+                "
               >
                 <a
                   class="text-white"
