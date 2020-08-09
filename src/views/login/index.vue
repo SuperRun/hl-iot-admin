@@ -51,9 +51,9 @@
 </template>
 
 <script>
-import {validUsername} from '@/utils/validate';
+import { validUsername } from '@/utils/validate';
 import request from '@/utils/request';
-import {setPlatform} from '@/utils/auth';
+import { setPlatform } from '@/utils/auth';
 export default {
   name: 'Login',
   data() {
@@ -101,11 +101,15 @@ export default {
       this.loading = true;
       if (this.valid()) {
         try {
-          await this.$store.dispatch('user/userLogin', this.model);
+          const role_id = await this.$store.dispatch(
+            'user/userLogin',
+            this.model,
+          );
+
           // 获取上传图片信息
           this.$store.dispatch('upload/getUploadImgConfig');
-          this.$store.dispatch('upload/getUploadVideoConfig', {type: 1});
-          this.$router.push({path: '/'});
+          this.$store.dispatch('upload/getUploadVideoConfig', { type: 1 });
+          this.$router.push({ path: '/' });
         } catch (error) {
           this.tip = error;
           this.$refs['tip'].style.opacity = 1;
@@ -120,7 +124,7 @@ export default {
       }
     },
     async getValidCode() {
-      const {img, key} = await this.$store.dispatch('user/getValidCode');
+      const { img, key } = await this.$store.dispatch('user/getValidCode');
       this.code = img;
       this.model.captcha_key = key;
     },
@@ -129,7 +133,6 @@ export default {
         url: '/getSystem',
         methods: 'get',
       }).then((res) => {
-        console.log(res);
         this.platName = res.data.title;
         this.logo = res.data.logo;
         setPlatform(res.data);

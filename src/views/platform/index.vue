@@ -88,7 +88,6 @@ export default {
     },
     getSetting() {
       getSystem().then((res) => {
-        console.log(res);
         const { title, logo } = res.data;
         this.copyTitle = title;
         this.model.title = title;

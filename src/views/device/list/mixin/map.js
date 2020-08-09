@@ -1,7 +1,7 @@
 import BaiduMap from '@/utils/map-util';
 import MapMark from '@/utils/map-marker';
-import {keep7Num} from '@/utils/util';
-import {showSuccessMsg} from '@/utils/message';
+import { keep7Num } from '@/utils/util';
+import { showSuccessMsg } from '@/utils/message';
 
 export default {
   data() {
@@ -11,16 +11,13 @@ export default {
     };
   },
   async mounted() {
-    console.log('mounted');
-
     // 设备列表地图
     this.$store
-      .dispatch('project/detailProject', {id: this.cur_proj})
+      .dispatch('project/detailProject', { id: this.cur_proj })
       .then((res) => {
-        console.log('res', res);
         this.deviceMap = new BaiduMap(
           'device-map',
-          {lng: res.longitude, lat: res.latitude},
+          { lng: res.longitude, lat: res.latitude },
           true,
           true,
         );
@@ -34,17 +31,14 @@ export default {
       params['is_weather'] = 1;
     }
 
-    const {list} = await this.listDevice(params);
+    const { list } = await this.listDevice(params);
     this.deviceList = list;
   },
   methods: {
     switchTableOrMap() {
       this.tableOrMap = 'map';
-      console.log('switchTableOrMap');
-      console.log(this.deviceList);
       this.deviceList.forEach((data) => {
         const vm = this;
-        console.log(data.status);
         if (data.status != 1) {
           let iconPath = !this.isWeather
             ? MapMark[
@@ -82,14 +76,13 @@ export default {
             },
           };
           const clickFunc = (e) => {
-            console.log(e);
             if (this.isWeather) {
-              this.detailDevice({id: data.id}).then((res) => {
+              this.detailDevice({ id: data.id }).then((res) => {
                 this.$store.commit('app/SET_DEVICE_DETAIL', res);
                 this.$store.commit('app/OPEN_WEATHERDIALOG');
               });
             } else {
-              this.detailDevice({id: data.id}).then((res) => {
+              this.detailDevice({ id: data.id }).then((res) => {
                 this.$store.commit('app/SET_DEVICE_DETAIL', res);
                 this.$store.commit('app/OPEN_DEVICEDIALOG');
               });

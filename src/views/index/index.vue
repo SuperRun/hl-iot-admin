@@ -501,7 +501,6 @@ export default {
         url: '/getSystem',
         methods: 'get',
       }).then((res) => {
-        console.log(res);
         this.platName = res.data.title;
         this.logo = res.data.logo;
         setPlatform(res.data);
@@ -518,7 +517,6 @@ export default {
     },
     getToken() {
       getCameraToken().then((res) => {
-        console.log('res', res);
         this.cameraToken = res.data.accessToken;
       });
     },
@@ -550,7 +548,6 @@ export default {
       this.isShow = true;
       this.content = 'Content';
       this.$store.dispatch('device/detailDevice', { id }).then((res) => {
-        console.log('res', res);
         if (
           res.product_type == 2 &&
           res.is_weather == 1 &&
@@ -591,7 +588,6 @@ export default {
     },
     getDefaultDevice() {
       firstDevice({ project_id: this.cur_proj }).then((res) => {
-        console.log('res', res);
         if (res.data) {
           this.cameraDetail = res.data.camera_data;
           this.screenDetail = res.data.led_data;
@@ -617,14 +613,11 @@ export default {
             this.files = arr.map((item) => {
               return { filename: item.url.split('/').pop(), link: item.url };
             });
-            console.log('this.files', this.files);
           }
         }
       });
     },
     setDefaultDetail({ varName, data }) {
-      console.log('varName', varName);
-      console.log('data', data);
       this[varName] = data;
     },
     async getLightTimeControl(group_id) {
@@ -659,11 +652,9 @@ export default {
             return true;
           }
         });
-        console.log('this.deviceOptions', this.deviceOptions);
       } else {
         this.deviceOptions = list;
       }
-      console.log('this.deviceOptions', this.deviceOptions);
       this.loading = false;
     },
     searchChange(val) {

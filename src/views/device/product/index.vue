@@ -2,18 +2,21 @@
   <div class="product-manage bg-white-3 min-h-1 bx-shadow-2">
     <ul class="flex">
       <li
+        v-if="tabs.includes(16)"
         :class="['tab', currentTab == 'CameraPanel' ? 'active' : '']"
         @click="currentTab = 'CameraPanel'"
       >
         摄像头
       </li>
       <li
+        v-if="tabs.includes(17)"
         :class="['tab', currentTab == 'ScreenPanel' ? 'active' : '']"
         @click="currentTab = 'ScreenPanel'"
       >
         LED屏
       </li>
       <li
+        v-if="tabs.includes(24)"
         :class="['tab', currentTab == 'LightPanel' ? 'active' : '']"
         @click="currentTab = 'LightPanel'"
       >
@@ -24,6 +27,7 @@
         @click="currentTab='WeatherPanel'"
       >气象站</li> -->
       <li
+        v-if="tabs.includes(25)"
         :class="['tab', currentTab == 'GatewayPanel' ? 'active' : '']"
         @click="currentTab = 'GatewayPanel'"
       >
@@ -52,6 +56,11 @@ export default {
     LightPanel,
     WeatherPanel,
     GatewayPanel,
+  },
+  computed: {
+    tabs() {
+      return this.$store.getters.tabs;
+    },
   },
   data() {
     return {

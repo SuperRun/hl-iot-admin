@@ -1,7 +1,7 @@
 <template>
   <div class="group-manage bg-white-3 min-h-1 bx-shadow-2">
     <ul class="flex">
-      <li class="tab active">照明灯</li>
+      <li v-if="tabs.includes(26)" class="tab active">照明灯</li>
     </ul>
     <!-- 搜索栏 -->
     <div class="flex jc-start mg-top-1">
@@ -12,7 +12,9 @@
           showGroupaddDialog = true;
           mode = 'add';
         "
-      >添加</button>
+      >
+        添加
+      </button>
       <button type="button" class="btn btn-del" @click="del">删除</button>
       <el-input
         placeholder="搜索组号"
@@ -42,14 +44,16 @@
               showGroupdetailDialog = true;
               id = scope.row.id;
             "
-          >详情</span>
+            >详情</span
+          >
           <span
             class="btn-table mg-right-1"
             @click="
               showGroupcontrolDialog = true;
               id = scope.row.id;
             "
-          >控制</span>
+            >控制</span
+          >
           <span
             class="btn-table"
             @click="
@@ -58,7 +62,8 @@
               num = scope.row.group_number;
               id = scope.row.id;
             "
-          >编辑</span>
+            >编辑</span
+          >
         </template>
       </el-table-column>
     </el-table>
@@ -83,9 +88,17 @@
       :id="id"
     ></addgroup-dialog>
     <!-- 控制分组弹出框 -->
-    <controlgroup-dialog :showDialog="showGroupcontrolDialog" :id="id" @closeDialog="closeDialog"></controlgroup-dialog>
+    <controlgroup-dialog
+      :showDialog="showGroupcontrolDialog"
+      :id="id"
+      @closeDialog="closeDialog"
+    ></controlgroup-dialog>
     <!-- 分组详情弹出框 -->
-    <groupdetail-dialog :showDialog="showGroupdetailDialog" @closeDialog="closeDialog" :id="id"></groupdetail-dialog>
+    <groupdetail-dialog
+      :showDialog="showGroupdetailDialog"
+      @closeDialog="closeDialog"
+      :id="id"
+    ></groupdetail-dialog>
   </div>
 </template>
 
@@ -127,7 +140,7 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(['cur_proj']),
+    ...mapGetters(['cur_proj', 'tabs']),
   },
   watch: {
     cur_proj() {
@@ -200,7 +213,7 @@ export default {
           // showInfoMsg('取消删除');
         });
     },
-    search: _.debounce(function () {
+    search: _.debounce(function() {
       this.getList();
     }, 500),
     closeDialog(operate) {

@@ -1,24 +1,26 @@
 <template>
   <div class="auth-manage">
-    <el-form label-width="80px" :model="model" :rules="rules" ref="form">
+    <el-form ref="form" label-width="80px" :model="model" :rules="rules">
       <el-form-item label="角色名称" prop="name">
         <el-input
-          type="text"
           v-model="model.name"
+          type="text"
           maxlength="10"
           style="width:220px"
           show-word-limit
-        ></el-input>
+        />
       </el-form-item>
     </el-form>
     <div class="mg-top-3 tree-list">
       <el-tree
+        ref="addTree"
+        key="addTree"
         :data="treeData"
         node-key="id"
         show-checkbox
         :props="defaultProps"
-        @check-change="handleCheckChange"
-      ></el-tree>
+        @check="checkHandle"
+      />
     </div>
     <div class="flex jc-end mg-top-1">
       <el-button class="btn-dark" type="button" @click="add">创建</el-button>
@@ -28,7 +30,7 @@
 
 <script>
 import { showSuccessMsg } from '@/utils/message';
-import { listAuth, treeAuthList } from '@/api/auth';
+import { treeAuthList } from '@/api/auth';
 export default {
   name: 'AddAuth',
   data() {
@@ -69,7 +71,6 @@ export default {
       treeAuthList().then((res) => {
         this.listLoading = false;
         this.treeData = res.data.list;
-        console.log('res.data.list', res.data.list);
       });
     },
     add() {
@@ -78,7 +79,7 @@ export default {
         this.$store
           .dispatch('role/addRole', {
             ...this.model,
-            permission_id_list: this.permission_id_list.join(','),
+            permission_id_list: this.permission_id_list,
           })
           .then((_) => {
             showSuccessMsg('添加成功');
@@ -86,35 +87,19 @@ export default {
           });
       });
     },
-    handleCheckChange(data, checked, indeterminate) {
-      console.log('data', data);
-      if (data.parent_id === 0) {
-        return;
+    // 新增的方法  选中节点
+    checkHandle(data) {
+      const halfCheckedKeys = this.$refs.addTree.getHalfCheckedKeys().join(',');
+      const checkedKeys = this.$refs.addTree.getCheckedKeys().join(',');
+      if (halfCheckedKeys.length && checkedKeys.length) {
+        this.permission_id_list = halfCheckedKeys + ',' + checkedKeys;
+      } else if (halfCheckedKeys.length && checkedKeys.length === 0) {
+        this.permission_id_list = halfCheckedKeys;
+      } else if (halfCheckedKeys.length === 0 && checkedKeys.length) {
+        this.permission_id_list = checkedKeys;
+      } else {
+        this.permission_id_list = '';
       }
-      if (checked && !this.permission_id_list.includes(data.id)) {
-        this.permission_id_list.push(data.id);
-        if (
-          data.level === 2 &&
-          !this.permission_id_list.includes(data.parent_id)
-        ) {
-          this.permission_id_list.push(data.parent_id);
-        }
-      }
-      if (!checked && this.permission_id_list.includes(data.id)) {
-        const index = this.permission_id_list.findIndex((id) => id === data.id);
-        if (index != -1) {
-          this.permission_id_list.splice(index, 1);
-        }
-        if (data.level === 2) {
-          const temp = this.permission_id_list.findIndex(
-            (id) => id === data.parent_id,
-          );
-          if (temp != -1) {
-            this.permission_id_list.splice(temp, 1);
-          }
-        }
-      }
-      console.log('permission_id_list', this.permission_id_list);
     },
   },
 };

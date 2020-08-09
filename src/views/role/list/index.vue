@@ -1,6 +1,11 @@
 <template>
   <div class="auth-manage">
-    <el-button type="button" class="btn-add" @click="$router.push({path: '/role/add'})">添加</el-button>
+    <el-button
+      type="button"
+      class="btn-add"
+      @click="$router.push({ path: '/role/add' })"
+      >添加</el-button
+    >
     <el-table
       ref="multipleTable"
       :data="tableData"
@@ -11,13 +16,19 @@
       element-loading-spinner="el-icon-loading"
     >
       <el-table-column label="序号">
-        <template slot-scope="scope">{{ (page-1)*limit + scope.$index + 1 }}</template>
+        <template slot-scope="scope">{{
+          (page - 1) * limit + scope.$index + 1
+        }}</template>
       </el-table-column>
       <el-table-column label="角色名称" prop="name"></el-table-column>
       <el-table-column label="操作">
         <template slot-scope="scope">
-          <!-- <span class="btn-table mg-right-1" @click="del(scope.row)">删除</span> -->
-          <span class="btn-table" @click="$router.push({path: `/role/detail/${scope.row.id}`})">详情</span>
+          <span class="btn-table mg-right-1" @click="del(scope.row)">删除</span>
+          <span
+            class="btn-table"
+            @click="$router.push({ path: `/role/detail/${scope.row.id}` })"
+            >详情</span
+          >
         </template>
       </el-table-column>
     </el-table>
@@ -68,20 +79,20 @@ export default {
       this.page = page;
       this.getList();
     },
-    // del(item) {
-    //   this.$confirm(`确认删除角色 ${item.name}? `, "提示", {
-    //     confirmButtonText: "确定",
-    //     cancelButtonText: "取消"
-    //   })
-    //     .then(async _ => {
-    //       await this.$store.dispatch("role/delRole", { id: item.id });
-    //       showSuccessMsg("删除");
-    //       this.getList();
-    //     })
-    //     .catch(_ => {
-    //       showInfoMsg("已取消删除");
-    //     });
-    // }
+    del(item) {
+      this.$confirm(`确认删除角色 ${item.name}? `, '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+      })
+        .then(async (_) => {
+          await this.$store.dispatch('role/delRole', { id: item.id });
+          showSuccessMsg('删除');
+          this.getList();
+        })
+        .catch((_) => {
+          showInfoMsg('已取消删除');
+        });
+    },
   },
 };
 </script>

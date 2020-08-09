@@ -139,6 +139,9 @@ export default {
     title() {
       return this.mode == 'add' ? '添加产品(照明灯)' : '编辑产品(照明灯)';
     },
+    btns() {
+      return this.$store.getters.btns;
+    },
   },
   data() {
     return {

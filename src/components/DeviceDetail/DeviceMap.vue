@@ -7,7 +7,7 @@
 
 <script>
 import BaiduMap from '@/utils/map-util';
-import {mapGetters} from 'vuex';
+import { mapGetters } from 'vuex';
 
 export default {
   name: 'DeviceMap',
@@ -20,10 +20,9 @@ export default {
     ...mapGetters(['deviceDetail']),
   },
   mounted() {
-    console.log('map mounted');
     this.deviceMap = new BaiduMap(
       'device-detail-map',
-      {lng: this.deviceDetail.longitude, lat: this.deviceDetail.latitude},
+      { lng: this.deviceDetail.longitude, lat: this.deviceDetail.latitude },
       true,
       true,
     );

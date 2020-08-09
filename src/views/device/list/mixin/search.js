@@ -1,7 +1,7 @@
-import {getValByKey} from '@/utils/util';
-import {showSuccessMsg, showInfoMsg, showErrorMsg} from '@/utils/message';
-import {mapGetters, createNamespacedHelpers} from 'vuex';
-const {mapActions} = createNamespacedHelpers('device');
+import { getValByKey } from '@/utils/util';
+import { showSuccessMsg, showInfoMsg, showErrorMsg } from '@/utils/message';
+import { mapGetters, createNamespacedHelpers } from 'vuex';
+const { mapActions } = createNamespacedHelpers('device');
 import _ from 'lodash';
 
 export default {
@@ -15,11 +15,11 @@ export default {
       ids: '', // 删除设备的id
       selectedDevice: [], // 选中要删除的设备
       options: [
-        {label: '全部', value: 0},
-        {label: '待检测', value: 1},
-        {label: '正常', value: 2},
-        {label: '故障', value: 3},
-        {label: '离线', value: 4},
+        { label: '全部', value: 0 },
+        { label: '待检测', value: 1 },
+        { label: '正常', value: 2 },
+        { label: '故障', value: 3 },
+        { label: '离线', value: 4 },
       ],
       timer: null,
     };
@@ -41,7 +41,6 @@ export default {
   },
   beforeDestroy() {
     clearInterval(this.timer);
-    console.log('beforeDestroy', this.timer);
   },
   methods: {
     ...mapActions([
@@ -58,7 +57,7 @@ export default {
       } else {
         showInfoMsg('正在读取……');
       }
-      const {total, list} = await this.listDevice({
+      const { total, list } = await this.listDevice({
         ...this.params,
         page: this.page,
         limit: this.limit,
@@ -134,8 +133,7 @@ export default {
       )
         .then(
           async (_) => {
-            console.log('then');
-            await this.delDevice({ids: this.ids});
+            await this.delDevice({ ids: this.ids });
             this.getList();
             showSuccessMsg('删除成功');
           },
@@ -148,7 +146,6 @@ export default {
         });
     },
     handleSelectionChange(val) {
-      console.log(val);
       this.ids = getValByKey('id', val);
       // 编号：22222   产品名称1（型号）
       this.selectedDevice = val.reduce((pre, cur) => {
@@ -158,15 +155,13 @@ export default {
         pre.push(obj);
         return pre;
       }, []);
-      console.log(this.selectedDevice);
     },
     currentPage(page) {
       this.page = page;
       this.getList();
     },
     detail(id) {
-      this.detailDevice({id}).then((res) => {
-        console.log('detail', res);
+      this.detailDevice({ id }).then((res) => {
         this.$store.commit('app/SET_DEVICE_DETAIL', res);
         this.$store.commit('app/OPEN_DEVICEDIALOG');
       });
@@ -184,7 +179,6 @@ export default {
         ...this.params,
         is_export: 1,
       });
-      console.log(res);
       const blob = new Blob([res]);
       const elink = document.createElement('a');
       elink.download = '照明灯列表.csv';

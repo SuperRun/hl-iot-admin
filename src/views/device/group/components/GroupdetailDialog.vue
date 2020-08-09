@@ -138,13 +138,11 @@ export default {
     async getDeviceList() {
       this.params.group_id = this.id;
       this.listLoading = true;
-      const {list} = await this.$store.dispatch(
+      const { list } = await this.$store.dispatch(
         'group/deviceListGroup',
         this.params,
       );
       this.tableData = list;
-      console.log('list', list);
-
       this.listLoading = false;
     },
     search: _.debounce(function() {

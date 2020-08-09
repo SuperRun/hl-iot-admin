@@ -2,7 +2,7 @@
   <div class="fault-manage bg-white-3 min-h-1 bx-shadow-2">
     <div class="flex jc-between">
       <ul class="flex">
-        <li class="tab active">照明灯</li>
+        <li v-if="tabs.includes(20)" class="tab active">照明灯</li>
       </ul>
 
       <ul class="flex">
@@ -29,6 +29,11 @@ export default {
   name: 'FaultManage',
   components: {
     LightPanel,
+  },
+  computed: {
+    tabs() {
+      return this.$store.getters.tabs;
+    },
   },
   data() {
     return {

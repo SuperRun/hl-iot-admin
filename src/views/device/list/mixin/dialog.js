@@ -1,8 +1,8 @@
 import Map from '@/utils/map-util';
-import {keep7Num} from '@/utils/util';
-import {validString} from '@/utils/validate';
+import { keep7Num } from '@/utils/util';
+import { validString } from '@/utils/validate';
 import cameraMark from '@/assets/images/marker-camera.png';
-import {showSuccessMsg, showWarningMsg} from '@/utils/message';
+import { showSuccessMsg, showWarningMsg } from '@/utils/message';
 export default {
   data() {
     const validCode = (rule, value, callback) => {
@@ -23,22 +23,24 @@ export default {
       groups: [],
       rules: {
         device_number: [
-          {required: true, message: '请填写设备编号', trigger: 'blur'},
+          { required: true, message: '请填写设备编号', trigger: 'blur' },
         ],
-        product_id: [{required: true, message: '请选择产品', trigger: 'blur'}],
+        product_id: [
+          { required: true, message: '请选择产品', trigger: 'blur' },
+        ],
         place_number: [
-          {required: true, message: '请填写位号', trigger: 'blur'},
+          { required: true, message: '请填写位号', trigger: 'blur' },
         ],
         gateway_device_id: [
-          {required: true, message: '请选择网关', trigger: 'blur'},
+          { required: true, message: '请选择网关', trigger: 'blur' },
         ],
-        group_id: [{required: true, message: '请选择分组', trigger: 'blur'}],
+        group_id: [{ required: true, message: '请选择分组', trigger: 'blur' }],
         validate_code: [
-          {required: true, message: '请填写设备验证码', trigger: 'blur'},
-          {validator: validCode, trigger: 'blur'},
+          { required: true, message: '请填写设备验证码', trigger: 'blur' },
+          { validator: validCode, trigger: 'blur' },
         ],
-        longitude: [{required: true, message: '请标记地点', trigger: 'blur'}],
-        latitude: [{required: true, message: '请标记地点', trigger: 'blur'}],
+        longitude: [{ required: true, message: '请标记地点', trigger: 'blur' }],
+        latitude: [{ required: true, message: '请标记地点', trigger: 'blur' }],
       },
       dialogMap: {}, // 弹出框地图
       model: {
@@ -63,7 +65,6 @@ export default {
     edit(item) {
       this.mode = 'edit';
       this.showDialog = true;
-      console.log('item', item);
       this.model = Object.assign(this.model, item);
       if (this.params.product_type == 3) {
         this.model.group_id == null ? (this.model.group_id = 0) : '';
@@ -72,12 +73,12 @@ export default {
     async dialogOpened() {
       // 获取产品和网关列表
       if (this.params.product_type == 3) {
-        let {list} = await this.$store.dispatch('group/listGroup', {
+        let { list } = await this.$store.dispatch('group/listGroup', {
           project_id: this.cur_proj,
         });
         this.groups = list;
       }
-      let {list} = await this.$store.dispatch('product/listProduct', {
+      let { list } = await this.$store.dispatch('product/listProduct', {
         type: this.params.product_type,
       });
       this.products = list;
@@ -88,7 +89,7 @@ export default {
       this.gateways = res.list;
 
       // 弹出框地图
-      const {longitude, latitude} = await this.$store.dispatch(
+      const { longitude, latitude } = await this.$store.dispatch(
         'project/detailProject',
         {
           id: this.cur_proj,
@@ -151,8 +152,6 @@ export default {
             data[key] = this.model[key];
           }
         });
-        console.log(this.params.product_type);
-        console.log(data);
 
         if (this.mode == 'add') {
           await this.addDevice(data);
@@ -187,7 +186,7 @@ export default {
       this.loading = false;
     },
     async choosePlace(val) {
-      const {location} = await this.$store.dispatch('map/queryPlaceDetail', {
+      const { location } = await this.$store.dispatch('map/queryPlaceDetail', {
         uid: val,
       });
       this.model.longitude = keep7Num(location.lng);

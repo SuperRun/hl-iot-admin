@@ -1,4 +1,3 @@
-
 <template>
   <div>
     <el-scrollbar>
@@ -23,17 +22,17 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
-import vars from "@/styles/sidebar-variables.scss";
-import SidebarItem from "./SidebarItem";
+import { mapGetters } from 'vuex';
+import vars from '@/styles/sidebar-variables.scss';
+import SidebarItem from './SidebarItem';
 export default {
-  name: "SideBar",
+  name: 'SideBar',
   components: { SidebarItem },
   computed: {
-    ...mapGetters(["sidebar"]),
-    routes() {
-      return this.$router.options.routes;
-    },
+    ...mapGetters(['sidebar', 'routes']),
+    // routes() {
+    //   return this.$router.options.routes;
+    // },
     activeMenu() {
       const route = this.$route;
       const { meta, path } = route;
@@ -48,10 +47,9 @@ export default {
     },
     isCollapse() {
       return !this.sidebar.opened;
-    }
-  }
+    },
+  },
 };
 </script>
 
-<style>
-</style>
+<style></style>

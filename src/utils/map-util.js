@@ -9,7 +9,7 @@ export default class BaiduMap {
   ) {
     this.ZOOM = 15;
     // , {enableMapClick: false}
-    this.map = new BMap.Map(id, {enableMapClick: false});
+    this.map = new BMap.Map(id, { enableMapClick: false });
     this.marks = [];
     // 中心点
     if (Object.keys(point).length != 0) {
@@ -59,7 +59,7 @@ export default class BaiduMap {
 
     if (Object.keys(icon).length !== 0) {
       myIcon = new BMap.Icon(icon.url, new BMap.Size(icon.h, icon.w));
-      marker = new BMap.Marker(_point, {icon: myIcon});
+      marker = new BMap.Marker(_point, { icon: myIcon });
     } else {
       marker = new BMap.Marker(_point);
     }
@@ -90,8 +90,7 @@ export default class BaiduMap {
 
       marker.addEventListener(
         'dragend',
-        _.debounce(function({type, target, pixel, point}) {
-          console.log('point', point);
+        _.debounce(function({ type, target, pixel, point }) {
           dragendFunc(point).then((_) => {
             marker.removeEventListener('mouseover', addInfoWinFunc(_point));
             marker.addEventListener('mouseover', addInfoWinFunc(point));

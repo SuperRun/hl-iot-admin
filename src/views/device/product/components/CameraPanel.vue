@@ -2,8 +2,22 @@
   <div class="camera-panel">
     <!-- 搜索栏 -->
     <div class="operate flex jc-start">
-      <button type="button" class="btn btn-add" @click="add">添加</button>
-      <button type="button" class="btn btn-del" @click="del">删除</button>
+      <button
+        v-if="btns.includes(34)"
+        type="button"
+        class="btn btn-add"
+        @click="add"
+      >
+        添加
+      </button>
+      <button
+        v-if="btns.includes(34)"
+        type="button"
+        class="btn btn-del"
+        @click="del"
+      >
+        删除
+      </button>
       <div class="search flex">
         <el-input
           placeholder="搜索产品名称"
@@ -138,6 +152,9 @@ export default {
   computed: {
     title() {
       return this.mode == 'add' ? '添加产品(摄像头)' : '编辑产品(摄像头)';
+    },
+    btns() {
+      return this.$store.getters.btns;
     },
   },
   data() {

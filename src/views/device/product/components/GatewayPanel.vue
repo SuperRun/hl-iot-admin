@@ -2,8 +2,22 @@
   <div class="gateway-panel">
     <!-- 搜索栏 -->
     <div class="operate flex jc-start">
-      <button type="button" class="btn btn-add" @click="add">添加</button>
-      <button type="button" class="btn btn-del" @click="del">删除</button>
+      <button
+        v-if="btns.includes(46)"
+        type="button"
+        class="btn btn-add"
+        @click="add"
+      >
+        添加
+      </button>
+      <button
+        v-if="btns.includes(47)"
+        type="button"
+        class="btn btn-del"
+        @click="del"
+      >
+        删除
+      </button>
       <div class="search flex">
         <el-input
           placeholder="搜索产品名称"
@@ -140,6 +154,9 @@ export default {
     title() {
       return this.mode == 'add' ? '添加产品(物联网关)' : '编辑产品(物联网关)';
     },
+    btns() {
+      return this.$store.getters.btns;
+    },
   },
   data() {
     return {
@@ -152,8 +169,8 @@ export default {
         image: '', // 图片
       },
       rules: {
-        name: [{required: true, message: '请填写设备名称', trigger: 'blur'}],
-        mode: [{required: true, message: '请填写产品型号', trigger: 'blur'}],
+        name: [{ required: true, message: '请填写设备名称', trigger: 'blur' }],
+        mode: [{ required: true, message: '请填写产品型号', trigger: 'blur' }],
       },
       params: {
         type: 5, // 5-网关

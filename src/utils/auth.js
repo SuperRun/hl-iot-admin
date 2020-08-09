@@ -2,6 +2,8 @@ import Cookies from 'js-cookie';
 
 let TokenKey = 'token';
 let InfoKey = 'user';
+let BtnsKey = 'Btns';
+let TabsKey = 'tabs';
 let ProjlistKey = 'proj_list';
 let ProjidKey = 'proj_id';
 let UploadimgKey = 'upload_img';
@@ -32,6 +34,30 @@ export function setUserinfo(userinfo) {
 
 export function removeUserinfo() {
   return localStorage.removeItem(InfoKey);
+}
+
+// role
+export function getBtns() {
+  return JSON.parse(localStorage.getItem(BtnsKey));
+}
+
+export function setBtns(Btns) {
+  return localStorage.setItem(BtnsKey, JSON.stringify(Btns));
+}
+
+export function removeBtns() {
+  return localStorage.removeItem(BtnsKey);
+}
+export function getTabs() {
+  return JSON.parse(localStorage.getItem(TabsKey));
+}
+
+export function setTabs(Tabs) {
+  return localStorage.setItem(TabsKey, JSON.stringify(Tabs));
+}
+
+export function removeTabs() {
+  return localStorage.removeItem(TabsKey);
 }
 
 // proj list

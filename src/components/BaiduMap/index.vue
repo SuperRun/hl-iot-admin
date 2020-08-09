@@ -2,15 +2,15 @@
   <div id="container"></div>
 </template>
 <script>
-import {mapGetters, createNamespacedHelpers} from 'vuex';
+import { mapGetters, createNamespacedHelpers } from 'vuex';
 // import {styleJson} from '@/utils/map_config.js';
 import BMap from 'BMap';
 import MapMark from '@/utils/map-marker';
 import _ from 'lodash';
-import {keep7Num} from '@/utils/util';
-import {showSuccessMsg} from '@/utils/message';
-const {mapActions} = createNamespacedHelpers('device');
-import {getLedWeatherData} from '@/api/device';
+import { keep7Num } from '@/utils/util';
+import { showSuccessMsg } from '@/utils/message';
+const { mapActions } = createNamespacedHelpers('device');
+import { getLedWeatherData } from '@/api/device';
 
 // - 类型 1-摄像头,2-led屏,3-照明灯,4-气象站
 // - 状态 1-待检测 2-正常,3-故障,4-离线
@@ -93,7 +93,6 @@ export default {
         const index = self.markers.findIndex(
           (item) => item.device_number == val,
         );
-        console.log('select marker', self.markers[index]);
         const curType = self.markers[index].product_type;
         let indexVal;
         let iconSize = null;
@@ -103,10 +102,6 @@ export default {
         } else {
           indexVal = self.indexArr[curType - 1];
         }
-        console.log('marker', self.markers[index]);
-        console.log('indexArr', self.indexArr);
-        console.log('indexVal', indexVal);
-        console.log('curType', curType);
 
         switch (curType) {
           case 1:
@@ -135,8 +130,6 @@ export default {
         if (temp2 == 2 && self.deviceMapList[index].is_weather == 1) {
           temp2 = 4;
         }
-        console.log('temp1', temp1);
-        console.log('temp2', temp2);
         if (indexVal != 0) {
           if ((temp1 == 4 && temp2 != 4) || (temp1 != 4 && temp2 == 4)) {
             self.markers[index].marker.setIcon(
@@ -160,7 +153,7 @@ export default {
           }
         }
 
-        self.detailDevice({id: self.deviceMapList[index].id}).then((res) => {
+        self.detailDevice({ id: self.deviceMapList[index].id }).then((res) => {
           self.$emit('setDefaultDetail', {
             varName: `${typeMap.get(temp2)}Detail`,
             data: res,
@@ -183,7 +176,7 @@ export default {
       if (!this.cur_proj) {
         return;
       }
-      const {longitude, latitude} = await this.$store.dispatch(
+      const { longitude, latitude } = await this.$store.dispatch(
         'project/detailProject',
         {
           id: this.cur_proj,
@@ -202,7 +195,7 @@ export default {
         product_type_list: typesCopy.join(','),
       };
 
-      const {list} = await this.$store.dispatch('device/listDevice', params);
+      const { list } = await this.$store.dispatch('device/listDevice', params);
 
       if (this.types.includes(4) && !this.types.includes(2)) {
         this.deviceList = list.filter((item) => {
@@ -225,7 +218,7 @@ export default {
     initMap(longitude, latitude) {
       // if (Object.keys(this.map).length == 0) {
       //   console.log('map');
-      this.map = new BMap.Map('container', {enableMapClick: false}); // 创建地图实例
+      this.map = new BMap.Map('container', { enableMapClick: false }); // 创建地图实例
       this.map.enableScrollWheelZoom(true); //开启鼠标滚轮缩放
       // }
       this.map.clearOverlays();
@@ -295,10 +288,8 @@ export default {
           this.indexArr[findIndex] = index;
         }
       });
-      console.log('this.deviceMapList', this.deviceMapList);
     },
     addMarkers() {
-      console.log('this.markers', this.markers);
       const self = this;
       this.markers = [];
       this.map.clearOverlays();
@@ -327,7 +318,7 @@ export default {
             break;
         }
         let myIcon = new BMap.Icon(device.icon, iconSize);
-        let marker = new BMap.Marker(point, {icon: myIcon});
+        let marker = new BMap.Marker(point, { icon: myIcon });
 
         const deviceData = {
           content: `<div>设备编号：${
@@ -370,7 +361,6 @@ export default {
           ) {
             curType = 4;
           }
-          console.log('curType', curType);
 
           const indexVal = self.indexArr[curType - 1];
           let temp1 = self.deviceMapList[indexVal].product_type;
@@ -430,19 +420,18 @@ export default {
             );
           }
 
-          self.detailDevice({id: device.id}).then((res1) => {
-            console.log('temp2', temp2);
+          self.detailDevice({ id: device.id }).then((res1) => {
             if (temp2 == 4) {
-              getLedWeatherData({device_id: device.id}).then((res2) => {
+              getLedWeatherData({ device_id: device.id }).then((res2) => {
                 if (res2.data && res2.data.list && res2.data.list.length > 0) {
                   self.$emit('setDefaultDetail', {
                     varName: `${typeMap.get(temp2)}Detail`,
-                    data: {...res1, weatherInfo: res2.data.list[0]},
+                    data: { ...res1, weatherInfo: res2.data.list[0] },
                   });
                 } else {
                   self.$emit('setDefaultDetail', {
                     varName: `${typeMap.get(temp2)}Detail`,
-                    data: {...res1, weatherInfo: null},
+                    data: { ...res1, weatherInfo: null },
                   });
                 }
                 self.$store.commit('app/SET_DEVICE_DETAIL', res1);
@@ -487,17 +476,16 @@ export default {
         });
         marker.addEventListener(
           'dragend',
-          _.debounce(function({type, target, pixel, point}) {
+          _.debounce(function({ type, target, pixel, point }) {
             dragendFunc(point).then((_) => {
               marker.removeEventListener('mouseover', addInfoWinFunc(_point));
               marker.addEventListener('mouseover', addInfoWinFunc(point));
             });
           }, 500),
         );
-        this.markers.push({marker, ...device});
+        this.markers.push({ marker, ...device });
         this.map.addOverlay(marker);
       });
-      console.log('this.markers', this.markers);
     },
     deviceType(type) {
       const map = new Map([

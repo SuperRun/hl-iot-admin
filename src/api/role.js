@@ -1,13 +1,13 @@
 import request from '@/utils/request';
-import {ROLE_LIST, ROLE_ADD, ROLE_EDIT, ROLE_DETAIL} from '@/constant/url';
+import { ROLE_LIST, ROLE_ADD, ROLE_EDIT, ROLE_DETAIL } from '@/constant/url';
 
 /**
  * @description: 角色列表
  * @param {object} params
- * @return: 
+ * @return:
  */
-export function listRole (params) {
-  return request ({
+export function listRole(params) {
+  return request({
     url: ROLE_LIST,
     method: 'get',
     params,
@@ -17,10 +17,10 @@ export function listRole (params) {
 /**
  * @description: 添加角色
  * @param {object} data
- * @return: 
+ * @return:
  */
-export function addRole (data) {
-  return request ({
+export function addRole(data) {
+  return request({
     url: ROLE_ADD,
     method: 'post',
     data,
@@ -30,10 +30,10 @@ export function addRole (data) {
 /**
  * @description: 编辑角色
  * @param {object} data
- * @return: 
+ * @return:
  */
-export function editRole (data) {
-  return request ({
+export function editRole(data) {
+  return request({
     url: ROLE_EDIT,
     method: 'post',
     data,
@@ -43,10 +43,10 @@ export function editRole (data) {
 /**
  * @description: 角色详情
  * @param {object} data
- * @return: 
+ * @return:
  */
-export function detailRole (params) {
-  return request ({
+export function detailRole(params) {
+  return request({
     url: ROLE_DETAIL,
     method: 'get',
     params,
@@ -54,12 +54,12 @@ export function detailRole (params) {
 }
 
 /**
- * @description: 角色详情
+ * @description: 角色权限
  * @param {object} data
- * @return: 
+ * @return:
  */
-export function roleAuthList (params) {
-  return request ({
+export function roleAuthList(params) {
+  return request({
     url: '/role/role_permission',
     method: 'get',
     params,

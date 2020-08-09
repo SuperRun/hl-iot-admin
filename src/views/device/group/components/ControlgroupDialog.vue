@@ -120,7 +120,12 @@
             type="button"
             class="wpx-150 btn-dark br-4 mg-top-1 pd-tb-05"
             @click="
-              items.push({time: '', brightness: '', isEdit: true, isNew: true})
+              items.push({
+                time: '',
+                brightness: '',
+                isEdit: true,
+                isNew: true,
+              })
             "
           >
             增加定时控灯
@@ -145,8 +150,8 @@
 </template>
 
 <script>
-import {showErrorMsg, showSuccessMsg} from '@/utils/message';
-import {controlGroup, setGroupBrightness} from '@/api/group';
+import { showErrorMsg, showSuccessMsg } from '@/utils/message';
+import { controlGroup, setGroupBrightness } from '@/api/group';
 
 export default {
   name: 'ControlgroupDialog',
@@ -203,11 +208,11 @@ export default {
         });
         this.isControl = this.model.is_timing == 1 ? true : false;
       }
-      const {list} = await this.$store.dispatch('group/detailControlGroup', {
+      const { list } = await this.$store.dispatch('group/detailControlGroup', {
         group_id: this.id,
       });
       this.items = list.reduce((pre, cur) => {
-        pre.push({...cur, isEdit: false, isNew: false});
+        pre.push({ ...cur, isEdit: false, isNew: false });
         return pre;
       }, []);
     },
@@ -244,7 +249,6 @@ export default {
         item.isNew = false;
       }
       this.items[index] = item;
-      console.log('items', this.items);
       this.items.sort(function(a, b) {
         if (a.hour > b.hour || (a.hour == b.hour && a.minute > b.minute)) {
           return 1;
@@ -264,7 +268,7 @@ export default {
     },
     groupConfig() {
       const controlJson = this.items.reduce((pre, cur) => {
-        const {hour, minute, brightness} = cur;
+        const { hour, minute, brightness } = cur;
         pre.push({
           hour,
           minute,
@@ -283,14 +287,12 @@ export default {
       });
     },
     setBrightness() {
-      console.log('setBrightness');
       return new Promise((resolve) => {
         setGroupBrightness({
           group_id: this.id,
           type: 2,
           brightness: this.brightness,
         }).then((res) => {
-          console.log('setBrightness', res);
           resolve(res);
         });
       });

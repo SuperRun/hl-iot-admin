@@ -3,8 +3,22 @@
     <!-- 搜索栏 -->
     <div class="operate flex jc-between">
       <div class="flex">
-        <button type="button" class="btn btn-add" @click="add">添加</button>
-        <button type="button" class="btn btn-del" @click="del">删除</button>
+        <button
+          type="button"
+          class="btn btn-add"
+          @click="add"
+          v-if="btns.includes(22)"
+        >
+          添加
+        </button>
+        <button
+          type="button"
+          class="btn btn-del"
+          @click="del"
+          v-if="btns.includes(22)"
+        >
+          删除
+        </button>
         <el-select
           v-model="params.status"
           placeholder="请选择设备状态"
@@ -64,7 +78,7 @@
         <button
           type="button"
           class="btn btn-add mg-left-1"
-          @click="$router.push({path: '/device/product'})"
+          @click="$router.push({ path: '/device/product' })"
         >
           产品管理
         </button>
@@ -276,6 +290,9 @@ export default {
   computed: {
     title() {
       return this.mode == 'add' ? '添加设备(摄像头)' : '编辑设备(摄像头)';
+    },
+    btns() {
+      return this.$store.getters.btns;
     },
   },
   data() {

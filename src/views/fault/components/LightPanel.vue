@@ -77,10 +77,10 @@
 </template>
 
 <script>
-import {mapGetters} from 'vuex';
-import {closeWarn} from '@/api/fault';
-import {getValByKey} from '@/utils/util';
-import {showSuccessMsg, showInfoMsg, showErrorMsg} from '@/utils/message';
+import { mapGetters } from 'vuex';
+import { closeWarn } from '@/api/fault';
+import { getValByKey } from '@/utils/util';
+import { showSuccessMsg, showInfoMsg, showErrorMsg } from '@/utils/message';
 import DeviceDetail from '@/components/DeviceDetail';
 
 export default {
@@ -137,9 +137,7 @@ export default {
         project_id: this.cur_proj,
         device_number: this.sn,
       });
-      const {list, total} = res.data;
-      console.log('list', list);
-
+      const { list, total } = res.data;
       this.listLoading = false;
       this.tableData = list;
       this.total = total;
@@ -199,8 +197,7 @@ export default {
       )
         .then(
           async (_) => {
-            console.log('then');
-            await closeWarn({ids: this.ids, type: this.isCur ? 2 : 1});
+            await closeWarn({ ids: this.ids, type: this.isCur ? 2 : 1 });
             this.getList();
             showSuccessMsg('操作成功');
           },
@@ -220,8 +217,7 @@ export default {
       this.getList();
     },
     detail(id) {
-      this.$store.dispatch('device/detailDevice', {id}).then((res) => {
-        console.log('detail', res);
+      this.$store.dispatch('device/detailDevice', { id }).then((res) => {
         this.isShow = true;
         this.content = 'Fault';
         this.$store.commit('app/SET_DEVICE_DETAIL', res);

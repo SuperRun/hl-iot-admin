@@ -4,7 +4,6 @@
     :visible="deviceDetailDialogOpened"
     :destroy-on-close="true"
     center
-    @open="open"
     @close="close"
     width="800px"
   >
@@ -107,7 +106,7 @@
 </template>
 
 <script>
-import {mapGetters} from 'vuex';
+import { mapGetters } from 'vuex';
 import Content from './Content';
 import Fault from './Fault';
 import DeviceMap from './DeviceMap';
@@ -127,7 +126,6 @@ export default {
   },
   watch: {
     curContent(newVal) {
-      console.log('curContent');
       this.currentTab = newVal;
     },
   },
@@ -162,13 +160,9 @@ export default {
     },
   },
   created() {
-    console.log('created');
     this.currentTab = this.curContent;
   },
   methods: {
-    open() {
-      console.log(this.deviceDetail);
-    },
     close() {
       this.$store.dispatch('app/closeDeviceDialog');
       this.currentTab = 'Content';

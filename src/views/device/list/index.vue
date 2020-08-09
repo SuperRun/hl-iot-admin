@@ -2,30 +2,35 @@
   <div class="device-list bg-white-3 min-h-1 bx-shadow-2">
     <ul class="flex">
       <li
+        v-if="tabs.includes(11)"
         :class="['tab', currentTab == 'CameraPanel' ? 'active' : '']"
         @click="currentTab = 'CameraPanel'"
       >
         摄像头
       </li>
       <li
+        v-if="tabs.includes(12)"
         :class="['tab', currentTab == 'ScreenPanel' ? 'active' : '']"
         @click="currentTab = 'ScreenPanel'"
       >
         LED屏
       </li>
       <li
+        v-if="tabs.includes(13)"
         :class="['tab', currentTab == 'LightPanel' ? 'active' : '']"
         @click="currentTab = 'LightPanel'"
       >
         照明灯
       </li>
       <li
+        v-if="tabs.includes(14)"
         :class="['tab', currentTab == 'WeatherPanel' ? 'active' : '']"
         @click="currentTab = 'WeatherPanel'"
       >
         气象站
       </li>
       <li
+        v-if="tabs.includes(15)"
         :class="['tab', currentTab == 'CommunicationPanel' ? 'active' : '']"
         @click="currentTab = 'CommunicationPanel'"
       >
@@ -63,6 +68,11 @@ export default {
     CommunicationPanel,
     DeviceDetail,
     WeatherDetail,
+  },
+  computed: {
+    tabs() {
+      return this.$store.getters.tabs;
+    },
   },
   data() {
     return {

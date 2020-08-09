@@ -22,18 +22,8 @@
         show-checkbox
         disabled
         :props="defaultProps"
-        @check-change="handleCheckChange"
+        @check="checkHandle"
       ></el-tree>
-      <!-- <el-tree
-        v-else
-        ref="editTree"
-        key="editTree"
-        :data="treeDataEdit"
-        node-key="id"
-        show-checkbox
-        :props="defaultProps"
-        @check-change="handleCheckChange"
-      ></el-tree> -->
     </div>
 
     <div class="flex jc-end mg-top-1">
@@ -72,7 +62,7 @@ export default {
         label: 'title',
         children: 'children',
         disabled: () => {
-          return this.isEdit ? false : true;
+          return !this.isEdit;
         },
       },
       permission_id_list_copy: [],
@@ -87,7 +77,6 @@ export default {
   async mounted() {
     this.model = await this.$store.dispatch('role/detailRole', { id: this.id });
     this.getList();
-    // this.getAuthList();
   },
   methods: {
     getList() {
@@ -111,12 +100,12 @@ export default {
     getAuthList() {
       roleAuthList({ role_id: this.id }).then((res) => {
         res.data.list.forEach((item) => {
-          if (item.permission.level != 1) {
-            this.permission_id_list.push(item.permission_id);
-            this.permission_id_list_copy.push(item.permission_id);
-          }
+          this.permission_id_list.push(item.permission_id);
+          this.permission_id_list_copy.push(item.permission_id);
         });
-        this.$refs.detailTree.setCheckedKeys(this.permission_id_list_copy);
+        this.permission_id_list_copy.forEach((value) => {
+          this.$refs.detailTree.setChecked(value, true, false);
+        });
       });
     },
     confirm() {
@@ -128,40 +117,26 @@ export default {
         .dispatch('role/editRole', {
           id: this.model.id,
           name: this.model.name,
-          permission_id_list: this.permission_id_list.join(','),
+          permission_id_list: this.permission_id_list,
         })
         .then((_) => {
-          console.log(_);
           showSuccessMsg('编辑成功');
           this.$router.push({ path: '/role/list' });
         });
     },
-    handleCheckChange(data, checked, indeterminate) {
-      if (data.parent_id === 0) {
-        return;
-      }
-      if (checked && !this.permission_id_list.includes(data.id)) {
-        this.permission_id_list.push(data.id);
-        if (
-          data.level === 2 &&
-          !this.permission_id_list.includes(data.parent_id)
-        ) {
-          this.permission_id_list.push(data.parent_id);
-        }
-      }
-      if (!checked && this.permission_id_list.includes(data.id)) {
-        const index = this.permission_id_list.findIndex((id) => id === data.id);
-        if (index != -1) {
-          this.permission_id_list.splice(index, 1);
-        }
-        if (data.level === 2) {
-          const temp = this.permission_id_list.findIndex(
-            (id) => id === data.parent_id,
-          );
-          if (temp != -1) {
-            this.permission_id_list.splice(temp, 1);
-          }
-        }
+    checkHandle(data) {
+      const halfCheckedKeys = this.$refs.detailTree
+        .getHalfCheckedKeys()
+        .join(',');
+      const checkedKeys = this.$refs.detailTree.getCheckedKeys().join(',');
+      if (halfCheckedKeys.length && checkedKeys.length) {
+        this.permission_id_list = halfCheckedKeys + ',' + checkedKeys;
+      } else if (halfCheckedKeys.length && checkedKeys.length === 0) {
+        this.permission_id_list = halfCheckedKeys;
+      } else if (halfCheckedKeys.length === 0 && checkedKeys.length) {
+        this.permission_id_list = checkedKeys;
+      } else {
+        this.permission_id_list = '';
       }
     },
     edit() {
@@ -170,7 +145,6 @@ export default {
     cancel() {
       this.isEdit = false;
       this.$nextTick(() => {
-        console.log('permission_id_list_copy', this.permission_id_list_copy);
         this.$refs.detailTree.setCheckedKeys(this.permission_id_list_copy);
       });
     },

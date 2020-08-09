@@ -181,13 +181,13 @@
 </template>
 
 <script>
-import {validPhoneNumber} from '@/utils/validate';
+import { validPhoneNumber } from '@/utils/validate';
 import _ from 'lodash';
-import {showSuccessMsg, showInfoMsg} from '@/utils/message';
-import {getValByKey} from '@/utils/util';
-import {getProjlist} from '@/utils/auth';
-import {createNamespacedHelpers, mapGetters} from 'vuex';
-const {mapActions} = createNamespacedHelpers('user');
+import { showSuccessMsg, showInfoMsg } from '@/utils/message';
+import { getValByKey } from '@/utils/util';
+import { getProjlist } from '@/utils/auth';
+import { createNamespacedHelpers, mapGetters } from 'vuex';
+const { mapActions } = createNamespacedHelpers('user');
 const projList = getProjlist();
 export default {
   name: 'UserManage',
@@ -247,20 +247,30 @@ export default {
       },
       rules: {
         username: [
-          {required: true, message: '请填写账号', trigger: 'blur'},
-          {min: 5, max: 20, message: '长度在 5 到 20 个字符', trigger: 'blur'},
+          { required: true, message: '请填写账号', trigger: 'blur' },
+          {
+            min: 5,
+            max: 20,
+            message: '长度在 5 到 20 个字符',
+            trigger: 'blur',
+          },
         ],
         show_pwd: [
-          {required: true, message: '请填写密码', trigger: 'blur'},
-          {min: 6, max: 20, message: '长度在 6 到 20 个字符', trigger: 'blur'},
+          { required: true, message: '请填写密码', trigger: 'blur' },
+          {
+            min: 6,
+            max: 20,
+            message: '长度在 6 到 20 个字符',
+            trigger: 'blur',
+          },
         ],
         mobile: [
-          {required: true, message: '请填写手机号', trigger: 'blur'},
-          {max: 11, message: '手机号不能超过11个字符', trigger: 'blur'},
-          {validator: checkPhone, trigger: 'blur'},
+          { required: true, message: '请填写手机号', trigger: 'blur' },
+          { max: 11, message: '手机号不能超过11个字符', trigger: 'blur' },
+          { validator: checkPhone, trigger: 'blur' },
         ],
-        sex: [{required: true, message: '请选择性别', trigger: 'blur'}],
-        role_id: [{required: true, message: '请选择角色', trigger: 'blur'}],
+        sex: [{ required: true, message: '请选择性别', trigger: 'blur' }],
+        role_id: [{ required: true, message: '请选择角色', trigger: 'blur' }],
       },
       roleList: [],
       params: {
@@ -281,9 +291,8 @@ export default {
   async mounted() {
     this.getList();
     // 获取角色、项目列表
-    const {totla, list} = await this.$store.dispatch('role/listRole');
+    const { totla, list } = await this.$store.dispatch('role/listRole');
     this.roleList = list;
-    console.log('role', this.roleList);
   },
   watch: {
     isEnable() {
@@ -299,7 +308,7 @@ export default {
       Object.keys(this.params).forEach((key) =>
         this.params[key] ? (param[key] = this.params[key]) : '',
       );
-      const {total, list} = await this.listUser({
+      const { total, list } = await this.listUser({
         ...param,
         page: this.page,
         limit: this.limit,
@@ -322,7 +331,6 @@ export default {
     add() {
       this.showDialog = true;
       this.mode = 'add';
-      console.log('title', this.title);
     },
     edit(item) {
       this.mode = 'edit';
@@ -382,7 +390,7 @@ export default {
           cancelButtonText: '取消',
         },
       ).then(async (_) => {
-        await this.disableUser({user_ids: this.ids});
+        await this.disableUser({ user_ids: this.ids });
         showSuccessMsg('禁用成功');
         this.getList();
       });

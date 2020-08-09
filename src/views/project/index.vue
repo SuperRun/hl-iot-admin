@@ -189,10 +189,10 @@
 <script>
 import _ from 'lodash';
 import BaiduMap from '@/utils/map-util';
-import {keep7Num, getValByKey} from '@/utils/util';
-import {showSuccessMsg, showWarningMsg, showInfoMsg} from '@/utils/message';
-import {createNamespacedHelpers} from 'vuex';
-const {mapActions} = createNamespacedHelpers('project');
+import { keep7Num, getValByKey } from '@/utils/util';
+import { showSuccessMsg, showWarningMsg, showInfoMsg } from '@/utils/message';
+import { createNamespacedHelpers } from 'vuex';
+const { mapActions } = createNamespacedHelpers('project');
 
 export default {
   name: 'ProjectManage',
@@ -232,13 +232,13 @@ export default {
         remark: '', // 描述
       },
       rules: {
-        title: [{required: true, message: '请填写项目名称', trigger: 'blur'}],
+        title: [{ required: true, message: '请填写项目名称', trigger: 'blur' }],
         location: [
-          {required: true, validator: validateLocation, trigger: 'blur'},
+          { required: true, validator: validateLocation, trigger: 'blur' },
         ],
-        longitude: [{required: true, message: '请标记地点', trigger: 'blur'}],
-        latitude: [{required: true, message: '请标记地点', trigger: 'blur'}],
-        remark: [{required: true, message: '请填写描述', trigger: 'blur'}],
+        longitude: [{ required: true, message: '请标记地点', trigger: 'blur' }],
+        latitude: [{ required: true, message: '请标记地点', trigger: 'blur' }],
+        remark: [{ required: true, message: '请填写描述', trigger: 'blur' }],
       },
       tableData: [],
       total: 0, // 总数
@@ -274,7 +274,7 @@ export default {
     ]),
     async getList() {
       this.listLoading = true;
-      const {total, list} = await this.listProject({
+      const { total, list } = await this.listProject({
         ...this.params,
         page: this.page,
         limit: this.limit,
@@ -297,8 +297,6 @@ export default {
       this.getList();
     }, 500),
     dialogOpened() {
-      console.log('dialogOpened');
-
       // 弹出框地图
       this.dialogMap = new BaiduMap('dialog-map', {}, true, true);
       const self = this;
@@ -337,7 +335,7 @@ export default {
       this.loading = false;
     },
     async choosePlace(val) {
-      const {location} = await this.$store.dispatch('map/queryPlaceDetail', {
+      const { location } = await this.$store.dispatch('map/queryPlaceDetail', {
         uid: val,
       });
       this.model.longitude = keep7Num(location.lng);
@@ -346,7 +344,6 @@ export default {
       this.dialogMap.addMark(location.lng, location.lat, {}, true);
     },
     onChangeProvince(province) {
-      console.log('onChangeProvince');
       this.model.province = province.value;
       this.dialogMap.setCenterByCity(province.value);
       // 清空经纬度
@@ -354,7 +351,6 @@ export default {
       this.model.latitude = '';
     },
     onChangeCity(city) {
-      console.log('onChangeCity');
       this.model.city = city.value;
       this.dialogMap.setCenterByCity(city.value);
       // 清空经纬度
@@ -384,10 +380,8 @@ export default {
       });
     },
     edit(item) {
-      console.log(item);
       this.mode = 'edit';
       this.showDialog = true;
-      console.log('model', this.model);
       this.model = Object.assign({}, item);
       this.copyItem.longitude = item.longitude;
       this.copyItem.latitude = item.latitude;
@@ -425,7 +419,7 @@ export default {
           cancelButtonText: '取消',
         },
       ).then(async (_) => {
-        await this.delProject({ids: this.ids});
+        await this.delProject({ ids: this.ids });
         this.getList();
         showSuccessMsg('删除成功');
         // 重新获取导航条上项目下拉框

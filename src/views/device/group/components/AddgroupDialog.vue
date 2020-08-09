@@ -19,7 +19,6 @@
           <el-input-number
             v-model="model.group_number"
             controls-position="right"
-            @change="numberOnly"
             :min="1"
             :max="16"
           ></el-input-number>
@@ -43,9 +42,9 @@
 </template>
 
 <script>
-import {mapGetters} from 'vuex';
-import {validPositiveNum} from '@/utils/validate';
-import {showSuccessMsg} from '@/utils/message';
+import { mapGetters } from 'vuex';
+import { validPositiveNum } from '@/utils/validate';
+import { showSuccessMsg } from '@/utils/message';
 export default {
   name: 'AddgroupDialog',
   props: {
@@ -86,7 +85,7 @@ export default {
       },
       rules: {
         group_number: [
-          {required: true, message: '请输入组号', trigger: 'blur'},
+          { required: true, message: '请输入组号', trigger: 'blur' },
           // {validator: validGroupNumber, trigger: 'blur'},
         ],
       },
@@ -111,7 +110,6 @@ export default {
             ...this.model,
             project_id: this.cur_proj,
           });
-          console.log('res', res);
           showSuccessMsg('添加成功');
         } else {
           await this.$store.dispatch('group/editGroup', {

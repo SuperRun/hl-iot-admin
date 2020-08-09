@@ -176,7 +176,6 @@ export default {
   },
   methods: {
     initCamera() {
-      console.log('this.ezopenUrl', this.ezopenUrl);
       this.player = new EZUIKit.EZUIKitPlayer({
         autoplay: true,
         id: 'monitor',
@@ -188,10 +187,8 @@ export default {
         plugin: ['talk'],
         footer: ['talk', 'broadcast', 'hd', 'fullScreen'],
       });
-      console.log('player', player);
     },
     replay() {
-      console.log(this.dateRange);
       if (this.dateRange.length == 0) {
         showWarningMsg('请选择回放时间');
         return;
@@ -200,10 +197,6 @@ export default {
       this.beginTime = this.dateRange[0];
       this.endTime = this.dateRange[1];
       this.isReplay = true;
-      console.log(
-        'this.ezopenUrl',
-        this.ezopenUrl + `&begin=${this.beginTime}` + `&end=${this.endTime}`,
-      );
       this.player.play({
         accessToken: this.cameraToken,
         url:
@@ -241,12 +234,9 @@ export default {
     getAudioList() {
       let formData = new FormData();
       formData.append('accessToken', this.cameraToken);
-      console.log('formData', formData);
       queryAudioFile(formData).then((res) => {
-        console.log('res', res);
         if (res.status == 200 && res.data.code == '200') {
           this.audioList = res.data.data;
-          console.log('audioList', this.audioList);
         }
       });
     },
@@ -271,7 +261,6 @@ export default {
       this.isReplay = false;
       this.dateRange = [];
       this.isLive = true;
-      console.log('this.ezopenUrl', this.ezopenUrl);
       this.player.play({ accessToken: this.cameraToken, url: this.ezopenUrl });
     },
     beforeUpload(file) {
@@ -280,7 +269,6 @@ export default {
         showWarningMsg('语音文件最大20M');
         return false;
       }
-      console.log('file', file);
 
       if (
         !(
@@ -299,7 +287,6 @@ export default {
       this.loading = true;
     },
     onSuccess(res) {
-      console.log('res', res);
       this.loading = false;
       if (res.code != 200) {
         showWarningMsg(res.msg);
@@ -317,8 +304,6 @@ export default {
       }
     },
     reloadIframe() {
-      console.log('reloadIframe');
-      console.log('reloadIframe', document.getElementById('ysOpenDevice').src);
       window.open(this.url, 'videoIframe', '');
     },
   },

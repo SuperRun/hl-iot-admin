@@ -33,7 +33,6 @@ const mutations = {
     state.device = device;
   },
   OPEN_DEVICEDIALOG: (state) => {
-    console.log('OPEN_DEVICEDIALOG');
     state.deviceDetailDialogOpened = true;
   },
   CLOSE_DEVICEDIALOG: (state) => {
@@ -60,34 +59,34 @@ const mutations = {
 };
 
 const actions = {
-  toggleSideBar({commit}) {
+  toggleSideBar({ commit }) {
     commit('TOGGLE_SIDEBAR');
   },
-  closeSideBar({commit}, {withoutAnimation}) {
+  closeSideBar({ commit }, { withoutAnimation }) {
     commit('CLOSE_SIDEBAR', withoutAnimation);
   },
-  toggleDevice({commit}, device) {
+  toggleDevice({ commit }, device) {
     commit('TOGGLE_DEVICE', device);
   },
-  openDeviceDialog({commit}) {
+  openDeviceDialog({ commit }) {
     commit('OPEN_DEVICEDIALOG');
   },
-  closeDeviceDialog({commit}) {
+  closeDeviceDialog({ commit }) {
     commit('CLOSE_DEVICEDIALOG');
   },
-  openWeatherDialog({commit}) {
+  openWeatherDialog({ commit }) {
     commit('OPEN_WEATHERDIALOG');
   },
-  closeWeatherDialog({commit}) {
+  closeWeatherDialog({ commit }) {
     commit('CLOSE_WEATHERDIALOG');
   },
-  openPwdDialog({commit}) {
+  openPwdDialog({ commit }) {
     commit('OPEN_PWDDIALOG');
   },
-  closePwdDialog({commit}) {
+  closePwdDialog({ commit }) {
     commit('CLOSE_PWDDIALOG');
   },
-  setPlatformConfig({commit}, config) {
+  setPlatformConfig({ commit }, config) {
     commit('SET_PLATFORM_CONFIG', config);
   },
 };

@@ -1,7 +1,7 @@
 import axios from 'axios';
-import {MessageBox, Message} from 'element-ui';
+import { MessageBox, Message } from 'element-ui';
 import store from '@/store';
-import {getToken} from '@/utils/auth';
+import { getToken } from '@/utils/auth';
 
 const service = axios.create({
   baseURL: process.env.VUE_APP_BASE_API,
@@ -45,7 +45,7 @@ service.interceptors.response.use(
           });
         });
       } else {
-        // console.log('Error', res);
+        // .log('Error', res);
         Message({
           message: res.msg || 'Error',
           type: 'error',
@@ -58,7 +58,6 @@ service.interceptors.response.use(
     }
   },
   (error) => {
-    console.log('err' + error); // for debug
     Message({
       message: error.message,
       type: 'error',

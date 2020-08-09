@@ -48,7 +48,11 @@
         </button>
       </div>
       <div class="flex">
-        <button type="button" class="btn btn-dark mg-right-1 br-4" @click="exportExcel">
+        <button
+          type="button"
+          class="btn btn-dark mg-right-1 br-4"
+          @click="exportExcel"
+        >
           导出
         </button>
         <ul class="flex">
@@ -75,7 +79,7 @@
         <button
           type="button"
           class="btn btn-add mg-left-1"
-          @click="$router.push({path: '/device/product'})"
+          @click="$router.push({ path: '/device/product' })"
         >
           产品管理
         </button>
@@ -288,13 +292,16 @@
 import SearchMixin from '../mixin/search';
 import DialogMixin from '../mixin/dialog';
 import MapMixin from '../mixin/map';
-import {refreshDevice} from '@/api/device';
+import { refreshDevice } from '@/api/device';
 export default {
   name: 'LightPanel',
   mixins: [SearchMixin, DialogMixin, MapMixin],
   computed: {
     title() {
       return this.mode == 'add' ? '添加设备(照明灯)' : '编辑设备(照明灯)';
+    },
+    btns() {
+      return this.$store.getters.btns;
     },
   },
   data() {
