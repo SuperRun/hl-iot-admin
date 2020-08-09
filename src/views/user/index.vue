@@ -2,8 +2,22 @@
   <div class="user-manage bg-white-3 min-h-1 bx-shadow-2">
     <!-- 搜索栏 -->
     <div class="operate flex">
-      <button type="button" class="btn btn-add" @click="add">添加</button>
-      <button type="button" class="btn btn-del" @click="del">禁用</button>
+      <button
+        type="button"
+        class="btn btn-add"
+        @click="add"
+        v-if="tabs.includes(81)"
+      >
+        添加
+      </button>
+      <button
+        type="button"
+        class="btn btn-del"
+        @click="del"
+        v-if="tabs.includes(82)"
+      >
+        禁用
+      </button>
       <div class="search flex">
         <el-input
           placeholder="搜索名称"
@@ -60,7 +74,7 @@
             <span>{{ scope.row.project_user | projFilter }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="operation" label="操作">
+        <el-table-column prop="operation" label="操作" v-if="tabs.includes(84)">
           <template slot-scope="scope">
             <span class="btn-table" @click="edit(scope.row)">编辑</span>
           </template>
@@ -192,7 +206,7 @@ const projList = getProjlist();
 export default {
   name: 'UserManage',
   computed: {
-    ...mapGetters(['projList']),
+    ...mapGetters(['projList', 'btns']),
     title() {
       return this.mode == 'add' ? '添加用户' : '编辑用户';
     },

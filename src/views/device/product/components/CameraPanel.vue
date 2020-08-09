@@ -3,7 +3,7 @@
     <!-- 搜索栏 -->
     <div class="operate flex jc-start">
       <button
-        v-if="btns.includes(34)"
+        v-if="btns.includes(40)"
         type="button"
         class="btn btn-add"
         @click="add"
@@ -11,7 +11,7 @@
         添加
       </button>
       <button
-        v-if="btns.includes(34)"
+        v-if="btns.includes(41)"
         type="button"
         class="btn btn-del"
         @click="del"
@@ -69,7 +69,7 @@
             />
           </template>
         </el-table-column>
-        <el-table-column prop="operation" label="操作">
+        <el-table-column v-if="btns.includes(51)" prop="operation" label="操作">
           <template slot-scope="scope">
             <span class="btn-table" @click="edit(scope.row)">编辑</span>
           </template>

@@ -3,8 +3,22 @@
     <!-- 搜索栏 -->
     <div class="operate flex jc-between">
       <div class="flex">
-        <button type="button" class="btn btn-add" @click="add">添加</button>
-        <button type="button" class="btn btn-del" @click="del">删除</button>
+        <button
+          v-if="btns.includes(38)"
+          type="button"
+          class="btn btn-add"
+          @click="add"
+        >
+          添加
+        </button>
+        <button
+          v-if="btns.includes(39)"
+          type="button"
+          class="btn btn-del"
+          @click="del"
+        >
+          删除
+        </button>
         <el-select
           v-model="params.status"
           placeholder="请选择设备状态"
@@ -64,7 +78,7 @@
         <button
           type="button"
           class="btn btn-add mg-left-1"
-          @click="$router.push({path: '/device/product'})"
+          @click="$router.push({ path: '/device/product' })"
         >
           产品管理
         </button>
@@ -107,10 +121,18 @@
           </el-table-column>
           <el-table-column prop="operation" label="操作">
             <template slot-scope="scope">
-              <span class="btn-table mg-right-1" @click="detail(scope.row.id)"
+              <span
+                v-if="btns.includes(71)"
+                class="btn-table mg-right-1"
+                @click="detail(scope.row.id)"
                 >详情</span
               >
-              <span class="btn-table" @click="edit(scope.row)">编辑</span>
+              <span
+                v-if="btns.includes(70)"
+                class="btn-table"
+                @click="edit(scope.row)"
+                >编辑</span
+              >
             </template>
           </el-table-column>
         </el-table>
@@ -244,6 +266,9 @@ export default {
   computed: {
     title() {
       return this.mode == 'add' ? '添加设备(通信设备)' : '编辑设备(通信设备)';
+    },
+    btns() {
+      return this.$store.getters.btns;
     },
   },
   data() {

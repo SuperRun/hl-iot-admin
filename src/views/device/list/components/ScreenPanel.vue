@@ -3,8 +3,22 @@
     <!-- 搜索栏 -->
     <div class="operate flex jc-between">
       <div class="flex">
-        <button type="button" class="btn btn-add" @click="add">添加</button>
-        <button type="button" class="btn btn-del" @click="del">删除</button>
+        <button
+          v-if="btns.includes(36)"
+          type="button"
+          class="btn btn-add"
+          @click="add"
+        >
+          添加
+        </button>
+        <button
+          v-if="btns.includes(37)"
+          type="button"
+          class="btn btn-del"
+          @click="del"
+        >
+          删除
+        </button>
         <el-select
           v-model="params.status"
           placeholder="请选择设备状态"
@@ -64,7 +78,7 @@
         <button
           type="button"
           class="btn btn-add mg-left-1"
-          @click="$router.push({path: '/device/product'})"
+          @click="$router.push({ path: '/device/product' })"
         >
           产品管理
         </button>
@@ -112,10 +126,18 @@
           </el-table-column>
           <el-table-column prop="operation" label="操作">
             <template slot-scope="scope">
-              <span class="btn-table mg-right-1" @click="detail(scope.row.id)"
+              <span
+                v-if="btns.includes(66)"
+                class="btn-table mg-right-1"
+                @click="detail(scope.row.id)"
                 >详情</span
               >
-              <span class="btn-table" @click="edit(scope.row)">编辑</span>
+              <span
+                v-if="btns.includes(64)"
+                class="btn-table"
+                @click="edit(scope.row)"
+                >编辑</span
+              >
             </template>
           </el-table-column>
         </el-table>
@@ -271,6 +293,9 @@ export default {
     title() {
       return this.mode == 'add' ? '添加设备(LED屏)' : '编辑设备(LED屏)';
     },
+    btns() {
+      return this.$store.getters.btns;
+    },
   },
   data() {
     return {
@@ -286,12 +311,12 @@ export default {
         status: 0, // 状态
       },
       rules: {
-        num: [{required: true, message: '请填写设备编号', trigger: 'blur'}],
-        product: [{required: true, message: '请选择产品', trigger: 'blur'}],
-        position: [{required: true, message: '请填写位号', trigger: 'blur'}],
-        gateway: [{required: true, message: '请选择网关', trigger: 'blur'}],
-        lng: [{required: true, message: '请标记地点', trigger: 'blur'}],
-        lat: [{required: true, message: '请标记地点', trigger: 'blur'}],
+        num: [{ required: true, message: '请填写设备编号', trigger: 'blur' }],
+        product: [{ required: true, message: '请选择产品', trigger: 'blur' }],
+        position: [{ required: true, message: '请填写位号', trigger: 'blur' }],
+        gateway: [{ required: true, message: '请选择网关', trigger: 'blur' }],
+        lng: [{ required: true, message: '请标记地点', trigger: 'blur' }],
+        lat: [{ required: true, message: '请标记地点', trigger: 'blur' }],
       },
       deviceMap: {}, // 列表地图
     };

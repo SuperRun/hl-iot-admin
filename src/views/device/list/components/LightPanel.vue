@@ -3,8 +3,22 @@
     <!-- 搜索栏 -->
     <div class="operate flex jc-between">
       <div class="flex">
-        <button type="button" class="btn btn-add" @click="add">添加</button>
-        <button type="button" class="btn btn-del" @click="del">删除</button>
+        <button
+          v-if="btns.includes(34)"
+          type="button"
+          class="btn btn-add"
+          @click="add"
+        >
+          添加
+        </button>
+        <button
+          v-if="btns.includes(35)"
+          type="button"
+          class="btn btn-del"
+          @click="del"
+        >
+          删除
+        </button>
         <el-select
           v-model="params.status"
           placeholder="请选择设备状态"
@@ -49,6 +63,7 @@
       </div>
       <div class="flex">
         <button
+          v-if="btns.includes(50)"
           type="button"
           class="btn btn-dark mg-right-1 br-4"
           @click="exportExcel"
@@ -132,10 +147,18 @@
           </el-table-column>
           <el-table-column prop="operation" label="操作">
             <template slot-scope="scope">
-              <span class="btn-table mg-right-1" @click="detail(scope.row.id)"
+              <span
+                v-if="btns.includes(68)"
+                class="btn-table mg-right-1"
+                @click="detail(scope.row.id)"
                 >详情</span
               >
-              <span class="btn-table" @click="edit(scope.row)">编辑</span>
+              <span
+                v-if="btns.includes(67)"
+                class="btn-table"
+                @click="edit(scope.row)"
+                >编辑</span
+              >
             </template>
           </el-table-column>
         </el-table>

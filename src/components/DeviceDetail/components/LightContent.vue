@@ -1,6 +1,6 @@
 <template>
   <div class="flex flex-column">
-    <div class="refresh" @click="refresh">
+    <div v-if="btns.includes(102)" class="refresh" @click="refresh">
       读状态
       <!-- <i class="el-icon-refresh"></i> -->
     </div>
@@ -35,6 +35,7 @@
     <div class="flex mg-top-2 ai-center">
       <span class="text-grey-2 mg-right-1 light">亮度：{{ brightness }}%</span>
       <el-switch
+        v-if="btns.includes(103)"
         class="mg-right-1"
         v-model="isFull"
         @change="setLightLightness"
@@ -43,7 +44,7 @@
       ></el-switch>
       <el-button
         class="mg-left-1 btn-light"
-        v-if="!isEdit"
+        v-if="!isEdit && btns.includes(103)"
         @click="isEdit = true"
         size="small"
         >编辑</el-button
@@ -89,15 +90,15 @@
 </template>
 
 <script>
-import {setGroupBrightness, controlGroup} from '@/api/group';
-import {refreshDevice} from '@/api/device';
-import {mapGetters} from 'vuex';
-import {showSuccessMsg} from '@/utils/message';
+import { setGroupBrightness, controlGroup } from '@/api/group';
+import { refreshDevice } from '@/api/device';
+import { mapGetters } from 'vuex';
+import { showSuccessMsg } from '@/utils/message';
 
 export default {
   name: 'LightContent',
   computed: {
-    ...mapGetters(['deviceDetail']),
+    ...mapGetters(['deviceDetail', 'btns']),
   },
   data() {
     return {
@@ -113,7 +114,7 @@ export default {
   },
   async created() {
     if (this.deviceDetail.group) {
-      const {list} = await this.$store.dispatch('group/detailControlGroup', {
+      const { list } = await this.$store.dispatch('group/detailControlGroup', {
         group_id: this.deviceDetail.group.id,
       });
       this.controlList = list;
@@ -137,7 +138,7 @@ export default {
   methods: {
     refresh() {
       this.loading = true;
-      refreshDevice({device_ids: this.deviceDetail.id}).then(
+      refreshDevice({ device_ids: this.deviceDetail.id }).then(
         (res) => {
           this.loading = false;
         },

@@ -3,29 +3,33 @@
   <div class="container" v-loading="loading">
     <div class="flex jc-start">
       <el-button
+        v-if="btns.includes(88)"
         type="button"
         @click="playNow"
         :class="isLive ? 'btn-dark' : 'btn-add'"
         >实时</el-button
       >
-      <el-button
-        type="button"
-        class="mg-left-1"
-        :class="!isLive ? 'btn-dark' : 'btn-add'"
-        @click="replay"
-        >回放</el-button
-      >
-      <el-date-picker
-        class="mg-left-1"
-        v-model="dateRange"
-        type="daterange"
-        range-separator="~"
-        value-format="timestamp"
-        start-placeholder="开始日期"
-        end-placeholder="结束日期"
-      >
-      </el-date-picker>
+      <template v-if="btns.includes(87)">
+        <el-button
+          type="button"
+          class="mg-left-1"
+          :class="!isLive ? 'btn-dark' : 'btn-add'"
+          @click="replay"
+          >回放</el-button
+        >
+        <el-date-picker
+          class="mg-left-1"
+          v-model="dateRange"
+          type="daterange"
+          range-separator="~"
+          value-format="timestamp"
+          start-placeholder="开始日期"
+          end-placeholder="结束日期"
+        >
+        </el-date-picker>
+      </template>
       <el-upload
+        v-if="btns.includes(28)"
         action="https://open.ys7.com/api/lapp/voice/upload"
         class="upload-demo ai-center mg-left-1"
         :data="uploadData"
@@ -35,7 +39,12 @@
       >
         <el-button class="btn-upload mg-right-1">选择语音</el-button>
       </el-upload>
-      <el-select v-model="audio" placeholder="语音列表" @change="audio = ''">
+      <el-select
+        v-if="btns.includes(96)"
+        v-model="audio"
+        placeholder="语音列表"
+        @change="audio = ''"
+      >
         <el-option
           v-for="audio in audioList"
           :key="audio.voiceName"
@@ -73,7 +82,10 @@
     >
     </iframe>-->
     <!-- 控制方向 -->
-    <div class="direction flex flex-column jc-center" v-if="!isReplay">
+    <div
+      class="direction flex flex-column jc-center"
+      v-if="!isReplay && btns.includes(104)"
+    >
       <div class="up">
         <svg-icon :icon-class="'up'" @click="setDirection(0)"></svg-icon>
       </div>
@@ -107,7 +119,7 @@ import EZUIKit from 'ezuikit-js';
 export default {
   name: 'CameraContent',
   computed: {
-    ...mapGetters(['deviceDetail']),
+    ...mapGetters(['deviceDetail', 'btns']),
     url() {
       //open.ys7.com/ezopen/h5/iframe?url=ezopen://MLXIYY@open.ys7.com/D95050244/1.hd.live&audio=1&autoplay=1&accessToken=at.7obzyhqhbbp6cq2md2ra78oxctpfh4qc-64c4bpfe5q-12voqre-zxs0vthui
       https: return `https://open.ys7.com/ezopen/h5/${

@@ -1,12 +1,17 @@
 <template>
   <!-- LED屏幕 -->
   <div>
-    <el-button size="small" class="btn-dark mg-bottom-1" @click="restart"
+    <el-button
+      v-if="btns.includes(97)"
+      size="small"
+      class="btn-dark mg-bottom-1"
+      @click="restart"
       >重启设备</el-button
     >
     <div class="flex">
       显示屏开关：
       <el-switch
+        :disabled="!btns.includes(98)"
         v-model="isOn"
         active-color="#5372FB"
         inactive-color="#D6DAEF"
@@ -30,7 +35,7 @@
 
       <el-button
         class="mg-left-1 btn-light"
-        v-if="!isEdit"
+        v-if="!isEdit && btns.includes(99)"
         @click="isEdit = true"
         size="small"
         >编辑</el-button
@@ -61,6 +66,7 @@
           :on-exceed="handleExceed"
           :http-request="uploadVideo"
           :file-list="fileList"
+          v-if="btns.includes(100)"
         >
           <el-button size="small" class="btn-upload mg-right-1"
             >选择文件</el-button
@@ -89,12 +95,14 @@
           <el-button
             size="small"
             class="btn-upload mg-right-1"
+            v-if="btns.includes(100)"
             @click.stop="isUpload = false"
             >上传</el-button
           >
           <el-button
             size="small"
             class="btn-light mg-right-1"
+            v-if="btns.includes(101)"
             @click.stop="clear"
             >清除</el-button
           >
@@ -126,15 +134,15 @@ import {
   clearLedFile,
   turnLED,
 } from '@/api/device';
-import {showSuccessMsg, showInfoMsg, showErrorMsg} from '@/utils/message';
-import {mapGetters} from 'vuex';
+import { showSuccessMsg, showInfoMsg, showErrorMsg } from '@/utils/message';
+import { mapGetters } from 'vuex';
 import Divider from '@/components/Divider';
 
 export default {
   name: 'ScreenContent',
-  components: {Divider},
+  components: { Divider },
   computed: {
-    ...mapGetters(['deviceDetail']),
+    ...mapGetters(['deviceDetail', 'btns']),
   },
   data() {
     return {
@@ -167,7 +175,7 @@ export default {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
       }).then((_) => {
-        restartLed({device_id: this.deviceDetail.id}).then((_) => {
+        restartLed({ device_id: this.deviceDetail.id }).then((_) => {
           showSuccessMsg('重启成功');
         });
       });
@@ -180,12 +188,12 @@ export default {
       }
     },
     getLedConfig() {
-      getLedOpenState({device_id: this.deviceDetail.id}).then((res) => {
+      getLedOpenState({ device_id: this.deviceDetail.id }).then((res) => {
         this.isOn = res.data.result;
         this.isOnWatch(); // 取消
         this.createIsOnWatch();
       });
-      getLedLightness({device_id: this.deviceDetail.id}).then((res) => {
+      getLedLightness({ device_id: this.deviceDetail.id }).then((res) => {
         this.lightness = Math.floor((res.data.result / 255) * 100);
         this.copyLightness = this.lightness;
       });
@@ -225,7 +233,7 @@ export default {
         cancelButtonText: '取消',
       }).then(
         (_) => {
-          clearLedFile({device_id: this.deviceDetail.id}).then((_) => {
+          clearLedFile({ device_id: this.deviceDetail.id }).then((_) => {
             showSuccessMsg('清除成功');
             this.getUploadDetail();
           });
@@ -259,10 +267,10 @@ export default {
       });
     },
     getUploadDetail() {
-      getLedImgOrVedio({device_id: this.deviceDetail.id}).then((res) => {
+      getLedImgOrVedio({ device_id: this.deviceDetail.id }).then((res) => {
         this.fileList = [];
         if (res.data != null) {
-          const {content, width, height} = res.data;
+          const { content, width, height } = res.data;
           this.content = JSON.parse(content)[0];
           this.fileList.push({
             url: this.content.url,

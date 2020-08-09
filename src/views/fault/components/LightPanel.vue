@@ -2,7 +2,12 @@
   <div class="camera-panel">
     <!-- 搜索栏 -->
     <div class="operate flex">
-      <button type="button" class="btn btn-del" @click="closeFaults">
+      <button
+        v-if="btns.includes(72)"
+        type="button"
+        class="btn btn-del"
+        @click="closeFaults"
+      >
         {{ isCur == 1 ? '关闭' : '删除' }}
       </button>
       <div class="search flex">

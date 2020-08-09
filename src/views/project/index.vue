@@ -3,6 +3,7 @@
     <!-- 搜索栏 -->
     <div class="operate flex">
       <button
+        v-if="btns.includes(75)"
         type="button"
         class="btn btn-add"
         @click="
@@ -12,7 +13,14 @@
       >
         添加
       </button>
-      <button type="button" class="btn btn-del" @click="del">删除</button>
+      <button
+        v-if="btns.includes(76)"
+        type="button"
+        class="btn btn-del"
+        @click="del"
+      >
+        删除
+      </button>
       <div class="search flex">
         <el-input
           placeholder="搜索名称"
@@ -72,7 +80,12 @@
         </el-table-column>
         <el-table-column prop="operation" label="操作">
           <template slot-scope="scope">
-            <span class="btn-table" @click="edit(scope.row)">编辑</span>
+            <span
+              v-if="btns.includes(78)"
+              class="btn-table"
+              @click="edit(scope.row)"
+              >编辑</span
+            >
           </template>
         </el-table-column>
       </el-table>
@@ -199,6 +212,9 @@ export default {
   computed: {
     title() {
       return this.mode == 'add' ? '创建项目' : '编辑项目';
+    },
+    btns() {
+      return this.$store.getters.btns;
     },
   },
   data() {

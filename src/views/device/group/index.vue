@@ -6,6 +6,7 @@
     <!-- 搜索栏 -->
     <div class="flex jc-start mg-top-1">
       <button
+        v-if="btns.includes(48)"
         type="button"
         class="btn btn-add"
         @click="
@@ -15,7 +16,14 @@
       >
         添加
       </button>
-      <button type="button" class="btn btn-del" @click="del">删除</button>
+      <button
+        v-if="btns.includes(49)"
+        type="button"
+        class="btn btn-del"
+        @click="del"
+      >
+        删除
+      </button>
       <el-input
         placeholder="搜索组号"
         v-model="params.group_number"
@@ -39,6 +47,7 @@
       <el-table-column label="操作">
         <template slot-scope="scope">
           <span
+            v-if="btns.includes(55)"
             class="btn-table mg-right-1"
             @click="
               showGroupdetailDialog = true;
@@ -47,6 +56,7 @@
             >详情</span
           >
           <span
+            v-if="btns.includes(56)"
             class="btn-table mg-right-1"
             @click="
               showGroupcontrolDialog = true;
@@ -55,6 +65,7 @@
             >控制</span
           >
           <span
+            v-if="btns.includes(57)"
             class="btn-table"
             @click="
               showGroupaddDialog = true;
@@ -140,7 +151,7 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(['cur_proj', 'tabs']),
+    ...mapGetters(['cur_proj', 'tabs', 'btns']),
   },
   watch: {
     cur_proj() {

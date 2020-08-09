@@ -2,8 +2,22 @@
   <div class="camera-panel">
     <!-- 搜索栏 -->
     <div class="operate flex jc-start">
-      <button type="button" class="btn btn-add" @click="add">添加</button>
-      <button type="button" class="btn btn-del" @click="del">删除</button>
+      <button
+        v-if="btns.includes(42)"
+        type="button"
+        class="btn btn-add"
+        @click="add"
+      >
+        添加
+      </button>
+      <button
+        v-if="btns.includes(43)"
+        type="button"
+        class="btn btn-del"
+        @click="del"
+      >
+        删除
+      </button>
       <div class="search flex">
         <el-input
           placeholder="搜索产品名称"
@@ -55,7 +69,7 @@
             />
           </template>
         </el-table-column>
-        <el-table-column prop="operation" label="操作">
+        <el-table-column prop="operation" v-if="btns.includes(54)" label="操作">
           <template slot-scope="scope">
             <span class="btn-table" @click="edit(scope.row)">编辑</span>
           </template>

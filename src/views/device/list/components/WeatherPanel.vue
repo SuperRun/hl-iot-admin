@@ -68,7 +68,7 @@
         <button
           type="button"
           class="btn btn-add mg-left-1"
-          @click="$router.push({path: '/device/product'})"
+          @click="$router.push({ path: '/device/product' })"
         >
           产品管理
         </button>
@@ -114,7 +114,11 @@
               scope.row.created_at | formatTime
             }}</template>
           </el-table-column>
-          <el-table-column prop="operation" label="操作">
+          <el-table-column
+            v-if="btns.includes(69)"
+            prop="operation"
+            label="操作"
+          >
             <template slot-scope="scope">
               <span
                 class="btn-table mg-right-1"
@@ -270,11 +274,11 @@ import MapMixin from '../mixin/map';
 export default {
   name: 'WeatherPanel',
   mixins: [SearchMixin, DialogMixin, MapMixin],
-  // computed: {
-  //   title() {
-  //     return this.mode == 'add' ? '添加设备(气象站)' : '编辑设备(气象站)';
-  //   },
-  // },
+  computed: {
+    btns() {
+      return this.$store.getters.btns;
+    },
+  },
   data() {
     return {
       showDialog: false,
@@ -295,7 +299,7 @@ export default {
   },
   methods: {
     weatherDetail(id) {
-      this.detailDevice({id}).then((res) => {
+      this.detailDevice({ id }).then((res) => {
         this.$store.commit('app/SET_DEVICE_DETAIL', res);
         this.$store.commit('app/OPEN_WEATHERDIALOG');
       });
