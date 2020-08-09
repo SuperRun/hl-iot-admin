@@ -69,7 +69,7 @@ export default {
       treeAuthList().then((res) => {
         this.listLoading = false;
         this.treeData = res.data.list;
-        console.log('res', res);
+        console.log('res.data.list', res.data.list);
       });
     },
     add() {
@@ -87,7 +87,7 @@ export default {
       });
     },
     handleCheckChange(data, checked, indeterminate) {
-      console.log(data);
+      console.log('data', data);
       if (data.parent_id === 0) {
         return;
       }
@@ -102,8 +102,6 @@ export default {
       }
       if (!checked && this.permission_id_list.includes(data.id)) {
         const index = this.permission_id_list.findIndex((id) => id === data.id);
-        console.log('index', index);
-
         if (index != -1) {
           this.permission_id_list.splice(index, 1);
         }
@@ -116,7 +114,7 @@ export default {
           }
         }
       }
-      console.log(this.permission_id_list);
+      console.log('permission_id_list', this.permission_id_list);
     },
   },
 };

@@ -15,16 +15,25 @@
 
     <div class="mg-top-3 tree-list">
       <el-tree
-        lazy
-        ref="tree"
-        :data="treeData"
+        ref="detailTree"
+        key="detailTree"
+        :data="treeDataDetail"
         node-key="id"
         show-checkbox
-        :default-checked-keys="[8, 9]"
+        disabled
         :props="defaultProps"
         @check-change="handleCheckChange"
-      >
-      </el-tree>
+      ></el-tree>
+      <!-- <el-tree
+        v-else
+        ref="editTree"
+        key="editTree"
+        :data="treeDataEdit"
+        node-key="id"
+        show-checkbox
+        :props="defaultProps"
+        @check-change="handleCheckChange"
+      ></el-tree> -->
     </div>
 
     <div class="flex jc-end mg-top-1">
@@ -39,15 +48,15 @@
       <el-button v-else class="btn-dark" type="button" @click="edit"
         >编辑</el-button
       >
-      <el-button class="btn-dark" type="button" @click="test">测试</el-button>
+      <!-- <el-button class="btn-dark" type="button" @click="test">测试</el-button> -->
     </div>
   </div>
 </template>
 
 <script>
-import {treeAuthList} from '@/api/auth';
-import {roleAuthList} from '@/api/role';
-import {showErrorMsg, showSuccessMsg} from '@/utils/message';
+import { treeAuthList } from '@/api/auth';
+import { roleAuthList, editRole } from '@/api/role';
+import { showErrorMsg, showSuccessMsg } from '@/utils/message';
 export default {
   name: 'EditAuth',
   data() {
@@ -57,12 +66,16 @@ export default {
       model: {
         name: '',
       },
-      treeData: [],
+      treeDataDetail: [],
+      treeDataEdit: [],
       defaultProps: {
         label: 'title',
         children: 'children',
+        disabled: () => {
+          return this.isEdit ? false : true;
+        },
       },
-      permission_list: [],
+      permission_id_list_copy: [],
       permission_id_list: [],
     };
   },
@@ -72,7 +85,7 @@ export default {
     },
   },
   async mounted() {
-    this.model = await this.$store.dispatch('role/detailRole', {id: this.id});
+    this.model = await this.$store.dispatch('role/detailRole', { id: this.id });
     this.getList();
     // this.getAuthList();
   },
@@ -81,10 +94,8 @@ export default {
       this.listLoading = true;
       treeAuthList().then((res) => {
         this.listLoading = false;
-        this.treeData = [{id: 8, title: '1', children: [{id: 9, title: '2'}]}];
-        console.log('treeData1', this.treeData);
-        this.treeData = this.convertList(res.data.list, true);
-        console.log('treeData2', this.treeData);
+        this.treeDataEdit = JSON.parse(JSON.stringify(res.data.list));
+        this.treeDataDetail = JSON.parse(JSON.stringify(res.data.list));
         this.getAuthList();
       });
     },
@@ -98,19 +109,14 @@ export default {
       return arr;
     },
     getAuthList() {
-      roleAuthList({role_id: this.id}).then((res) => {
-        console.log('res', res.data.list);
+      roleAuthList({ role_id: this.id }).then((res) => {
         res.data.list.forEach((item) => {
-          console.log('item', item.permission.level);
           if (item.permission.level != 1) {
-            this.permission_list.push(item.permission_id);
+            this.permission_id_list.push(item.permission_id);
+            this.permission_id_list_copy.push(item.permission_id);
           }
         });
-        console.log('treeData1', this.treeData);
-        console.log('permission_list', this.permission_list);
-        this.$nextTick(() => {
-          this.$refs.tree.setCheckedKeys([8, 9, 10]);
-        });
+        this.$refs.detailTree.setCheckedKeys(this.permission_id_list_copy);
       });
     },
     confirm() {
@@ -122,12 +128,12 @@ export default {
         .dispatch('role/editRole', {
           id: this.model.id,
           name: this.model.name,
-          permission_id_list: this.permission_list.join(','),
+          permission_id_list: this.permission_id_list.join(','),
         })
         .then((_) => {
           console.log(_);
           showSuccessMsg('编辑成功');
-          this.$router.push({path: '/role/list'});
+          this.$router.push({ path: '/role/list' });
         });
     },
     handleCheckChange(data, checked, indeterminate) {
@@ -145,8 +151,6 @@ export default {
       }
       if (!checked && this.permission_id_list.includes(data.id)) {
         const index = this.permission_id_list.findIndex((id) => id === data.id);
-        console.log('index', index);
-
         if (index != -1) {
           this.permission_id_list.splice(index, 1);
         }
@@ -159,23 +163,16 @@ export default {
           }
         }
       }
-      console.log('permission_id_list', this.permission_id_list);
     },
     edit() {
       this.isEdit = true;
-      this.treeData = this.convertList(this.treeData, false);
     },
     cancel() {
       this.isEdit = false;
-      this.treeData = this.convertList(this.treeData, true);
-      console.log('cancel this.permission_list', this.permission_list);
       this.$nextTick(() => {
-        this.$refs.tree.setCheckedKeys(this.permission_list);
+        console.log('permission_id_list_copy', this.permission_id_list_copy);
+        this.$refs.detailTree.setCheckedKeys(this.permission_id_list_copy);
       });
-    },
-    test() {
-      console.log(this.$refs.tree);
-      this.$refs.tree.setCheckedKeys([8, 9, 10]);
     },
   },
 };

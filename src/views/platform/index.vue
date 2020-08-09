@@ -69,6 +69,7 @@ export default {
       },
       copyTitle: '',
       dialogVisible: false,
+      dialogImageUrl: '',
     };
   },
   mounted() {
