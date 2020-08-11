@@ -120,7 +120,7 @@ export default {
       this.code = img;
       this.model.captcha_key = key;
     },
-    async getLogo() {
+    getLogo() {
       request({
         url: '/getSystem',
         methods: 'get',

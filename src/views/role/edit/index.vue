@@ -28,16 +28,10 @@
 
     <div class="flex jc-end mg-top-1">
       <div v-if="isEdit">
-        <el-button class="btn-light" type="button" @click="cancel"
-          >取消</el-button
-        >
-        <el-button class="btn-dark" type="button" @click="confirm"
-          >确定</el-button
-        >
+        <el-button class="btn-light" type="button" @click="cancel">取消</el-button>
+        <el-button class="btn-dark" type="button" @click="confirm">确定</el-button>
       </div>
-      <el-button v-else class="btn-dark" type="button" @click="edit"
-        >编辑</el-button
-      >
+      <el-button v-else class="btn-dark" type="button" @click="edit">编辑</el-button>
       <!-- <el-button class="btn-dark" type="button" @click="test">测试</el-button> -->
     </div>
   </div>
@@ -103,6 +97,7 @@ export default {
           this.permission_id_list.push(item.permission_id);
           this.permission_id_list_copy.push(item.permission_id);
         });
+        this.permission_id_list.join(',');
         this.permission_id_list_copy.forEach((value) => {
           this.$refs.detailTree.setChecked(value, true, false);
         });
@@ -113,11 +108,18 @@ export default {
         showErrorMsg('请输入角色名称');
         return;
       }
+      let permissionIds = '';
+      if (typeof this.permission_id_list == 'object') {
+        permissionIds = this.permission_id_list.join(',');
+      } else {
+        permissionIds = this.permission_id_list;
+      }
+      console.log();
       this.$store
         .dispatch('role/editRole', {
           id: this.model.id,
           name: this.model.name,
-          permission_id_list: this.permission_id_list,
+          permission_id_list: permissionIds,
         })
         .then((_) => {
           showSuccessMsg('编辑成功');

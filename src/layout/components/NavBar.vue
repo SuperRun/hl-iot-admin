@@ -69,7 +69,7 @@ export default {
       this.$store.commit('project/SET_CURPROJ', this.projId);
     },
     getPlatformConfig() {
-      if (!this.platformConfig) {
+      if (this.platformConfig) {
         const p = JSON.parse(this.platformConfig);
         this.$store.dispatch('app/setPlatformConfig', p);
         return;
