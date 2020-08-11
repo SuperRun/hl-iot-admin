@@ -7,21 +7,13 @@
         type="button"
         class="btn btn-del"
         @click="closeFaults"
-      >
-        {{ isCur == 1 ? '关闭' : '删除' }}
-      </button>
+      >{{ isCur == 1 ? '关闭' : '删除' }}</button>
       <div class="search flex">
         <el-input placeholder="搜索设备编号" v-model="sn">
-          <el-button
-            slot="append"
-            icon="el-icon-search"
-            @click="search"
-          ></el-button>
+          <el-button slot="append" icon="el-icon-search" @click="search"></el-button>
         </el-input>
       </div>
-      <button type="button" class="btn btn-refresh mg-left-1" @click="refresh">
-        刷新
-      </button>
+      <button type="button" class="btn btn-refresh mg-left-1" @click="refresh">刷新</button>
     </div>
 
     <!-- 表格 -->
@@ -35,24 +27,16 @@
       >
         <el-table-column type="selection" width="55"></el-table-column>
         <el-table-column prop="name" label="设备编号" width="200">
-          <template slot-scope="scope">
-            {{ scope.row.device.device_number }}
-          </template>
+          <template slot-scope="scope">{{ scope.row.device.device_number }}</template>
         </el-table-column>
         <el-table-column prop="mode" label="产品名称" width="200">
-          <template slot-scope="scope">
-            {{ scope.row.product.title }}
-          </template>
+          <template slot-scope="scope">{{ scope.row.product.title }}</template>
         </el-table-column>
         <el-table-column prop="mode" label="位号" width="200">
-          <template slot-scope="scope">
-            {{ scope.row.device.place_number }}
-          </template>
+          <template slot-scope="scope">{{ scope.row.device.place_number }}</template>
         </el-table-column>
         <el-table-column prop="mode" label="告警内容" width="200">
-          <template>
-            设备故障
-          </template>
+          <template>设备故障</template>
         </el-table-column>
         <el-table-column prop="operation" label="操作">
           <template slot-scope="scope">
@@ -73,11 +57,7 @@
       </div>
     </div>
     <!-- 设备详情弹出框 -->
-    <device-detail
-      :curContent="content"
-      @hideDetail="hideDetail"
-      v-if="isShow"
-    ></device-detail>
+    <device-detail :curContent="content" @hideDetail="hideDetail" v-if="isShow"></device-detail>
   </div>
 </template>
 
@@ -100,7 +80,7 @@ export default {
     },
   },
   computed: {
-    ...mapGetters(['cur_proj']),
+    ...mapGetters(['cur_proj', 'btns']),
   },
   data() {
     return {

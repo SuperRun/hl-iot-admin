@@ -4,13 +4,7 @@
       <span class="text-grey-2 fs-md">平台名称：</span>
       <div v-if="!isEditName" class="flex ai-center">
         <span class="fs-md pd-right-1">{{ model.title }}</span>
-        <el-button
-          type="button"
-          class="btn btn-dark"
-          v-if="btns.includes(91)"
-          @click="isEditName = true"
-          >编辑</el-button
-        >
+        <el-button type="button" class="btn btn-dark" @click="isEditName = true">编辑</el-button>
       </div>
       <div class="flex" v-else>
         <el-input
@@ -20,19 +14,14 @@
           maxlength="12"
           show-word-limit
         ></el-input>
-        <el-button type="button" class="btn btn-dark" @click="editPName"
-          >确定</el-button
-        >
-        <el-button type="button" class="btn btn-light" @click="cancel"
-          >取消</el-button
-        >
+        <el-button type="button" class="btn btn-dark" @click="editPName">确定</el-button>
+        <el-button type="button" class="btn btn-light" @click="cancel">取消</el-button>
       </div>
     </div>
     <div class="flex mg-top-1 logo">
       <span class="text-grey-2 fs-md pd-right-1">平台LOGO：</span>
       <div class="flex flex-column">
         <el-upload
-          v-if="btns.includes(92)"
           action
           class="upload-logo"
           list-type="picture-card"
@@ -51,7 +40,7 @@
       </div>
     </div>
     <el-dialog title="图片预览" :visible.sync="dialogVisible">
-      <img class="w-100" :src="dialogImageUrl" alt="" />
+      <img class="w-100" :src="dialogImageUrl" alt />
     </el-dialog>
   </div>
 </template>

@@ -2,44 +2,14 @@
   <div class="user-manage bg-white-3 min-h-1 bx-shadow-2">
     <!-- 搜索栏 -->
     <div class="operate flex">
-      <button
-        type="button"
-        class="btn btn-add"
-        @click="add"
-        v-if="tabs.includes(81)"
-      >
-        添加
-      </button>
-      <button
-        type="button"
-        class="btn btn-del"
-        @click="del"
-        v-if="tabs.includes(82)"
-      >
-        禁用
-      </button>
+      <button type="button" class="btn btn-add" @click="add" v-if="btns.includes(81)">添加</button>
+      <button type="button" class="btn btn-del" @click="del" v-if="btns.includes(82)">禁用</button>
       <div class="search flex">
-        <el-input
-          placeholder="搜索名称"
-          v-model="params.name"
-          class="mg-right-1"
-          @input="search"
-        ></el-input>
-        <el-input
-          placeholder="搜索账号"
-          v-model="params.username"
-          @input="search"
-          class="mg-right-1"
-        ></el-input>
-        <el-input
-          placeholder="搜索手机号"
-          v-model="params.mobile"
-          @input="search"
-        ></el-input>
+        <el-input placeholder="搜索名称" v-model="params.name" class="mg-right-1" @input="search"></el-input>
+        <el-input placeholder="搜索账号" v-model="params.username" @input="search" class="mg-right-1"></el-input>
+        <el-input placeholder="搜索手机号" v-model="params.mobile" @input="search"></el-input>
       </div>
-      <button type="button" class="btn btn-light mg-left-1 br-4" @click="reset">
-        重置
-      </button>
+      <button type="button" class="btn btn-light mg-left-1 br-4" @click="reset">重置</button>
     </div>
     <!-- 表格 -->
     <div class="table">
@@ -54,27 +24,17 @@
       >
         <el-table-column type="selection" width="55"></el-table-column>
         <el-table-column prop="name" label="名称" width="220"></el-table-column>
-        <el-table-column
-          prop="username"
-          label="账号"
-          width="220"
-        ></el-table-column>
-        <el-table-column
-          prop="mobile"
-          label="手机"
-          width="220"
-        ></el-table-column>
+        <el-table-column prop="username" label="账号" width="220"></el-table-column>
+        <el-table-column prop="mobile" label="手机" width="220"></el-table-column>
         <el-table-column label="状态" width="220">
-          <template slot-scope="scope">
-            {{ scope.row.status == 1 ? '正常' : '禁用' }}
-          </template>
+          <template slot-scope="scope">{{ scope.row.status == 1 ? '正常' : '禁用' }}</template>
         </el-table-column>
         <el-table-column label="项目" width="220">
           <template slot-scope="scope">
             <span>{{ scope.row.project_user | projFilter }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="operation" label="操作" v-if="tabs.includes(84)">
+        <el-table-column prop="operation" label="操作" v-if="btns.includes(84)">
           <template slot-scope="scope">
             <span class="btn-table" @click="edit(scope.row)">编辑</span>
           </template>
@@ -93,13 +53,7 @@
       </div>
     </div>
     <!-- 弹出框 -->
-    <el-dialog
-      :title="title"
-      :visible.sync="showDialog"
-      center
-      width="600px"
-      @closed="closed"
-    >
+    <el-dialog :title="title" :visible.sync="showDialog" center width="600px" @closed="closed">
       <el-form
         :model="model"
         :label-width="formLabelWidth"
@@ -140,12 +94,7 @@
           ></el-input>
         </el-form-item>
         <el-form-item label="手机" prop="mobile">
-          <el-input
-            v-model="model.mobile"
-            autocomplete="off"
-            maxlength="11"
-            show-word-limit
-          ></el-input>
+          <el-input v-model="model.mobile" autocomplete="off" maxlength="11" show-word-limit></el-input>
         </el-form-item>
         <el-form-item label="性别" prop="sex">
           <el-select v-model="model.sex" class="w-100">
@@ -155,22 +104,12 @@
         </el-form-item>
         <el-form-item label="角色" prop="role_id">
           <el-select v-model="model.role_id" class="w-100">
-            <el-option
-              :label="item.name"
-              :value="item.id"
-              :key="item.id"
-              v-for="item in roleList"
-            ></el-option>
+            <el-option :label="item.name" :value="item.id" :key="item.id" v-for="item in roleList"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="项目配置">
           <el-select v-model="projIds" multiple class="w-100">
-            <el-option
-              :label="item.title"
-              :value="item.id"
-              :key="item.id"
-              v-for="item in projList"
-            ></el-option>
+            <el-option :label="item.title" :value="item.id" :key="item.id" v-for="item in projList"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="状态" v-if="mode == 'edit'" prop="status">
@@ -183,12 +122,8 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button class="dialog-btn btn-light" @click="showDialog = false"
-          >取 消</el-button
-        >
-        <el-button class="dialog-btn btn-dark" type="primary" @click="confirm"
-          >确 定</el-button
-        >
+        <el-button class="dialog-btn btn-light" @click="showDialog = false">取 消</el-button>
+        <el-button class="dialog-btn btn-dark" type="primary" @click="confirm">确 定</el-button>
       </div>
     </el-dialog>
   </div>
@@ -331,7 +266,7 @@ export default {
       this.tableData = list;
       this.total = total;
     },
-    search: _.debounce(function() {
+    search: _.debounce(function () {
       this.getList();
     }, 500),
     currentPage(page) {

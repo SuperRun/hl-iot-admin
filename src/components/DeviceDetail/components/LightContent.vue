@@ -29,9 +29,7 @@
       v-loading="loading"
       element-loading-text="获取数据中请稍等"
       element-loading-spinner="el-icon-loading"
-    >
-      获取数据失败，请稍后重试。
-    </p>
+    >获取数据失败，请稍后重试。</p>
     <div class="flex mg-top-2 ai-center">
       <span class="text-grey-2 mg-right-1 light">亮度：{{ brightness }}%</span>
       <el-switch
@@ -42,27 +40,16 @@
         active-color="#5372FB"
         inactive-color="#D6DAEF"
       ></el-switch>
-      <el-button
-        class="mg-left-1 btn-light"
-        v-if="!isEdit && btns.includes(103)"
-        @click="isEdit = true"
-        size="small"
-        >编辑</el-button
-      >
-      <div class="flex" v-else>
-        <div class="progress">
-          <el-slider
-            v-model="brightness"
-            @change="changeBrightness"
-          ></el-slider>
+      <template v-if="btns.includes(103)">
+        <el-button class="mg-left-1 btn-light" v-if="!isEdit" @click="isEdit = true" size="small">编辑</el-button>
+        <div class="flex" v-else>
+          <div class="progress">
+            <el-slider v-model="brightness" @change="changeBrightness"></el-slider>
+          </div>
+          <el-button size="small" class="btn-light" @click="isEdit = false">取消</el-button>
+          <el-button size="small" class="btn-dark" @click="confirm">确定</el-button>
         </div>
-        <el-button size="small" class="btn-light" @click="isEdit = false"
-          >取消</el-button
-        >
-        <el-button size="small" class="btn-dark" @click="confirm"
-          >确定</el-button
-        >
-      </div>
+      </template>
     </div>
     <div class="flex flex-column mg-top-3">
       <span class="text-dark">定时控灯：</span>
@@ -82,9 +69,7 @@
           <span>{{ control.brightness }}%</span>
         </div>
       </template>
-      <div class="mg-top-1" v-else>
-        暂无数据
-      </div>
+      <div class="mg-top-1" v-else>暂无数据</div>
     </div>
   </div>
 </template>
