@@ -50,6 +50,7 @@ export default {
       model: {
         name: '',
       },
+      nameCopy: '',
       treeDataDetail: [],
       treeDataEdit: [],
       defaultProps: {
@@ -70,6 +71,7 @@ export default {
   },
   async mounted() {
     this.model = await this.$store.dispatch('role/detailRole', { id: this.id });
+    this.nameCopy = this.model.name;
     this.getList();
   },
   methods: {
@@ -146,6 +148,7 @@ export default {
     },
     cancel() {
       this.isEdit = false;
+      this.model.name = this.nameCopy;
       this.$nextTick(() => {
         this.$refs.detailTree.setCheckedKeys(this.permission_id_list_copy);
       });

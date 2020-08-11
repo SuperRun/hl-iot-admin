@@ -35,6 +35,7 @@ const state = {
   routes: [],
   tabs: getTabs(),
   btns: getBtns(),
+  routesList: [],
 };
 
 const mutations = {
@@ -52,6 +53,9 @@ const mutations = {
   },
   SET_BTNS: (state, btns) => {
     state.btns = btns;
+  },
+  SET_ROUTELIST: (state, routesList) => {
+    state.routesList = routesList;
   },
 };
 
@@ -92,6 +96,7 @@ const actions = {
           console.log('btns', btns);
           commit('SET_TABS', tabs);
           commit('SET_BTNS', btns);
+          commit('SET_ROUTELIST', routesList);
           setBtns(btns);
           setTabs(tabs);
           resolve(routesList);

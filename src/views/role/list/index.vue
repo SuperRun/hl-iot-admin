@@ -1,6 +1,11 @@
 <template>
   <div class="auth-manage">
-    <el-button type="button" class="btn-add" @click="$router.push({ path: '/role/add' })">添加</el-button>
+    <el-button
+      type="button"
+      class="btn-add"
+      @click="$router.push({ path: '/role/add' })"
+      v-if="routes.includes('AddRole')"
+    >添加</el-button>
     <el-table
       ref="multipleTable"
       :data="tableData"
@@ -20,7 +25,11 @@
       <el-table-column label="角色名称" prop="name"></el-table-column>
       <el-table-column label="操作">
         <template slot-scope="scope">
-          <span class="btn-table" @click="$router.push({ path: `/role/detail/${scope.row.id}` })">详情</span>
+          <span
+            v-if="routes.includes('DetailRole')"
+            class="btn-table"
+            @click="$router.push({ path: `/role/detail/${scope.row.id}` })"
+          >详情</span>
         </template>
       </el-table-column>
     </el-table>
@@ -53,7 +62,13 @@ export default {
       total: 0,
     };
   },
+  computed: {
+    routes() {
+      return this.$store.getters.routesList;
+    },
+  },
   mounted() {
+    console.log('routes', this.routes);
     this.getList();
   },
   methods: {

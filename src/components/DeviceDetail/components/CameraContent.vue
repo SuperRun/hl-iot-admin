@@ -2,21 +2,14 @@
   <!-- 摄像头 -->
   <div class="container" v-loading="loading">
     <div class="flex jc-start">
-      <el-button
-        v-if="btns.includes(88)"
-        type="button"
-        @click="playNow"
-        :class="isLive ? 'btn-dark' : 'btn-add'"
-        >实时</el-button
-      >
+      <el-button type="button" @click="playNow" :class="isLive ? 'btn-dark' : 'btn-add'">实时</el-button>
       <template v-if="btns.includes(87)">
         <el-button
           type="button"
           class="mg-left-1"
           :class="!isLive ? 'btn-dark' : 'btn-add'"
           @click="replay"
-          >回放</el-button
-        >
+        >回放</el-button>
         <el-date-picker
           class="mg-left-1"
           v-model="dateRange"
@@ -25,8 +18,7 @@
           value-format="timestamp"
           start-placeholder="开始日期"
           end-placeholder="结束日期"
-        >
-        </el-date-picker>
+        ></el-date-picker>
       </template>
       <el-upload
         v-if="btns.includes(28)"
@@ -39,12 +31,7 @@
       >
         <el-button class="btn-upload mg-right-1">选择语音</el-button>
       </el-upload>
-      <el-select
-        v-if="btns.includes(96)"
-        v-model="audio"
-        placeholder="语音列表"
-        @change="audio = ''"
-      >
+      <el-select v-if="btns.includes(96)" v-model="audio" placeholder="语音列表" @change="audio = ''">
         <el-option
           v-for="audio in audioList"
           :key="audio.voiceName"
@@ -53,10 +40,7 @@
         >
           <div class="flex jc-between ai-center">
             <span style="float: left">{{ audio.voiceName }}</span>
-            <i
-              class="el-icon-circle-close"
-              @click="deleteAudio(audio.voiceName)"
-            ></i>
+            <i class="el-icon-circle-close" @click="deleteAudio(audio.voiceName)"></i>
           </div>
         </el-option>
       </el-select>
@@ -82,10 +66,7 @@
     >
     </iframe>-->
     <!-- 控制方向 -->
-    <div
-      class="direction flex flex-column jc-center"
-      v-if="!isReplay && btns.includes(104)"
-    >
+    <div class="direction flex flex-column jc-center" v-if="!isReplay && btns.includes(104)">
       <div class="up">
         <svg-icon :icon-class="'up'" @click="setDirection(0)"></svg-icon>
       </div>

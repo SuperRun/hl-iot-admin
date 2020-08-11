@@ -7,6 +7,7 @@ const getters = {
   token: (state) => state.user.token,
   userInfo: (state) => state.user.userInfo,
   routes: (state) => state.user.routes,
+  routesList: (state) => state.user.routesList,
   btns: (state) => state.user.btns,
   tabs: (state) => state.user.tabs,
   projList: (state) => state.project.projList,
