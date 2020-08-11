@@ -88,7 +88,10 @@ const actions = {
           tabs = tabs.map((tab) => tab.permission_id);
           let btns = list.filter((item) => item.permission.level == 4);
           btns = btns.map((btn) => btn.permission_id);
+          console.log('tabs', tabs);
+          console.log('btns', btns);
           commit('SET_TABS', tabs);
+          commit('SET_BTNS', btns);
           setBtns(btns);
           setTabs(tabs);
           resolve(routesList);
@@ -114,6 +117,7 @@ const actions = {
         .then(() => {
           commit('SET_TOKEN', '');
           commit('SET_USERINFO', '');
+          commit('SET_ROUTES', []);
           removeToken();
           removeUserinfo();
           removeProjlist();
@@ -186,7 +190,6 @@ function filterAsyncRoutes(asyncRoutes, routes) {
   const res = [];
   asyncRoutes.forEach((route) => {
     const tmp = { ...route };
-    console.log('tmp', tmp);
     if (routes.includes(tmp.name) || tmp.children) {
       if (tmp.children) {
         tmp.children = filterAsyncRoutes(tmp.children, routes);

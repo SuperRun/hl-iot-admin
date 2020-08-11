@@ -1,9 +1,7 @@
 <template>
   <div class="login w-100 h-100 flex jc-center ai-center text-white">
     <main class="flex flex-column ai-center">
-      <h1>
-        {{ platName }}
-      </h1>
+      <h1>{{ platName }}</h1>
       <div class="login-form flex flex-column jc-center ai-center bg-white">
         <div class="title">用户登录</div>
         <form>
@@ -38,12 +36,7 @@
             <img :src="code" alt @click="getValidCode" />
           </div>
           <p ref="tip">{{ !loading ? tip : '' }}</p>
-          <el-button
-            :loading="loading"
-            class="btn gradient-blue text-white fs-md"
-            @click="login"
-            >登录</el-button
-          >
+          <el-button :loading="loading" class="btn gradient-blue text-white fs-md" @click="login">登录</el-button>
         </form>
       </div>
     </main>
@@ -105,7 +98,6 @@ export default {
             'user/userLogin',
             this.model,
           );
-
           // 获取上传图片信息
           this.$store.dispatch('upload/getUploadImgConfig');
           this.$store.dispatch('upload/getUploadVideoConfig', { type: 1 });
@@ -135,6 +127,7 @@ export default {
       }).then((res) => {
         this.platName = res.data.title;
         this.logo = res.data.logo;
+        console.log('setPlatform', setPlatform);
         setPlatform(res.data);
       });
     },

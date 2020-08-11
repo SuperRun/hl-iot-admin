@@ -81,6 +81,7 @@ export default {
         url: '/getSystem',
         methods: 'get',
       }).then((res) => {
+        console.log('setPlatform', setPlatform);
         setPlatform(res.data);
         this.$store.dispatch('app/setPlatformConfig', res.data);
       });
