@@ -82,7 +82,7 @@ export default {
       }
     },
     types: {
-      handler: function(val, oldVal) {
+      handler: function (val, oldVal) {
         this.configMap();
       },
       deep: true,
@@ -105,13 +105,13 @@ export default {
 
         switch (curType) {
           case 1:
-            iconSize = new BMap.Size(30, 30);
+            iconSize = new BMap.Size(25, 25);
             break;
           case 2:
             if (isWeather == 1 && this.types.includes(4)) {
               iconSize = new BMap.Size(26, 41);
             } else if (isWeather == 2) {
-              iconSize = new BMap.Size(29, 49);
+              iconSize = new BMap.Size(20, 34);
             }
             break;
           case 3:
@@ -302,13 +302,13 @@ export default {
         }
         switch (device.product_type) {
           case 1:
-            iconSize = new BMap.Size(30, 30);
+            iconSize = new BMap.Size(25, 25);
             break;
           case 2:
             if (isWeather == 1 && this.types.includes(4)) {
-              iconSize = new BMap.Size(26, 41);
+              iconSize = new BMap.Size(20, 32);
             } else {
-              iconSize = new BMap.Size(29, 49);
+              iconSize = new BMap.Size(20, 34);
             }
             break;
           case 3:
@@ -343,8 +343,8 @@ export default {
           },
         };
 
-        const addInfoWinFunc = function(_point) {
-          return _.debounce(function() {
+        const addInfoWinFunc = function (_point) {
+          return _.debounce(function () {
             self.map.openInfoWindow(
               new BMap.InfoWindow(deviceData.content, deviceData.opts),
               _point,
@@ -352,7 +352,7 @@ export default {
           }, 500);
         };
 
-        const clickFunc = function(e) {
+        const clickFunc = function (e) {
           let curType = self.markers[index].product_type;
           if (
             curType == 2 &&
@@ -449,7 +449,7 @@ export default {
           });
         };
 
-        const dragendFunc = function(point) {
+        const dragendFunc = function (point) {
           return new Promise((resolve, reject) => {
             self
               .editDeviceLocation({
@@ -471,12 +471,12 @@ export default {
 
         marker.addEventListener('mouseover', addInfoWinFunc(point));
         marker.addEventListener('click', clickFunc);
-        marker.addEventListener('dragstart', function() {
+        marker.addEventListener('dragstart', function () {
           this.map.closeInfoWindow();
         });
         marker.addEventListener(
           'dragend',
-          _.debounce(function({ type, target, pixel, point }) {
+          _.debounce(function ({ type, target, pixel, point }) {
             dragendFunc(point).then((_) => {
               marker.removeEventListener('mouseover', addInfoWinFunc(_point));
               marker.addEventListener('mouseover', addInfoWinFunc(point));

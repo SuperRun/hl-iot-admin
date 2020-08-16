@@ -2,18 +2,8 @@
   <div class="index w-100 flex flex-column">
     <header class="w-100 flex jc-between ai-center">
       <div class="flex-3">
-        <el-select
-          class="proj-select"
-          v-model="projId"
-          filterable
-          @change="change"
-        >
-          <el-option
-            v-for="item in projList"
-            :key="item.id"
-            :label="item.title"
-            :value="item.id"
-          ></el-option>
+        <el-select class="proj-select" v-model="projId" filterable @change="change">
+          <el-option v-for="item in projList" :key="item.id" :label="item.title" :value="item.id"></el-option>
         </el-select>
       </div>
       <div class="header-center flex flex-3 ai-center jc-center">
@@ -37,7 +27,7 @@
           ]"
           :key="index"
           v-for="(menu, index) in menus"
-          @click="chooseDevice(index)"
+          @click="chooseDevice(menu.id,index)"
         >
           <svg-icon :icon-class="menu.iconName" class="menu-icon"></svg-icon>
           <div class="item-info flex flex-column">
@@ -80,10 +70,7 @@
               ></el-option>
             </el-select>
             <div class="flex">
-              <i
-                :class="['lock', isLock ? 'el-icon-lock' : 'el-icon-unlock']"
-                @click="lockMap"
-              ></i>
+              <i :class="['lock', isLock ? 'el-icon-lock' : 'el-icon-unlock']" @click="lockMap"></i>
               <i
                 :class="[
                   'el-icon-s-unfold',
@@ -101,23 +88,14 @@
               accordion
               v-if="faultList != null && faultList.length > 0"
             >
-              <el-collapse-item
-                v-for="(fault, index) in faultList"
-                :key="index"
-              >
+              <el-collapse-item v-for="(fault, index) in faultList" :key="index">
                 <template slot="title">
                   设备SN:{{ fault.device.device_number }}
                   <!-- <span class="alarm-num">01</span> -->
                 </template>
                 <div class="detail flex jc-between">
-                  <span @click="faultDetail(fault.device.id)">
-                    {{ '设备故障' | limitStrLen }}
-                  </span>
-                  <span
-                    class="text-light detail-btn"
-                    @click="faultDetail(fault.device.id)"
-                    >详情/设置 ></span
-                  >
+                  <span @click="faultDetail(fault.device.id)">{{ '设备故障' | limitStrLen }}</span>
+                  <span class="text-light detail-btn" @click="faultDetail(fault.device.id)">详情/设置 ></span>
                 </div>
               </el-collapse-item>
             </el-collapse>
@@ -142,28 +120,27 @@
     </main>
     <footer class="flex jc-start">
       <!-- 摄像头 -->
-      <div class="device-content" v-show="currentTab.includes(0)">
+      <div class="device-content" v-show="currentTab.includes(0) && hasDevice(11)">
         <div class="device-item">
           <h3>摄像头+音频广播+语音对讲</h3>
           <div class="device flex jc-between">
             <span class="text-light fs-sm">
               设备编号:{{
-                cameraDetail != null ? cameraDetail.device_number : '无'
+              cameraDetail != null ? cameraDetail.device_number : '无'
               }}
             </span>
             <span
               class="text-light detail-btn"
               v-if="cameraDetail != null"
               @click="openDeviceDetail(cameraDetail.id)"
-              >详情/设置 ></span
-            >
+            >详情/设置 ></span>
           </div>
           <div class="content flex flex-column">
             <template v-if="cameraDetail != null">
               <iframe
                 :src="videoSrc"
-                width="300"
-                height="100"
+                width="100%"
+                height="500"
                 id="ysOpenDevice"
                 class="mg-top-1"
                 allowfullscreen
@@ -176,21 +153,20 @@
         </div>
       </div>
       <!-- LED屏 -->
-      <div class="device-content" v-show="currentTab.includes(1)">
+      <div class="device-content" v-show="currentTab.includes(1) && hasDevice(12)">
         <div class="device-item">
           <h3>LED屏</h3>
           <div class="device flex jc-between">
             <span class="text-light fs-sm">
               设备编号:{{
-                screenDetail != null ? screenDetail.device_number : '无'
+              screenDetail != null ? screenDetail.device_number : '无'
               }}
             </span>
             <span
               class="text-light detail-btn"
               v-if="screenDetail != null"
               @click="openDeviceDetail(screenDetail.id)"
-              >详情/设置 ></span
-            >
+            >详情/设置 ></span>
           </div>
           <div class="content flex flex-column text-white">
             <template v-if="screenDetail != null">
@@ -207,13 +183,10 @@
                   v-for="(file, index) in files"
                   :key="index"
                   :href="file.link"
-                  >{{ file.filename }}</a
-                >
+                >{{ file.filename }}</a>
               </div>
               <p v-if="screenDetail.is_open == 2">LED屏未开启</p>
-              <p class="text-white fs-sm" v-if="screenDetail.status == 4">
-                设备离线，无法获取数据
-              </p>
+              <p class="text-white fs-sm" v-if="screenDetail.status == 4">设备离线，无法获取数据</p>
             </template>
             <template v-else>
               <no-device></no-device>
@@ -222,21 +195,20 @@
         </div>
       </div>
       <!-- 照明灯 -->
-      <div class="device-content" v-show="currentTab.includes(2)">
+      <div class="device-content" v-show="currentTab.includes(2) && hasDevice(13)">
         <div class="device-item">
           <h3>照明灯</h3>
           <div class="device flex jc-between">
             <span class="text-light fs-sm">
               设备编号:{{
-                lightDetail != null ? lightDetail.device_number : '无'
+              lightDetail != null ? lightDetail.device_number : '无'
               }}
             </span>
             <span
               class="text-light detail-btn"
               v-if="lightDetail != null"
               @click="openDeviceDetail(lightDetail.id)"
-              >详情/设置 ></span
-            >
+            >详情/设置 ></span>
           </div>
           <div class="content flex flex-column">
             <template v-if="lightDetail != null">
@@ -245,41 +217,33 @@
               </template>
               <template v-else-if="lightDetail.light_report_data != null">
                 <div class="parameter flex">
-                  <span class="flex-1 text-light fs-sm"
-                    >亮度：{{ lightDetail.light_report_data.brightness }}</span
-                  >
-                  <span class="flex-1 text-light fs-sm"
-                    >功率：{{ lightDetail.light_report_data.power }}mW</span
-                  >
+                  <span
+                    class="flex-1 text-light fs-sm"
+                  >亮度：{{ lightDetail.light_report_data.brightness }}</span>
+                  <span
+                    class="flex-1 text-light fs-sm"
+                  >功率：{{ lightDetail.light_report_data.power }}mW</span>
                 </div>
                 <div class="parameter flex">
-                  <span class="flex-1 text-light fs-sm"
-                    >电压：{{ lightDetail.light_report_data.voltage }}V</span
-                  >
-                  <span class="flex-1 text-light fs-sm">
-                    电流：{{ lightDetail.light_report_data.electric_current }}mA
-                  </span>
+                  <span
+                    class="flex-1 text-light fs-sm"
+                  >电压：{{ lightDetail.light_report_data.voltage }}V</span>
+                  <span
+                    class="flex-1 text-light fs-sm"
+                  >电流：{{ lightDetail.light_report_data.electric_current }}mA</span>
                 </div>
                 <div class="parameter flex">
-                  <span class="flex-1 text-light fs-sm">
-                    温度：{{ lightDetail.light_report_data.temperature }}ºC
-                  </span>
+                  <span
+                    class="flex-1 text-light fs-sm"
+                  >温度：{{ lightDetail.light_report_data.temperature }}ºC</span>
                 </div>
                 <div class="parameter flex">
                   <span class="flex-1 text-light fs-sm">定时控灯:</span>
                 </div>
                 <template v-if="controlList != null && controlList.length > 0">
-                  <div
-                    class="parameter flex"
-                    v-for="(control, index) in controlList"
-                    :key="index"
-                  >
-                    <span class="flex-1 text-light fs-sm"
-                      >{{ control.hour }}:{{ control.minute }}</span
-                    >
-                    <span class="flex-1 text-light fs-sm"
-                      >{{ control.brightness }}%</span
-                    >
+                  <div class="parameter flex" v-for="(control, index) in controlList" :key="index">
+                    <span class="flex-1 text-light fs-sm">{{ control.hour }}:{{ control.minute }}</span>
+                    <span class="flex-1 text-light fs-sm">{{ control.brightness }}%</span>
                   </div>
                 </template>
                 <span class="text-white fs-sm" v-else>暂无数据</span>
@@ -295,21 +259,20 @@
         </div>
       </div>
       <!-- 气象站 -->
-      <div class="device-content" v-show="currentTab.includes(3)">
+      <div class="device-content" v-show="currentTab.includes(3) && hasDevice(14)">
         <div class="device-item">
           <h3>气象站</h3>
           <div class="device flex jc-between">
             <span class="text-light fs-sm">
               设备编号:{{
-                weatherDetail != null ? weatherDetail.device_number : '无'
+              weatherDetail != null ? weatherDetail.device_number : '无'
               }}
             </span>
             <span
               class="text-light detail-btn"
               v-if="weatherDetail != null"
               @click="openDeviceDetail(weatherDetail.id)"
-              >详情/设置 ></span
-            >
+            >详情/设置 ></span>
           </div>
           <div class="content flex flex-column">
             <template v-if="weatherDetail != null">
@@ -318,33 +281,25 @@
               </template>
               <template v-else-if="weatherDetail.weather_info != null">
                 <div class="parameter flex">
-                  <span class="flex-1 text-light fs-sm"
-                    >PM2.5：{{ weatherDetail.weather_info.pm2 }}μg/m³</span
-                  >
-                  <span class="flex-1 text-light fs-sm"
-                    >PM10：{{ weatherDetail.weather_info.pm10 }}μg/m³</span
-                  >
+                  <span
+                    class="flex-1 text-light fs-sm"
+                  >PM2.5：{{ weatherDetail.weather_info.pm2 }}μg/m³</span>
+                  <span
+                    class="flex-1 text-light fs-sm"
+                  >PM10：{{ weatherDetail.weather_info.pm10 }}μg/m³</span>
                 </div>
                 <div class="parameter flex">
-                  <span class="flex-1 text-light fs-sm"
-                    >气温：{{ weatherDetail.weather_info.t }}ºC</span
-                  >
-                  <span class="flex-1 text-light fs-sm"
-                    >湿度：{{ weatherDetail.weather_info.h }}%rh</span
-                  >
+                  <span class="flex-1 text-light fs-sm">气温：{{ weatherDetail.weather_info.t }}ºC</span>
+                  <span class="flex-1 text-light fs-sm">湿度：{{ weatherDetail.weather_info.h }}%rh</span>
                 </div>
                 <div class="parameter flex">
-                  <span class="flex-1 text-light fs-sm"
-                    >噪声：{{ weatherDetail.weather_info.ns }}db</span
-                  >
-                  <span class="flex-1 text-light fs-sm"
-                    >风力：{{ weatherDetail.weather_info.ws }}m/s</span
-                  >
+                  <span class="flex-1 text-light fs-sm">噪声：{{ weatherDetail.weather_info.ns }}db</span>
+                  <span class="flex-1 text-light fs-sm">风力：{{ weatherDetail.weather_info.ws }}m/s</span>
                 </div>
                 <div class="parameter flex">
-                  <span class="flex-1 text-light fs-sm">
-                    风向：{{ weatherDetail.weather_info.wd | directionFilter }}
-                  </span>
+                  <span
+                    class="flex-1 text-light fs-sm"
+                  >风向：{{ weatherDetail.weather_info.wd | directionFilter }}</span>
                 </div>
               </template>
               <template v-else>
@@ -361,11 +316,7 @@
     <!-- 编辑密码 -->
     <edit-pwd></edit-pwd>
     <!-- 设备详情弹出框 -->
-    <device-detail
-      :curContent="content"
-      v-if="isShow"
-      @hideDetail="hideDetail"
-    ></device-detail>
+    <device-detail :curContent="content" v-if="isShow" @hideDetail="hideDetail"></device-detail>
     <!-- 气象站设备详情弹出框 -->
     <weather-detail></weather-detail>
   </div>
@@ -402,7 +353,7 @@ export default {
     },
   },
   computed: {
-    ...mapGetters(['projList', 'cur_proj']),
+    ...mapGetters(['projList', 'cur_proj', 'tabs']),
     videoSrc() {
       return `https://open.ys7.com/ezopen/h5/iframe?url=ezopen://${this.cameraDetail.validate_code}@open.ys7.com/${this.cameraDetail.device_number}/1.hd.live&audio=1&autoplay=1&accessToken=${this.cameraToken}`;
     },
@@ -418,34 +369,61 @@ export default {
   data() {
     return {
       deviceType: 1,
-      currentTab: [0, 1, 2, 3, 4, 5, 6],
-      types: [1, 2, 3, 4],
+      currentTab: [4, 5, 6],
+      types: [],
       isFold: false,
       isLock: true,
       faultList: [],
       projId: '',
       menus: [
-        { iconName: 'menu-icon1', title: '智慧监控', online: 12, total: 10 },
-        { iconName: 'menu-icon2', title: '智慧显示', online: 12, total: 10 },
-        { iconName: 'menu-icon3', title: '智慧照明', online: 12, total: 10 },
-        { iconName: 'menu-icon4', title: '气象检测', online: 12, total: 10 },
+        {
+          iconName: 'menu-icon1',
+          title: '智慧监控',
+          online: 12,
+          total: 10,
+          id: 11,
+        },
+        {
+          iconName: 'menu-icon2',
+          title: '智慧显示',
+          online: 12,
+          total: 10,
+          id: 12,
+        },
+        {
+          iconName: 'menu-icon3',
+          title: '智慧照明',
+          online: 12,
+          total: 10,
+          id: 13,
+        },
+        {
+          iconName: 'menu-icon4',
+          title: '气象检测',
+          online: 12,
+          total: 10,
+          id: 14,
+        },
         {
           iconName: 'menu-icon5',
           title: '城市热点',
           online: null,
           total: null,
+          id: null,
         },
         {
           iconName: 'menu-icon6',
           title: '智慧充电',
           online: null,
           total: null,
+          id: null,
         },
         {
           iconName: 'menu-icon7',
           title: '一键求助',
           online: null,
           total: null,
+          id: null,
         },
       ],
       cameraDetail: null,
@@ -471,12 +449,21 @@ export default {
     };
   },
   async created() {
+    // 获取设备的权限
+    this.menus.forEach((menu, index) => {
+      if (!!menu.id && this.tabs.includes(menu.id)) {
+        this.currentTab.push(index);
+        this.types.push(index + 1);
+      }
+    });
     // 获取项目列表
-    if (this.projList != null && this.projList.length == 0) {
-      await this.$store.dispatch('project/allProject');
-    }
+    // if (this.projList != null && this.projList.length == 0) {
+    //   const { list } = await this.$store.dispatch('device/listDevice', {
+    //     project_id: this.cur_proj,
+    //     product_type_list: types.join(','),
+    //   });
+    // }
     this.projId = this.cur_proj;
-
     // 获取设备数目统计
     this.countDeviceNum();
     // 获取初始状态默认设备详情
@@ -529,7 +516,10 @@ export default {
     foldEquips() {
       this.isFold = !this.isFold;
     },
-    chooseDevice(type) {
+    chooseDevice(id, type) {
+      if (!this.hasDevice(id)) {
+        return;
+      }
       if (type < 4) {
         this.currentTab.includes(type)
           ? this.currentTab.splice(this.currentTab.indexOf(type), 1)
@@ -673,6 +663,9 @@ export default {
     },
     showDetail() {
       this.isShow = true;
+    },
+    hasDevice(id) {
+      return this.tabs.includes(id);
     },
   },
 };
