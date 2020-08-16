@@ -458,10 +458,7 @@ export default {
     });
     // 获取项目列表
     if (this.projList != null && this.projList.length == 0) {
-      const { list } = await this.$store.dispatch('device/listDevice', {
-        project_id: this.cur_proj,
-        product_type_list: types.join(','),
-      });
+      await this.$store.dispatch('project/allProject');
     }
     this.projId = this.cur_proj;
     // 获取设备数目统计
