@@ -105,13 +105,13 @@ export default {
 
         switch (curType) {
           case 1:
-            iconSize = new BMap.Size(25, 25);
+            iconSize = new BMap.Size(10, 10);
             break;
           case 2:
             if (isWeather == 1 && this.types.includes(4)) {
-              iconSize = new BMap.Size(26, 41);
+              iconSize = new BMap.Size(11, 17);
             } else if (isWeather == 2) {
-              iconSize = new BMap.Size(20, 34);
+              iconSize = new BMap.Size(11, 16);
             }
             break;
           case 3:
@@ -302,13 +302,13 @@ export default {
         }
         switch (device.product_type) {
           case 1:
-            iconSize = new BMap.Size(25, 25);
+            iconSize = new BMap.Size(10, 10);
             break;
           case 2:
             if (isWeather == 1 && this.types.includes(4)) {
-              iconSize = new BMap.Size(20, 32);
+              iconSize = new BMap.Size(11, 17);
             } else {
-              iconSize = new BMap.Size(20, 34);
+              iconSize = new BMap.Size(11, 16);
             }
             break;
           case 3:
@@ -342,15 +342,20 @@ export default {
             enableMessage: true, //设置允许信息窗发送短息
           },
         };
-
+        const win = new BMap.InfoWindow(deviceData.content, deviceData.opts);
+        win.disableAutoPan();
         const addInfoWinFunc = function (_point) {
           return _.debounce(function () {
-            self.map.openInfoWindow(
-              new BMap.InfoWindow(deviceData.content, deviceData.opts),
-              _point,
-            );
+            self.map.openInfoWindow(win, _point);
           }, 500);
         };
+
+        // const closeInfoWinFunc = function () {
+        //   return _.debounce(function () {
+        //     console.log('close');
+        //     self.map.closeInfoWindow();
+        //   }, 500);
+        // };
 
         const clickFunc = function (e) {
           let curType = self.markers[index].product_type;
@@ -470,6 +475,7 @@ export default {
         };
 
         marker.addEventListener('mouseover', addInfoWinFunc(point));
+        // win.addEventListener('mouseout', closeInfoWinFunc());
         marker.addEventListener('click', clickFunc);
         marker.addEventListener('dragstart', function () {
           this.map.closeInfoWindow();
