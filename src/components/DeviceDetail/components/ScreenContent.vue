@@ -6,8 +6,7 @@
       size="small"
       class="btn-dark mg-bottom-1"
       @click="restart"
-      >重启设备</el-button
-    >
+    >重启设备</el-button>
     <div class="flex">
       显示屏开关：
       <el-switch
@@ -25,12 +24,8 @@
         <div class="wpx-300 mg-right-1">
           <el-slider :step="10" v-model="lightness"></el-slider>
         </div>
-        <el-button size="small" class="btn-light" @click="isEdit = false"
-          >取消</el-button
-        >
-        <el-button size="small" class="btn-dark" @click="confirm"
-          >确定</el-button
-        >
+        <el-button size="small" class="btn-light" @click="isEdit = false">取消</el-button>
+        <el-button size="small" class="btn-dark" @click="confirm">确定</el-button>
       </div>
 
       <el-button
@@ -38,8 +33,7 @@
         v-if="!isEdit && btns.includes(99)"
         @click="isEdit = true"
         size="small"
-        >编辑</el-button
-      >
+      >编辑</el-button>
     </div>
     <divider />
     <div
@@ -51,9 +45,11 @@
       <p class="text-dark ai-center">
         <span class="text-grey-2">当前播放:</span>
         <span v-if="!content.url">暂无播放内容</span>
-        <span v-else @click="download" style="cursor:pointer">{{
-          content.url.split('/').pop()
-        }}</span>
+        <span v-else @click="download" style="cursor:pointer">
+          {{
+          content.url.split('/').pop().split('_-').pop()
+          }}
+        </span>
       </p>
       <div v-if="!isUpload">
         <el-upload
@@ -68,25 +64,13 @@
           :file-list="fileList"
           v-if="btns.includes(100)"
         >
-          <el-button size="small" class="btn-upload mg-right-1"
-            >选择文件</el-button
-          >
+          <el-button size="small" class="btn-upload mg-right-1">选择文件</el-button>
         </el-upload>
         <div class="flex ai-center mg-bottom-1">
           <label class="pd-lr-1">分辨率</label>
-          <el-input
-            type="text"
-            placeholder="宽"
-            class="wpx-100"
-            v-model="model.width"
-          ></el-input>
+          <el-input type="text" placeholder="宽" class="wpx-100" v-model="model.width"></el-input>
           <span class="pd-lr-1">x</span>
-          <el-input
-            type="text"
-            placeholder="高"
-            class="wpx-100"
-            v-model="model.height"
-          ></el-input>
+          <el-input type="text" placeholder="高" class="wpx-100" v-model="model.height"></el-input>
         </div>
       </div>
       <a ref="downloadBtn" style="display:none;" target="_blank"></a>
@@ -97,26 +81,17 @@
             class="btn-upload mg-right-1"
             v-if="btns.includes(100)"
             @click.stop="isUpload = false"
-            >上传</el-button
-          >
+          >上传</el-button>
           <el-button
             size="small"
             class="btn-light mg-right-1"
             v-if="btns.includes(101)"
             @click.stop="clear"
-            >清除</el-button
-          >
+          >清除</el-button>
         </div>
         <div class="flex" v-else>
-          <el-button
-            size="small"
-            class="btn-light mg-right-1"
-            @click.stop="isUpload = true"
-            >取消</el-button
-          >
-          <el-button size="small" class="btn-dark" @click="uploadLed"
-            >确定</el-button
-          >
+          <el-button size="small" class="btn-light mg-right-1" @click.stop="isUpload = true">取消</el-button>
+          <el-button size="small" class="btn-dark" @click="uploadLed">确定</el-button>
         </div>
       </div>
     </div>
@@ -199,7 +174,7 @@ export default {
       });
     },
     createIsOnWatch() {
-      this.isOnWatch = this.$watch('isOn', function() {
+      this.isOnWatch = this.$watch('isOn', function () {
         turnLED({
           device_id: this.deviceDetail.id,
           is_open: this.isOn ? 1 : 2,

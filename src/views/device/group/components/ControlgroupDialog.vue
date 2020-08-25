@@ -1,11 +1,6 @@
 <template>
   <div>
-    <el-dialog
-      title="控制分组(照明灯)"
-      :visible="showDialog"
-      @open="open"
-      @close="close"
-    >
+    <el-dialog title="控制分组(照明灯)" :visible="showDialog" @open="open" @close="close">
       <div class="flex">
         <span>组号：</span>
         <span>{{ model.group_number }}</span>
@@ -22,6 +17,11 @@
           <el-slider v-model="brightness" :step="10"></el-slider>
         </div>
       </div>
+      <div class="flex jc-around mg-top-1">
+        <!-- <el-button class="dialog-btn btn-light wpx-200" @click="showDialog = false">取 消</el-button> -->
+        <el-button class="dialog-btn btn-dark wpx-200" type="primary" @click="confirmBrightness">确 定</el-button>
+      </div>
+      <divider />
       <div class="flex flex-column mg-top-1">
         <div class="flex">
           <span class="text-dark">定时控灯：</span>
@@ -48,25 +48,14 @@
               <span>{{ item.hour + ':' + item.minute }}</span>
               <span>{{ item.brightness }}%</span>
               <div class="flex">
-                <button
-                  type="button"
-                  class="mg-right-1 btn-add"
-                  @click="item.isEdit = true"
-                >
-                  编辑
-                </button>
-                <button type="button" class="btn-del" @click="del(item, index)">
-                  删除
-                </button>
+                <button type="button" class="mg-right-1 btn-add" @click="item.isEdit = true">编辑</button>
+                <button type="button" class="btn-del" @click="del(item, index)">删除</button>
               </div>
             </template>
             <template v-else>
               <div class="flex">
-                <el-select
-                  v-model="item.hour"
-                  placeholder="时"
-                  class="wpx-100 mg-right-1"
-                >
+                <el-select v-model="item.hour" placeholder="时" class="wpx-100 mg-right-1">
+                  <el-option label="00" value="00" key="00"></el-option>
                   <el-option
                     v-for="hour in 23"
                     :key="hour"
@@ -74,11 +63,8 @@
                     :value="hour < 10 ? '0' + hour : hour"
                   ></el-option>
                 </el-select>
-                <el-select
-                  v-model="item.minute"
-                  placeholder="分"
-                  class="wpx-100 mg-right-1"
-                >
+                <el-select v-model="item.minute" placeholder="分" class="wpx-100 mg-right-1">
+                  <el-option label="00" value="00" key="00"></el-option>
                   <el-option
                     v-for="minute in 59"
                     :key="minute"
@@ -102,17 +88,13 @@
                   size="small"
                   class="mg-right-1 btn-dark br-4 wpx-100"
                   @click="addItem(item, index)"
-                >
-                  确定
-                </button>
+                >确定</button>
                 <button
                   type="button"
                   size="small"
                   class="btn-light br-4 wpx-100"
                   @click="item.isNew ? items.pop() : (item.isEdit = false)"
-                >
-                  取消
-                </button>
+                >取消</button>
               </div>
             </template>
           </div>
@@ -127,23 +109,12 @@
                 isNew: true,
               })
             "
-          >
-            增加定时控灯
-          </button>
+          >增加定时控灯</button>
         </template>
       </div>
       <div class="flex jc-around mg-top-1">
-        <el-button
-          class="dialog-btn btn-light wpx-200"
-          @click="showDialog = false"
-          >取 消</el-button
-        >
-        <el-button
-          class="dialog-btn btn-dark wpx-200"
-          type="primary"
-          @click="confirm"
-          >确 定</el-button
-        >
+        <!-- <el-button class="dialog-btn btn-light wpx-200" @click="showDialog = false">取 消</el-button> -->
+        <el-button class="dialog-btn btn-dark wpx-200" type="primary" @click="confirm">确 定</el-button>
       </div>
     </el-dialog>
   </div>
@@ -152,9 +123,12 @@
 <script>
 import { showErrorMsg, showSuccessMsg } from '@/utils/message';
 import { controlGroup, setGroupBrightness } from '@/api/group';
-
+import Divider from '@/components/Divider/index.vue';
 export default {
   name: 'ControlgroupDialog',
+  components: {
+    Divider,
+  },
   props: {
     showDialog: {
       type: Boolean,
@@ -249,7 +223,7 @@ export default {
         item.isNew = false;
       }
       this.items[index] = item;
-      this.items.sort(function(a, b) {
+      this.items.sort(function (a, b) {
         if (a.hour > b.hour || (a.hour == b.hour && a.minute > b.minute)) {
           return 1;
         } else {
@@ -262,9 +236,12 @@ export default {
         this.items.pop();
       }
       await this.groupConfig();
+      showSuccessMsg('操作成功');
+      // this.$listeners.closeDialog('control');
+    },
+    async confirmBrightness() {
       await this.setBrightness();
-      showSuccessMsg('编辑成功');
-      this.$listeners.closeDialog('control');
+      showSuccessMsg('操作成功');
     },
     groupConfig() {
       const controlJson = this.items.reduce((pre, cur) => {

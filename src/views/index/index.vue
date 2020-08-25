@@ -183,7 +183,7 @@
                   v-for="(file, index) in files"
                   :key="index"
                   :href="file.link"
-                >{{ file.filename }}</a>
+                >{{ file.filename | filenameFilter }}</a>
               </div>
               <p v-if="screenDetail.is_open == 2">LED屏未开启</p>
               <p class="text-white fs-sm" v-if="screenDetail.status == 4">设备离线，无法获取数据</p>
@@ -350,6 +350,10 @@ export default {
   filters: {
     limitStrLen(str) {
       return str != null && str.length > 41 ? str.slice(0, 41) : str;
+    },
+    filenameFilter(filename) {
+      console.log('filename', filename);
+      return filename.split('_-').pop();
     },
   },
   computed: {

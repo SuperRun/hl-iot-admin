@@ -1,8 +1,12 @@
-import {getToken, getUploadimgConfig, getUploadvideoConfig} from '@/utils/auth';
-import {getFileNameUUID} from '@/utils/util';
-import {showWarningMsg, showSuccessMsg, showErrorMsg} from '@/utils/message';
-import {uploadImg, delImg} from '@/api/upload';
-import {setSystem} from '@/api/platform';
+import {
+  getToken,
+  getUploadimgConfig,
+  getUploadvideoConfig,
+} from '@/utils/auth';
+import { getFileNameUUID } from '@/utils/util';
+import { showWarningMsg, showSuccessMsg, showErrorMsg } from '@/utils/message';
+import { uploadImg, delImg } from '@/api/upload';
+import { setSystem } from '@/api/platform';
 
 export default {
   data() {
@@ -60,10 +64,7 @@ export default {
       }
 
       this.config =
-        this.uploadimgConfig.dir +
-        getFileNameUUID() +
-        '.' +
-        file.name.split('.').pop();
+        this.uploadimgConfig.dir + getFileNameUUID() + '_-' + file.name;
       this.file = file;
       return true;
     },
@@ -73,7 +74,7 @@ export default {
         param.append(key, this.uploadImgData[key]);
       });
       param.append('file', this.file);
-      uploadImg({url: this.uploadImgUrl, data: param}).then((_) => {
+      uploadImg({ url: this.uploadImgUrl, data: param }).then((_) => {
         this.model.image = this.uploadimgConfig.host + '/' + this.config;
       });
     },
@@ -83,7 +84,7 @@ export default {
         param.append(key, this.uploadImgData[key]);
       });
       param.append('file', this.file);
-      uploadImg({url: this.uploadImgUrl, data: param}).then((_) => {
+      uploadImg({ url: this.uploadImgUrl, data: param }).then((_) => {
         setSystem({
           title: this.model.title,
           logo: this.uploadimgConfig.host + '/' + this.config,
@@ -143,10 +144,7 @@ export default {
           );
         }
         this.config =
-          this.uploadimgConfig.dir +
-          getFileNameUUID() +
-          '.' +
-          file.name.split('.').pop();
+          this.uploadimgConfig.dir + getFileNameUUID() + '_-' + file.name;
         this.file = file;
       }
 
@@ -158,14 +156,11 @@ export default {
           console.log('过期了');
           this.uploadvideoConfig = await this.$store.dispatch(
             'upload/getUploadVideoConfig',
-            {type: 1},
+            { type: 1 },
           );
         }
         this.config =
-          this.uploadvideoConfig.dir +
-          getFileNameUUID() +
-          '.' +
-          file.name.split('.').pop();
+          this.uploadvideoConfig.dir + getFileNameUUID() + '_=' + file.name;
         this.file = file;
       }
 
@@ -188,7 +183,7 @@ export default {
           param.append(key, this.uploadVideoData[key]);
         });
         param.append('file', this.file);
-        uploadImg({url: this.uploadVideoUrl, data: param}).then((_) => {
+        uploadImg({ url: this.uploadVideoUrl, data: param }).then((_) => {
           this.uploadLoading = false;
           this.urlCache = this.uploadvideoConfig.host + '/' + this.config;
           showSuccessMsg('上传成功');
@@ -199,7 +194,7 @@ export default {
           param.append(key, this.uploadImgData[key]);
         });
         param.append('file', this.file);
-        uploadImg({url: this.uploadImgUrl, data: param}).then((_) => {
+        uploadImg({ url: this.uploadImgUrl, data: param }).then((_) => {
           this.uploadLoading = false;
           this.urlCache = this.uploadimgConfig.host + '/' + this.config;
           showSuccessMsg('上传成功');
