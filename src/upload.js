@@ -160,7 +160,7 @@ export default {
           );
         }
         this.config =
-          this.uploadvideoConfig.dir + getFileNameUUID() + '_=' + file.name;
+          this.uploadvideoConfig.dir + getFileNameUUID() + '_-' + file.name;
         this.file = file;
       }
 
