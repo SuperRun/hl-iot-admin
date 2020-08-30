@@ -50,14 +50,12 @@ export default {
   },
   methods: {
     async beforeImgUpload(file) {
-      console.log('beforeImgUpload');
       const isLt2M = file.size / 1024 / 1024 < 2;
       if (!isLt2M) {
         showWarningMsg('上传产品图片大小不能超过 2MB!');
         return;
       }
       if (this.uploadimgConfig.expire < new Date().getTime() / 1000) {
-        console.log('过期了');
         this.uploadimgConfig = await this.$store.dispatch(
           'upload/getUploadImgConfig',
         );
@@ -112,8 +110,6 @@ export default {
       showWarningMsg('最多上传一张请先删除');
     },
     async beforeVideoUpload(file) {
-      console.log('beforeVideoUpload', file.type.includes('image'));
-
       const isLt10M = file.size / 1024 / 1024 < 2;
       const isLt500M = file.size / 1024 / 1024 < 50;
 
@@ -131,14 +127,11 @@ export default {
         return false;
       }
 
-      console.log('cjdn');
-
       if (file.type.includes('image')) {
         if (
           !this.uploadimgConfig.expire ||
           this.uploadimgConfig.expire < new Date().getTime() / 1000
         ) {
-          console.log('过期了');
           this.uploadimgConfig = await this.$store.dispatch(
             'upload/getUploadImgConfig',
           );

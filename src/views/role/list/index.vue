@@ -68,7 +68,6 @@ export default {
     },
   },
   mounted() {
-    console.log('routes', this.routes);
     this.getList();
   },
   methods: {

@@ -4,6 +4,7 @@
     :visible="deviceDetailDialogOpened"
     :destroy-on-close="true"
     center
+    @open="open"
     @close="close"
     width="800px"
   >
@@ -17,13 +18,13 @@
         <li class="fs-md text-dark">
           <span class="text-grey-2">产品：</span>
           {{
-            deviceDetail.product && deviceDetail.product.title !== null
-              ? `${deviceDetail.product.title}(${
-                  deviceDetail.product.model !== null
-                    ? deviceDetail.product.model
-                    : ''
-                })`
-              : '无'
+          deviceDetail.product && deviceDetail.product.title !== null
+          ? `${deviceDetail.product.title}(${
+          deviceDetail.product.model !== null
+          ? deviceDetail.product.model
+          : ''
+          })`
+          : '无'
           }}
         </li>
         <li class="fs-md text-dark">
@@ -33,9 +34,9 @@
         <li class="fs-md text-dark" v-if="deviceDetail.product_type != 5">
           <span class="text-grey-2">所属网关：</span>
           {{
-            deviceDetail.gatewayData && deviceDetail.gatewayData !== null
-              ? `${deviceDetail.gatewayData.device_number}(${deviceDetail.gatewayData.place_number})`
-              : '无'
+          deviceDetail.gatewayData && deviceDetail.gatewayData !== null
+          ? `${deviceDetail.gatewayData.device_number}(${deviceDetail.gatewayData.place_number})`
+          : '无'
           }}
         </li>
         <li class="fs-md text-dark" v-if="deviceDetail.product_type == 2">
@@ -45,9 +46,9 @@
         <li class="fs-md text-dark" v-if="deviceDetail.product_type == 3">
           <span class="text-grey-2">分组：</span>
           {{
-            deviceDetail.group !== null
-              ? deviceDetail.group.group_number
-              : '无分组'
+          deviceDetail.group !== null
+          ? deviceDetail.group.group_number
+          : '无分组'
           }}
         </li>
         <li class="fs-md text-dark">
@@ -82,22 +83,16 @@
         :class="['tab', currentTab == 'Content' ? 'active' : '']"
         @click="currentTab = 'Content'"
         v-if="deviceDetail.product_type !== 5"
-      >
-        内容
-      </li>
+      >内容</li>
       <li
         :class="['tab', currentTab == 'Fault' ? 'active' : '']"
         @click="currentTab = 'Fault'"
         v-if="deviceDetail.product_type == 3"
-      >
-        告警
-      </li>
+      >告警</li>
       <li
         :class="['tab', currentTab == 'DeviceMap' ? 'active' : '']"
         @click="currentTab = 'DeviceMap'"
-      >
-        地图
-      </li>
+      >地图</li>
     </ul>
     <div class="tab-panel" v-if="deviceDetailDialogOpened">
       <component :is="currentTab"></component>
@@ -111,7 +106,7 @@ import Content from './Content';
 import Fault from './Fault';
 import DeviceMap from './DeviceMap';
 import NoImage from '@/components/NoImage';
-
+import { showWarningMsg } from '@/utils/message';
 export default {
   name: 'DeviceDetail',
   props: {
@@ -169,6 +164,11 @@ export default {
       // if (this.selectedContent == 'Fault') {
       this.$emit('hideDetail');
       // }
+    },
+    open() {
+      if (this.deviceDetail.status == 4) {
+        showWarningMsg('设备离线, 请检查网络连线');
+      }
     },
   },
 };

@@ -84,16 +84,12 @@ const actions = {
           let routesList = list.filter(
             (item) => item.permission.level == 1 || item.permission.level == 2,
           );
-          console.log('list', list);
-          console.log('routesList', routesList);
           routesList = routesList.map((route) => route.permission.h5_route);
           routesList = routesList.filter((route) => route != null);
           let tabs = list.filter((item) => item.permission.level == 3);
           tabs = tabs.map((tab) => tab.permission_id);
           let btns = list.filter((item) => item.permission.level == 4);
           btns = btns.map((btn) => btn.permission_id);
-          console.log('tabs', tabs);
-          console.log('btns', btns);
           commit('SET_TABS', tabs);
           commit('SET_BTNS', btns);
           commit('SET_ROUTELIST', routesList);
@@ -102,16 +98,13 @@ const actions = {
           resolve(routesList);
         })
         .catch((error) => {
-          console.log('error', error);
           reject(error);
         });
     });
   },
   dealRoutes({ commit }, data) {
     return new Promise((resolve, reject) => {
-      console.log('data', data);
       const filterRoutes = filterAsyncRoutes(asyncRoutes, data);
-      console.log('filterRoutes', filterRoutes);
       commit('SET_ROUTES', filterRoutes);
       resolve(filterRoutes);
     });

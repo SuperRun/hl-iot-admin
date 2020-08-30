@@ -78,11 +78,17 @@ export default {
           const clickFunc = (e) => {
             if (this.isWeather) {
               this.detailDevice({ id: data.id }).then((res) => {
+                // if (res.status == 4) {
+                //   showWarningMsg('设备离线, 请检查网络连线');
+                // }
                 this.$store.commit('app/SET_DEVICE_DETAIL', res);
                 this.$store.commit('app/OPEN_WEATHERDIALOG');
               });
             } else {
               this.detailDevice({ id: data.id }).then((res) => {
+                // if (res.status == 4) {
+                //   showWarningMsg('设备离线, 请检查网络连线');
+                // }
                 this.$store.commit('app/SET_DEVICE_DETAIL', res);
                 this.$store.commit('app/OPEN_DEVICEDIALOG');
               });

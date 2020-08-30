@@ -489,6 +489,9 @@ export default {
             });
           }, 500),
         );
+        if (device.product_type != 3) {
+          marker.setZIndex(1);
+        }
         this.markers.push({ marker, ...device });
         this.map.addOverlay(marker);
       });

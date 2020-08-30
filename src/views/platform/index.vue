@@ -39,6 +39,7 @@
         </el-upload>
       </div>
     </div>
+    <p class="text-grey">图片大小(100*40)</p>
     <el-dialog title="图片预览" :visible.sync="dialogVisible">
       <img class="w-100" :src="dialogImageUrl" alt />
     </el-dialog>

@@ -1,5 +1,10 @@
 import { getValByKey } from '@/utils/util';
-import { showSuccessMsg, showInfoMsg, showErrorMsg } from '@/utils/message';
+import {
+  showSuccessMsg,
+  showInfoMsg,
+  showErrorMsg,
+  showWarningMsg,
+} from '@/utils/message';
 import { mapGetters, createNamespacedHelpers } from 'vuex';
 const { mapActions } = createNamespacedHelpers('device');
 import _ from 'lodash';
@@ -162,6 +167,9 @@ export default {
     },
     detail(id) {
       this.detailDevice({ id }).then((res) => {
+        // if (res.status == 4) {
+        //   showWarningMsg('设备离线, 请检查网络连线');
+        // }
         this.$store.commit('app/SET_DEVICE_DETAIL', res);
         this.$store.commit('app/OPEN_DEVICEDIALOG');
       });

@@ -140,9 +140,11 @@ export default {
     };
   },
   created() {
-    this.getLedConfig();
-    this.getUploadDetail();
-    this.createIsOnWatch();
+    if (this.deviceDetail.status == 2) {
+      this.getLedConfig();
+      this.getUploadDetail();
+      this.createIsOnWatch();
+    }
   },
   methods: {
     restart() {

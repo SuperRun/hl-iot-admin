@@ -8,19 +8,14 @@
         </button>
         <button type="button" class="btn btn-del" @click="del" v-if="false">
           删除
-        </button> -->
-        <el-select
-          v-model="params.status"
-          placeholder="请选择设备状态"
-          @change="selectByStatus"
-        >
+        </button>-->
+        <el-select v-model="params.status" placeholder="请选择设备状态" @change="selectByStatus">
           <el-option
             v-for="item in options"
             :key="item.value"
             :label="item.label"
             :value="item.value"
-          >
-          </el-option>
+          ></el-option>
         </el-select>
         <div class="search flex">
           <el-input
@@ -29,19 +24,9 @@
             class="mg-right-1"
             @input="search"
           ></el-input>
-          <el-input
-            placeholder="搜索位号"
-            v-model="params.place_number"
-            @input="search"
-          ></el-input>
+          <el-input placeholder="搜索位号" v-model="params.place_number" @input="search"></el-input>
         </div>
-        <button
-          type="button"
-          class="btn btn-light mg-left-1 br-4"
-          @click="reset"
-        >
-          重置
-        </button>
+        <button type="button" class="btn btn-light mg-left-1 br-4" @click="reset">重置</button>
         <!-- <button type="button" class="btn btn-refresh mg-left-1">读状态</button> -->
       </div>
       <div class="flex">
@@ -51,27 +36,21 @@
             :class="tableOrMap == 'table' ? 'bg-blue-4' : ''"
             @click="tableOrMap = 'table'"
           >
-            <svg-icon
-              :icon-class="tableOrMap == 'table' ? 'table-active' : 'table'"
-            ></svg-icon>
+            <svg-icon :icon-class="tableOrMap == 'table' ? 'table-active' : 'table'"></svg-icon>
           </li>
           <li
             class="icon-btn flex ai-center"
             :class="tableOrMap == 'map' ? 'bg-blue-4' : ''"
             @click="switchTableOrMap"
           >
-            <svg-icon
-              :icon-class="tableOrMap == 'map' ? 'location-active' : 'location'"
-            ></svg-icon>
+            <svg-icon :icon-class="tableOrMap == 'map' ? 'location-active' : 'location'"></svg-icon>
           </li>
         </ul>
         <button
           type="button"
           class="btn btn-add mg-left-1"
           @click="$router.push({ path: '/device/product' })"
-        >
-          产品管理
-        </button>
+        >产品管理</button>
       </div>
     </div>
     <!-- 表格 -->
@@ -87,44 +66,40 @@
           @selection-change="handleSelectionChange"
         >
           <el-table-column type="selection" width="55"></el-table-column>
-          <el-table-column
-            prop="device_number"
-            label="编号"
-            width="180"
-          ></el-table-column>
+          <el-table-column prop="device_number" label="编号" width="180"></el-table-column>
           <el-table-column label="产品" width="200">
-            <template slot-scope="scope">{{
+            <template slot-scope="scope">
+              {{
               scope.row.product
-                ? `${scope.row.product.title}(${scope.row.product.model})`
-                : '无'
-            }}</template>
+              ? `${scope.row.product.title}(${scope.row.product.model})`
+              : '无'
+              }}
+            </template>
           </el-table-column>
           <el-table-column label="位号" width="180">
-            <template slot-scope="scope">{{
+            <template slot-scope="scope">
+              {{
               scope.row.place_number ? scope.row.place_number : '无'
-            }}</template>
+              }}
+            </template>
           </el-table-column>
           <el-table-column label="状态" width="150">
-            <template slot-scope="scope">{{
+            <template slot-scope="scope">
+              {{
               scope.row.status | faultStatus
-            }}</template>
+              }}
+            </template>
           </el-table-column>
           <el-table-column label="安装时间" width="200">
-            <template slot-scope="scope">{{
-              scope.row.created_at | formatTime
-            }}</template>
-          </el-table-column>
-          <el-table-column
-            v-if="btns.includes(69)"
-            prop="operation"
-            label="操作"
-          >
             <template slot-scope="scope">
-              <span
-                class="btn-table mg-right-1"
-                @click="weatherDetail(scope.row.id)"
-                >详情</span
-              >
+              {{
+              scope.row.created_at | formatTime
+              }}
+            </template>
+          </el-table-column>
+          <el-table-column v-if="btns.includes(69)" prop="operation" label="操作">
+            <template slot-scope="scope">
+              <span class="btn-table mg-right-1" @click="weatherDetail(scope.row.id)">详情</span>
               <!-- <span class="btn-table" @click="edit(scope.row)">编辑</span> -->
             </template>
           </el-table-column>
@@ -149,7 +124,7 @@
         v-if="false"
         :class="[`el-icon-${isLock ? '' : 'un'}lock`, 'lock']"
         @click="lock"
-      ></i> -->
+      ></i>-->
     </div>
     <!-- 弹出框 -->
     <!-- <el-dialog
@@ -158,7 +133,7 @@
       center
       @opened="dialogOpened"
       @closed="closed"
-    > -->
+    >-->
     <!-- <el-form :model="model" :inline="true" :rules="rules" ref="form">
         <el-form-item
           label="编号"
@@ -171,7 +146,7 @@
             maxlength="50"
             show-word-limit
           ></el-input>
-        </el-form-item> -->
+    </el-form-item>-->
     <!-- 显示产品名称和型号 -->
     <!-- <el-form-item
           label="产品"
@@ -191,14 +166,14 @@
           label="位号"
           :label-width="formLabelWidth"
           prop="place_number"
-        > -->
+    >-->
     <!-- <el-input
             v-model="model.place_number"
             autocomplete="off"
             maxlength="20"
             show-word-limit
           ></el-input>
-        </el-form-item> -->
+    </el-form-item>-->
     <!-- 显示网关名称和型号 -->
     <!-- <el-form-item
           label="网关"
@@ -230,7 +205,7 @@
           prop="latitude"
         >
           <el-input v-model="model.latitude" :readonly="true"></el-input>
-        </el-form-item> -->
+    </el-form-item>-->
     <!-- 地图 -->
     <!-- <div class="map">
           <el-select
@@ -262,7 +237,7 @@
           >确 定</el-button
         >
       </div>
-    </el-dialog> -->
+    </el-dialog>-->
   </div>
 </template>
 
@@ -300,6 +275,9 @@ export default {
   methods: {
     weatherDetail(id) {
       this.detailDevice({ id }).then((res) => {
+        if (res.status == 4) {
+          showWarningMsg('设备离线, 请检查网络连线');
+        }
         this.$store.commit('app/SET_DEVICE_DETAIL', res);
         this.$store.commit('app/OPEN_WEATHERDIALOG');
       });

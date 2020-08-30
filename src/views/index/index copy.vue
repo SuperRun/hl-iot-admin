@@ -2,18 +2,8 @@
   <div class="index w-100 flex flex-column">
     <header class="w-100 flex jc-between ai-center">
       <div class="flex-1">
-        <el-select
-          class="proj-select"
-          v-model="projId"
-          filterable
-          @change="change"
-        >
-          <el-option
-            v-for="item in projList"
-            :key="item.id"
-            :label="item.title"
-            :value="item.id"
-          ></el-option>
+        <el-select class="proj-select" v-model="projId" filterable @change="change">
+          <el-option v-for="item in projList" :key="item.id" :label="item.title" :value="item.id"></el-option>
         </el-select>
       </div>
       <div class="header-center flex flex-2 flex-column ai-center">
@@ -35,10 +25,7 @@
             <svg-icon icon-class="search"></svg-icon>
           </div>
           <div class="flex">
-            <i
-              :class="['lock', isLock ? 'el-icon-lock' : 'el-icon-unlock']"
-              @click="lockMap"
-            ></i>
+            <i :class="['lock', isLock ? 'el-icon-lock' : 'el-icon-unlock']" @click="lockMap"></i>
             <i
               :class="['el-icon-s-unfold', 'fold', isFold ? 'fold-rotate' : '']"
               @click="foldEquips"
@@ -153,9 +140,7 @@
                 设备SN
                 <span class="alarm-num">01</span>
               </template>
-              <div class="detail">
-                控制反馈：通过界面样式和交互动效让用户可以清晰的感知自己的操作；
-              </div>
+              <div class="detail">控制反馈：通过界面样式和交互动效让用户可以清晰的感知自己的操作；</div>
             </el-collapse-item>
           </el-collapse>
         </div>
@@ -296,7 +281,7 @@ import UserAccount from '@/components/UserAccount/index';
 import DeviceDetail from '@/components/DeviceDetail';
 import EditPwd from '@/components/EditPwd';
 import NoFault from '@/components/NoFault';
-import {mapGetters} from 'vuex';
+import { mapGetters } from 'vuex';
 
 export default {
   name: 'Index',
@@ -332,7 +317,6 @@ export default {
     if (this.projList.length == 0) {
       await this.$store.dispatch('project/allProject');
     }
-    console.log('this.cur_proj', this.cur_proj);
     this.projId = this.cur_proj;
   },
   methods: {

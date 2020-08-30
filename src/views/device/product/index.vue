@@ -5,34 +5,26 @@
         v-if="tabs.includes(16)"
         :class="['tab', currentTab == 'CameraPanel' ? 'active' : '']"
         @click="currentTab = 'CameraPanel'"
-      >
-        摄像头
-      </li>
+      >摄像头</li>
       <li
         v-if="tabs.includes(17)"
         :class="['tab', currentTab == 'ScreenPanel' ? 'active' : '']"
         @click="currentTab = 'ScreenPanel'"
-      >
-        LED屏
-      </li>
+      >LED屏</li>
       <li
         v-if="tabs.includes(24)"
         :class="['tab', currentTab == 'LightPanel' ? 'active' : '']"
         @click="currentTab = 'LightPanel'"
-      >
-        照明灯
-      </li>
+      >照明灯</li>
       <!-- <li
         :class="['tab', currentTab=='WeatherPanel'?'active':'']"
         @click="currentTab='WeatherPanel'"
-      >气象站</li> -->
+      >气象站</li>-->
       <li
         v-if="tabs.includes(25)"
         :class="['tab', currentTab == 'GatewayPanel' ? 'active' : '']"
         @click="currentTab = 'GatewayPanel'"
-      >
-        物联网关
-      </li>
+      >物联网关</li>
     </ul>
 
     <div class="tab-panel">
@@ -66,6 +58,24 @@ export default {
     return {
       currentTab: 'CameraPanel',
     };
+  },
+  created() {
+    if (this.tabs.includes(16)) {
+      this.currentTab = 'CameraPanel';
+      return;
+    }
+    if (this.tabs.includes(17)) {
+      this.currentTab = 'ScreenPanel';
+      return;
+    }
+    if (this.tabs.includes(24)) {
+      this.currentTab = 'LightPanel';
+      return;
+    }
+    if (this.tabs.includes(25)) {
+      this.currentTab = 'GatewayPanel';
+      return;
+    }
   },
 };
 </script>
