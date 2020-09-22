@@ -184,7 +184,6 @@ const actions = {
 };
 
 function filterAsyncRoutes(asyncRoutes, routes) {
-  console.log('routes', routes);
   const res = [];
   asyncRoutes.forEach((route) => {
     const tmp = { ...route };

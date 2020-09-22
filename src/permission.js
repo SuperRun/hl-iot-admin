@@ -21,8 +21,6 @@ router.beforeEach(async (to, from, next) => {
       NProgress.done();
     } else {
       const hasRoles = store.getters.routes && store.getters.routes.length > 0;
-      console.log('hasRoles', hasRoles);
-      console.log('store.getters.routes', store.getters.routes);
       if (hasRoles) {
         next();
       } else {
@@ -32,7 +30,6 @@ router.beforeEach(async (to, from, next) => {
           const routes = await store.dispatch('user/userRole', {
             role_id,
           });
-          console.log('routes', routes);
           const filterRoutes = await store.dispatch('user/dealRoutes', routes);
           console.log('filterRoutes', filterRoutes);
           router.addRoutes(filterRoutes);

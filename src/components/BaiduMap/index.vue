@@ -82,7 +82,7 @@ export default {
       }
     },
     types: {
-      handler: function (val, oldVal) {
+      handler: function(val, oldVal) {
         this.configMap();
       },
       deep: true,
@@ -224,7 +224,11 @@ export default {
       this.map.clearOverlays();
       var point = new BMap.Point(longitude, latitude); // 创建点坐标
       this.map.centerAndZoom(point, 15); // 初始化地图，设置中心点坐标和地图级别
+      var infoWindow = new BMap.InfoWindow('创建信息窗口对象'); // 创建信息窗口对象
+      self.map.openInfoWindow(infoWindow, point); //开启信息窗口
       this.addMarkers();
+      // var infoWindow = new BMap.InfoWindow('创建信息窗口对象'); // 创建信息窗口对象
+      // this.map.openInfoWindow(infoWindow, point); //开启信息窗口
       // this.map.clearOverlays();
     },
     converDeviceList() {
@@ -342,11 +346,19 @@ export default {
             enableMessage: true, //设置允许信息窗发送短息
           },
         };
-        const win = new BMap.InfoWindow(deviceData.content, deviceData.opts);
-        win.disableAutoPan();
-        const addInfoWinFunc = function (_point) {
-          return _.debounce(function () {
-            self.map.openInfoWindow(win, _point);
+        // var win = new BMap.InfoWindow('创建信息窗口对象');
+
+        // win.disableAutoPan();
+        const addInfoWinFunc = function(_point) {
+          return _.debounce(function() {
+            console.log('debounce');
+            // const win = new BMap.InfoWindow(
+            //   deviceData.content,
+            //   deviceData.opts,
+            // );
+            var infoWindow = new BMap.InfoWindow('创建信息窗口对象'); // 创建信息窗口对象
+            self.map.openInfoWindow(infoWindow, _point); //开启信息窗口
+            // self.map.openInfoWindow(win, _point);
           }, 500);
         };
 
@@ -357,7 +369,7 @@ export default {
         //   }, 500);
         // };
 
-        const clickFunc = function (e) {
+        const clickFunc = function(e) {
           let curType = self.markers[index].product_type;
           if (
             curType == 2 &&
@@ -454,7 +466,7 @@ export default {
           });
         };
 
-        const dragendFunc = function (point) {
+        const dragendFunc = function(point) {
           return new Promise((resolve, reject) => {
             self
               .editDeviceLocation({
@@ -477,12 +489,12 @@ export default {
         marker.addEventListener('mouseover', addInfoWinFunc(point));
         // win.addEventListener('mouseout', closeInfoWinFunc());
         marker.addEventListener('click', clickFunc);
-        marker.addEventListener('dragstart', function () {
+        marker.addEventListener('dragstart', function() {
           this.map.closeInfoWindow();
         });
         marker.addEventListener(
           'dragend',
-          _.debounce(function ({ type, target, pixel, point }) {
+          _.debounce(function({ type, target, pixel, point }) {
             dragendFunc(point).then((_) => {
               marker.removeEventListener('mouseover', addInfoWinFunc(_point));
               marker.addEventListener('mouseover', addInfoWinFunc(point));
