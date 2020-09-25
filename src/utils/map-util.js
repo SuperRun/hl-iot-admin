@@ -76,7 +76,6 @@ export default class BaiduMap {
     if (ifNeedInfoWindow) {
       marker.addEventListener('mouseover', addInfoWinFunc(_point));
       marker.addEventListener('click', clickFunc);
-
       marker.addEventListener('dragstart', function() {
         this.map.closeInfoWindow();
       });

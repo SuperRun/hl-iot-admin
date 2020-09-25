@@ -82,7 +82,7 @@ export default {
       }
     },
     types: {
-      handler: function(val, oldVal) {
+      handler: function (val, oldVal) {
         this.configMap();
       },
       deep: true,
@@ -224,11 +224,7 @@ export default {
       this.map.clearOverlays();
       var point = new BMap.Point(longitude, latitude); // 创建点坐标
       this.map.centerAndZoom(point, 15); // 初始化地图，设置中心点坐标和地图级别
-      var infoWindow = new BMap.InfoWindow('创建信息窗口对象'); // 创建信息窗口对象
-      self.map.openInfoWindow(infoWindow, point); //开启信息窗口
       this.addMarkers();
-      // var infoWindow = new BMap.InfoWindow('创建信息窗口对象'); // 创建信息窗口对象
-      // this.map.openInfoWindow(infoWindow, point); //开启信息窗口
       // this.map.clearOverlays();
     },
     converDeviceList() {
@@ -296,7 +292,7 @@ export default {
     addMarkers() {
       const self = this;
       this.markers = [];
-      this.map.clearOverlays();
+    //  this.map.clearOverlays();
       this.deviceMapList.forEach((device, index) => {
         let point = new BMap.Point(device.longitude, device.latitude);
         let iconSize = null;
@@ -319,46 +315,50 @@ export default {
             iconSize = new BMap.Size(40, 80);
             break;
           default:
+             iconSize = new BMap.Size(16, 28);
             break;
         }
         let myIcon = new BMap.Icon(device.icon, iconSize);
         let marker = new BMap.Marker(point, { icon: myIcon });
-
-        const deviceData = {
-          content: `<div>设备编号：${
-            device.device_number != null ? device.device_number : '无'
-          }</div>
-                      <div>设备位号：${
-                        device.place_number != null ? device.place_number : '无'
-                      }</div>
-                      <div>产品名称：${this.deviceType(
-                        device.product_type,
-                      )}</div>
-                      <div>产品型号：${
-                        device.product && device.product.model != null
-                          ? device.product.model
-                          : '无'
-                      }</div>`,
-          opts: {
-            width: 250, // 信息窗口宽度
-            height: 100, // 信息窗口高度
-            title: '基本信息', // 信息窗口标题
-            enableMessage: true, //设置允许信息窗发送短息
-          },
-        };
-        // var win = new BMap.InfoWindow('创建信息窗口对象');
-
-        // win.disableAutoPan();
-        const addInfoWinFunc = function(_point) {
-          return _.debounce(function() {
-            console.log('debounce');
-            // const win = new BMap.InfoWindow(
-            //   deviceData.content,
-            //   deviceData.opts,
-            // );
-            var infoWindow = new BMap.InfoWindow('创建信息窗口对象'); // 创建信息窗口对象
-            self.map.openInfoWindow(infoWindow, _point); //开启信息窗口
-            // self.map.openInfoWindow(win, _point);
+        // let content=`<div>设备编号：${device.device_number != null ? device.device_number : '无'}</div><div>设备位号：${device.place_number != null ? device.place_number : '无'}</div><div>产品名称：${this.deviceType(device.product_type,)}</div><div>产品型号：${device.product && device.product.model != null? device.product.model: '无'}</div>`;
+        // self.map.addOverlay(marker);
+        //  this.addClickHandler(content,marker,point);
+        // const deviceData = {
+        //   content: `<div>设备编号：${
+        //     device.device_number != null ? device.device_number : '无'
+        //   }</div>
+        //               <div>设备位号：${
+        //                 device.place_number != null ? device.place_number : '无'
+        //               }</div>
+        //               <div>产品名称：${this.deviceType(
+        //                 device.product_type,
+        //               )}</div>
+        //               <div>产品型号：${
+        //                 device.product && device.product.model != null
+        //                   ? device.product.model
+        //                   : '无'
+        //               }</div>`,
+        //   opts: {
+        //     width: 250, // 信息窗口宽度
+        //     height: 100, // 信息窗口高度
+        //     title: '基本信息', // 信息窗口标题
+        //     enableMessage: true, //设置允许信息窗发送短息
+        //   },
+        // };
+        // const win = new BMap.InfoWindow(deviceData.content, deviceData.opts);
+          const opts = {
+              width: 250, // 信息窗口宽度
+              height: 100, // 信息窗口高度
+              title: '基本信息', // 信息窗口标题
+              enableMessage: true, //设置允许信息窗发送短息
+          }
+         const win = new BMap.InfoWindow(`<div>设备编号：${device.device_number != null ? device.device_number : '无'}</div><div>设备位号：${device.place_number != null ? device.place_number : '无'}</div><div>产品名称：${this.deviceType(device.product_type,)}</div><div>产品型号：${device.product && device.product.model != null? device.product.model: '无'}</div>`, opts); // 创建信息窗口对象 
+       //self.map.openInfoWindow(win, point);
+       
+       win.disableAutoPan();
+        const addInfoWinFunc = function (_point) {
+          return _.debounce(function () {
+            self.map.openInfoWindow(win, _point);
           }, 500);
         };
 
@@ -369,7 +369,7 @@ export default {
         //   }, 500);
         // };
 
-        const clickFunc = function(e) {
+        const clickFunc = function (e) {
           let curType = self.markers[index].product_type;
           if (
             curType == 2 &&
@@ -466,7 +466,7 @@ export default {
           });
         };
 
-        const dragendFunc = function(point) {
+        const dragendFunc = function (point) {
           return new Promise((resolve, reject) => {
             self
               .editDeviceLocation({
@@ -486,15 +486,32 @@ export default {
           });
         };
 
-        marker.addEventListener('mouseover', addInfoWinFunc(point));
-        // win.addEventListener('mouseout', closeInfoWinFunc());
+        // marker.addEventListener("mouseover", function () {
+        //   this.map.openInfoWindow(win, point); //开启信息窗口
+        // });
+       marker.addEventListener('mouseover', addInfoWinFunc(point));
+      // marker.addEventListener('mouseover',function(e){
+      //    var p = e.target;
+      //    var es = event || window.event;
+      //   var left = es.screenX;
+      //   var top = es.screenY;
+       
+      //    var points = new BMap.Point(p.getPosition().lng, p.getPosition().lat);
+      //    self.map.openInfoWindow(win,points); //开启信息窗口
+      // });
+        //win.addEventListener('mouseout', closeInfoWinFunc());
         marker.addEventListener('click', clickFunc);
-        marker.addEventListener('dragstart', function() {
+        // marker.addEventListener('click', function () {
+        //   var infowindow = new BMap.InfoWindow("内容",{width:250,height:100,title:"hello"});
+        //   self.map.openInfoWindow(infoWindow,self.map.getCenter());
+        // //  that.map.openInfoWindow(win, map.getCenter()); //开启信息窗口
+        // });
+        marker.addEventListener('dragstart', function () {
           this.map.closeInfoWindow();
         });
         marker.addEventListener(
           'dragend',
-          _.debounce(function({ type, target, pixel, point }) {
+          _.debounce(function ({ type, target, pixel, point }) {
             dragendFunc(point).then((_) => {
               marker.removeEventListener('mouseover', addInfoWinFunc(_point));
               marker.addEventListener('mouseover', addInfoWinFunc(point));
@@ -505,9 +522,29 @@ export default {
           marker.setZIndex(1);
         }
         this.markers.push({ marker, ...device });
-        this.map.addOverlay(marker);
+         this.map.addOverlay(marker);
       });
     },
+    // addClickHandler(content,marker,point){
+    //   let that=this;
+		//   marker.addEventListener("mouseover",function(e){
+		// 	  that.openInfo(content,e,point);
+    //   });
+    // },
+    // openInfo(content,e,point){
+    //   const opts = {
+    //       width: 250, // 信息窗口宽度
+    //       height: 100, // 信息窗口高度
+    //       title: '基本信息', // 信息窗口标题
+    //       enableMessage: true, //设置允许信息窗发送短息
+    //   }
+    //   this.map = new BMap.Map('container');
+    //   var p = e.target;
+    //   var infoWindow = new BMap.InfoWindow(content,opts);  // 创建信息窗口对象 
+    //   infoWindow.disableAutoPan();
+    //   this.map.openInfoWindow(infoWindow,point); //开启信息窗口
+    //   return false;
+    // },
     deviceType(type) {
       const map = new Map([
         [1, '摄像头'],
@@ -528,6 +565,6 @@ export default {
 <style lang="scss" scoped>
 #container {
   width: 100%;
-  height: 100%;
+  height: 100vh;
 }
 </style>
