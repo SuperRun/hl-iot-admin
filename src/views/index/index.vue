@@ -90,7 +90,7 @@
             >
               <el-collapse-item v-for="(fault, index) in faultList" :key="index">
                 <template slot="title">
-                  设备SN:{{ fault.device.device_number }}
+                  设备SN:{{ fault.device.device_number }}灯故障
                   <!-- <span class="alarm-num">01</span> -->
                 </template>
                 <div class="detail flex jc-between">
@@ -222,7 +222,7 @@
                   >亮度：{{ lightDetail.light_report_data.brightness }}</span>
                   <span
                     class="flex-1 text-light fs-sm"
-                  >功率：{{ lightDetail.light_report_data.power }}mW</span>
+                  >功率：{{ lightDetail.light_report_data.power }}W</span>
                 </div>
                 <div class="parameter flex">
                   <span

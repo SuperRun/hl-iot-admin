@@ -18,7 +18,7 @@
         <span class="text-grey-2">电流：{{ model.electric_current }}mA</span>
       </li>
       <li class="flex mg-right-5">
-        <span class="text-grey-2">功率：{{ model.power }}mW</span>
+        <span class="text-grey-2">功率：{{ model.power }}W</span>
       </li>
       <li class="flex">
         <span class="text-grey-2">温度：{{ model.temperature }}ºC</span>

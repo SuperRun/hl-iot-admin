@@ -55,7 +55,7 @@ export default {
       selectedIndex: 0,
       selects: [],
       markers: [],
-      indexArr: [0, 0, 0, 0, 0],
+      indexArr: [0, 0, 0, 0],
     };
   },
   mounted() {
@@ -109,7 +109,7 @@ export default {
             break;
           case 2:
             if (isWeather == 1 && this.types.includes(4)) {
-              iconSize = new BMap.Size(23, 20);
+              iconSize = new BMap.Size(11, 17);
             } else if (isWeather == 2) {
               iconSize = new BMap.Size(11, 16);
             }
@@ -118,25 +118,24 @@ export default {
             iconSize = new BMap.Size(40, 80);
             break;
           default:
-            iconSize = new BMap.Size(11, 17);
             break;
         }
 
         self.indexArr[curType - 1] = index;
         let temp1 = self.deviceMapList[indexVal].product_type;
         let temp2 = self.deviceMapList[index].product_type;
-        // if (temp1 == 2 && self.deviceMapList[indexVal].is_weather == 1) {
-        //   temp1 = 4;
-        // }
+        if (temp1 == 2 && self.deviceMapList[indexVal].is_weather == 1) {
+          temp1 = 4;
+        }
         if (temp2 == 2 && self.deviceMapList[index].is_weather == 1) {
           temp2 = 4;
         }
         if (indexVal != 0) {
-          // if ((temp1 == 4 && temp2 != 4) || (temp1 != 4 && temp2 == 4)) {
-          //   self.markers[index].marker.setIcon(
-          //     new BMap.Icon(MapMark[`${typeMap.get(temp2)}Selected`], iconSize),
-          //   );
-          // } else {
+          if ((temp1 == 4 && temp2 != 4) || (temp1 != 4 && temp2 == 4)) {
+            self.markers[index].marker.setIcon(
+              new BMap.Icon(MapMark[`${typeMap.get(temp2)}Selected`], iconSize),
+            );
+          } else {
             self.markers[indexVal].marker.setIcon(
               new BMap.Icon(
                 MapMark[
@@ -151,7 +150,7 @@ export default {
             self.markers[index].marker.setIcon(
               new BMap.Icon(MapMark[`${typeMap.get(temp2)}Selected`], iconSize),
             );
-         // }
+          }
         }
 
         self.detailDevice({ id: self.deviceMapList[index].id }).then((res) => {
@@ -251,18 +250,9 @@ export default {
           } else if (cur.product_type == 2) {
             if (cur.is_weather == 1 && self.types.includes(4)) {
               if (self.defaultSelects.includes(cur.id)) {
-                icon = `${typeMap.get(4)}4`;
+                icon = `${typeMap.get(4)}Selected`;
               } else {
-                if(cur.status==2&&cur.is_open==1){
-                   icon = `${typeMap.get(4)}1`; 
-                }else if(cur.status==2&&cur.is_open==2){
-                   icon = `${typeMap.get(4)}2`;
-                }else if(cur.status==4){
-                   icon = `${typeMap.get(4)}3`;  
-                }else{
-                  icon = `${typeMap.get(4)}${statusMap.get(cur.status)}`;
-                }      
-               // icon = `${typeMap.get(4)}${statusMap.get(cur.status)}`;
+                icon = `${typeMap.get(4)}${statusMap.get(cur.status)}`;
               }
             } else if (self.types.includes(2)) {
               if (self.defaultSelects.includes(cur.id)) {
@@ -303,7 +293,17 @@ export default {
       const self = this;
       this.markers = [];
       this.map.clearOverlays();
+      var data_info=[];
+      var opts = {
+        width: 250, // 信息窗口宽度
+        height: 100, // 信息窗口高度
+        title: '基本信息', // 信息窗口标题
+        enableMessage: true, //设置允许信息窗发送短息
+      }
       this.deviceMapList.forEach((device, index) => {
+          data_info.push([device.longitude,device.latitude,`<div>设备编号：${device.device_number != null ? device.device_number : '无'}</div><div>设备位号：${device.place_number != null ? device.place_number : '无'}</div><div>产品名称：${this.deviceType(device.product_type,)}</div><div>产品型号：${device.product && device.product.model != null? device.product.model: '无'}</div>`])
+      })
+       this.deviceMapList.forEach((device, index) => {
         let point = new BMap.Point(device.longitude, device.latitude);
         let iconSize = null;
         let isWeather = 1;
@@ -316,7 +316,7 @@ export default {
             break;
           case 2:
             if (isWeather == 1 && this.types.includes(4)) {
-              iconSize = new BMap.Size(23, 20);
+              iconSize = new BMap.Size(11, 17);
             } else {
               iconSize = new BMap.Size(11, 16);
             }
@@ -325,42 +325,14 @@ export default {
             iconSize = new BMap.Size(40, 80);
             break;
           default:
-             iconSize = new BMap.Size(11, 17);
             break;
         }
         let myIcon = new BMap.Icon(device.icon, iconSize);
-        let marker = new BMap.Marker(point, { icon: myIcon });
-
-        const deviceData = {
-          content: `<div>设备编号：${
-            device.device_number != null ? device.device_number : '无'
-          }</div>
-                      <div>设备位号：${
-                        device.place_number != null ? device.place_number : '无'
-                      }</div>
-                      <div>产品名称：${this.deviceType(
-                        device.product_type,
-                      )}</div>
-                      <div>产品型号：${
-                        device.product && device.product.model != null
-                          ? device.product.model
-                          : '无'
-                      }</div>`,
-          opts: {
-            width: 250, // 信息窗口宽度
-            height: 100, // 信息窗口高度
-            title: '基本信息', // 信息窗口标题
-            enableMessage: true, //设置允许信息窗发送短息
-          },
-        };
-        const win = new BMap.InfoWindow(deviceData.content, deviceData.opts);
-        win.disableAutoPan();
-        const addInfoWinFunc = function (_point) {
-          return _.debounce(function () {
-            self.map.openInfoWindow(win, _point);
-          }, 500);
-        };
-
+        let marker = new BMap.Marker(point, { icon: myIcon });  // 创建标注
+        var content = data_info[index][2];
+        console.log(content)
+		    self.map.addOverlay(marker);               // 将标注添加到地图中
+		    addClickHandler(content,marker);
         // const closeInfoWinFunc = function () {
         //   return _.debounce(function () {
         //     console.log('close');
@@ -375,19 +347,19 @@ export default {
             self.types.includes(4) &&
             self.markers[index].is_weather == 1
           ) {
-            curType = 5;
+            curType = 4;
           }
 
           const indexVal = self.indexArr[curType - 1];
           let temp1 = self.deviceMapList[indexVal].product_type;
           let temp2 = self.deviceMapList[index].product_type;
-          // if (
-          //   temp1 == 2 &&
-          //   self.deviceMapList[indexVal].is_weather == 1 &&
-          //   self.types.includes(4)
-          // ) {
-          //   temp1 = 4;
-          // }
+          if (
+            temp1 == 2 &&
+            self.deviceMapList[indexVal].is_weather == 1 &&
+            self.types.includes(4)
+          ) {
+            temp1 = 4;
+          }
           if (
             temp2 == 2 &&
             self.deviceMapList[index].is_weather == 1 &&
@@ -397,15 +369,14 @@ export default {
           }
 
           self.indexArr[curType - 1] = index;
-          // if ((temp1 == 4 && temp2 != 4) || (temp1 != 4 && temp2 == 4)) {
-          //   self.markers[index].marker.setIcon(
-          //     new BMap.Icon(MapMark[`${typeMap.get(temp2)}Selected`], iconSize),
-          //   );
-          // } else {
+          if ((temp1 == 4 && temp2 != 4) || (temp1 != 4 && temp2 == 4)) {
+            self.markers[index].marker.setIcon(
+              new BMap.Icon(MapMark[`${typeMap.get(temp2)}Selected`], iconSize),
+            );
+          } else {
             let icon = '';
             let cur = self.markers[indexVal];
             if (cur.product_type == 3) {
-               iconSize = new BMap.Size(40, 80);
               if (cur.status == 2) {
                 icon = cur.is_open == 1 ? 'lightNormal' : 'lightClosed';
               } else if (cur.status == 3) {
@@ -415,32 +386,15 @@ export default {
               }
             } else if (cur.product_type == 2) {
               if (cur.is_weather == 1 && self.types.includes(4)) {
-                 iconSize = new BMap.Size(23, 20);
-               // icon = `${typeMap.get(4)}${statusMap.get(cur.status)}`;
-                if(cur.status==2&&cur.is_open==1){
-                   icon = `${typeMap.get(4)}1`; 
-                }else if(cur.status==2&&cur.is_open==2){
-                   icon = `${typeMap.get(4)}2`;
-                }else if(cur.status==4){
-                   icon = `${typeMap.get(4)}3`;  
-                }else{
-                  icon = `${typeMap.get(4)}${statusMap.get(cur.status)}`;
-                }      
+                icon = `${typeMap.get(4)}${statusMap.get(cur.status)}`;
               } else if (self.types.includes(2)) {
-                iconSize = new BMap.Size(11, 16);
                 if (cur.status == 2) {
                   icon = cur.is_open == 1 ? 'screenNormal' : 'screenClosed';
                 } else if (cur.status == 4) {
                   icon = 'screenOffline';
                 }
               }
-            }else if (cur.product_type == 4) {
-              iconSize = new BMap.Size(11, 17);
-              icon = `${typeMap.get(cur.product_type)}${statusMap.get(
-                cur.status,
-              )}`;
             } else {
-              iconSize = new BMap.Size(10, 10);
               icon = `${typeMap.get(cur.product_type)}${statusMap.get(
                 cur.status,
               )}`;
@@ -449,44 +403,12 @@ export default {
             self.markers[indexVal].marker.setIcon(
               new BMap.Icon(MapMark[icon], iconSize),
             );
-            if(self.deviceMapList[index].product_type==2){
-             if (self.deviceMapList[index].is_weather == 1 && self.types.includes(4)) {
-                iconSize = new BMap.Size(23, 20);
-                self.markers[index].marker.setIcon(
-                  new BMap.Icon(MapMark[`${typeMap.get(temp2)}4`], iconSize),
-                );
-             }else{
-               iconSize = new BMap.Size(11, 16);
-                self.markers[index].marker.setIcon(
-                  new BMap.Icon(MapMark[`${typeMap.get(temp2)}Selected`], iconSize),
-                );
-             }
-            }else if(self.deviceMapList[index].product_type==1){
-               iconSize = new BMap.Size(10, 10);
-               self.markers[index].marker.setIcon(
-                  new BMap.Icon(MapMark[`${typeMap.get(temp2)}Selected`], iconSize),
-                );
-            }else if(self.deviceMapList[index].product_type==4){
-               iconSize = new BMap.Size(11, 17);
-               self.markers[index].marker.setIcon(
-                  new BMap.Icon(MapMark[`${typeMap.get(temp2)}Selected`], iconSize),
-                );
-            }else if(self.deviceMapList[index].product_type==3){
-               iconSize = new BMap.Size(40, 80);
-               self.markers[index].marker.setIcon(
-                  new BMap.Icon(MapMark[`${typeMap.get(temp2)}Selected`], iconSize),
-                );
-            }else{
-                iconSize = new BMap.Size(10, 10);
-                self.markers[index].marker.setIcon(
-                  new BMap.Icon(MapMark[`${typeMap.get(temp2)}Selected`], iconSize),
-                );
-            }
+            self.markers[index].marker.setIcon(
+              new BMap.Icon(MapMark[`${typeMap.get(temp2)}Selected`], iconSize),
+            );
+          }
 
-
-          //}
-
-          self.detailDevice({ id: device.id }).then((res1) => {            
+          self.detailDevice({ id: device.id }).then((res1) => {
             if (temp2 == 4) {
               getLedWeatherData({ device_id: device.id }).then((res2) => {
                 if (res2.data && res2.data.list && res2.data.list.length > 0) {
@@ -534,28 +456,24 @@ export default {
               );
           });
         };
-
-        marker.addEventListener('mouseover', addInfoWinFunc(point));
-        // win.addEventListener('mouseout', closeInfoWinFunc());
-        marker.addEventListener('click', clickFunc);
-        marker.addEventListener('dragstart', function () {
-          this.map.closeInfoWindow();
-        });
-        marker.addEventListener(
-          'dragend',
-          _.debounce(function ({ type, target, pixel, point }) {
-            dragendFunc(point).then((_) => {
-              marker.removeEventListener('mouseover', addInfoWinFunc(_point));
-              marker.addEventListener('mouseover', addInfoWinFunc(point));
-            });
-          }, 500),
-        );
         if (device.product_type != 3) {
           marker.setZIndex(1);
         }
         this.markers.push({ marker, ...device });
         this.map.addOverlay(marker);
       });
+      const addClickHandler = function (content,marker) {
+          console.log(12312)
+          marker.addEventListener("mouseover",function(e){
+            openInfo(content,e)}
+          );
+      }  
+      const openInfo = function (content,e) {
+          var p = e.target;
+          var point = new BMap.Point(p.getPosition().lng, p.getPosition().lat);
+          var infoWindow = new BMap.InfoWindow(content,opts);  // 创建信息窗口对象 
+          this.map.openInfoWindow(infoWindow,point); //开启信息窗口
+       } 
     },
     deviceType(type) {
       const map = new Map([
