@@ -52,6 +52,7 @@ export default {
         latitude: '', // 纬度
         gateway_device_id: '', // 网关的产品id
         is_weather: 2, // 气象站id
+        weather_name:'',
         group_id: '', // 分组id
         validate_code: '', // 验证码
       },
@@ -135,6 +136,9 @@ export default {
           'is_weather',
           'gateway_device_id',
         ];
+        if(this.model.is_weather==2){
+          this.model.weather_name='';
+        }
         Object.keys(this.model).forEach((key) => {
           if (this.params.product_type === 1 && key === 'validate_code') {
             data[key] = this.model[key];

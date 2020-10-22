@@ -225,11 +225,20 @@
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="有无气象站" prop="is_weather">
-          <el-radio-group v-model="model.is_weather">
-            <el-radio :label="1">有</el-radio>
-            <el-radio :label="2">无</el-radio>
-          </el-radio-group>
+        <br />
+        <el-form-item label="有无气象站"  :label-width="formLabelWidth"  prop="is_weather">
+              <el-radio-group v-model="model.is_weather">
+                <el-radio :label="1">有</el-radio>
+                <el-radio :label="2">无</el-radio>
+              </el-radio-group>
+        </el-form-item>
+        <br />
+        <el-form-item
+          label="气象站名称"
+          :label-width="formLabelWidth"
+          prop="weather_name"  v-if="model.is_weather==1"
+        >
+          <el-input v-model="model.weather_name" ></el-input>
         </el-form-item>
         <br />
         <el-form-item
@@ -308,6 +317,7 @@ export default {
         device_number: '', // 设备编号
         place_number: '', // 位号
         project_id: '', // 项目ID
+        weather_name: '',//气象站名称
         status: 0, // 状态
       },
       rules: {

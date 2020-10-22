@@ -67,6 +67,13 @@
         >
           <el-table-column type="selection" width="55"></el-table-column>
           <el-table-column prop="device_number" label="编号" width="180"></el-table-column>
+          <el-table-column label="名称" width="180">
+            <template slot-scope="scope">
+              {{
+              scope.row.weather_name ? scope.row.weather_name : ''
+              }}
+            </template>
+          </el-table-column>
           <el-table-column label="产品" width="200">
             <template slot-scope="scope">
               {{
@@ -245,6 +252,7 @@
 import DialogMixin from '../mixin/dialog';
 import SearchMixin from '../mixin/search';
 import MapMixin from '../mixin/map';
+import { showWarningMsg } from '@/utils/message';
 
 export default {
   name: 'WeatherPanel',

@@ -279,7 +279,8 @@
               <template v-if="weatherDetail.status == 4">
                 <span class="text-white fs-sm">设备离线，无法获取数据</span>
               </template>
-              <template v-else-if="weatherDetail.weather_info != null">
+              <template v-else-if="weatherDetail != null">
+                
                 <div class="parameter flex">
                   <span
                     class="flex-1 text-light fs-sm"
@@ -318,7 +319,7 @@
     <!-- 设备详情弹出框 -->
     <device-detail :curContent="content" v-if="isShow" @hideDetail="hideDetail"></device-detail>
     <!-- 气象站设备详情弹出框 -->
-    <weather-detail></weather-detail>
+    <weather-detail @showDetail="showDetail"></weather-detail>
   </div>
 </template>
 

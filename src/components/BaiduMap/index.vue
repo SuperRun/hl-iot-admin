@@ -492,12 +492,12 @@ export default {
                 if (res2.data && res2.data.list && res2.data.list.length > 0) {
                   self.$emit('setDefaultDetail', {
                     varName: `${typeMap.get(temp2)}Detail`,
-                    data: { ...res1, weatherInfo: res2.data.list[0] },
+                    data: { ...res1, weather_info: res2.data.list[0] },
                   });
                 } else {
                   self.$emit('setDefaultDetail', {
                     varName: `${typeMap.get(temp2)}Detail`,
-                    data: { ...res1, weatherInfo: null },
+                    data: { ...res1,weather_info: null },
                   });
                 }
                 self.$store.commit('app/SET_DEVICE_DETAIL', res1);

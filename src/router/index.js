@@ -155,18 +155,18 @@ export const asyncRoutes = [
       },
     ],
   },
-  {
-    path: '/auth',
-    component: Layout,
-    children: [
-      {
-        path: 'index',
-        component: () => import('@/views/auth/index'),
-        name: 'AuthManage',
-        meta: { title: '权限管理', icon: 'nav-auth' },
-      },
-    ],
-  },
+  // {
+  //   path: '/auth',
+  //   component: Layout,
+  //   children: [
+  //     {
+  //       path: 'index',
+  //       component: () => import('@/views/auth/index'),
+  //       name: 'AuthManage',
+  //       meta: { title: '权限管理', icon: 'nav-auth' },
+  //     },
+  //   ],
+  // },
   {
     path: '/platform',
     component: Layout,

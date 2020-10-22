@@ -13,6 +13,13 @@
           <span class="text-grey-2">编号：</span>
           {{ deviceDetail.device_number }}
         </li>
+         <li class="fs-md text-dark">
+          <span class="text-grey-2">名称：</span>
+           {{
+            deviceDetail.weather_name  != null&&deviceDetail.weather_name  != ''
+              ? deviceDetail.weather_name  : '无'
+            }}
+        </li>
         <li class="fs-md text-dark">
           <span class="text-grey-2">产品：</span>
           {{
@@ -129,8 +136,11 @@ export default {
       this.currentTab = 'Content';
     },
     ledDetail() {
-      this.$store.commit('app/OPEN_DEVICEDIALOG', this.deviceDetail);
-      this.$store.dispatch('app/closeWeatherDialog');
+      this.$store.dispatch("app/closeWeatherDialog");
+      this.$emit('showDetail');
+      this.$store.commit('app/SET_DEVICE_DETAIL', this.deviceDetail);
+      this.$store.commit('app/OPEN_DEVICEDIALOG');
+      //this.$store.dispatch('app/closeWeatherDialog');
     },
   },
 };
